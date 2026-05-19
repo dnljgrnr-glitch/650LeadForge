@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>650 Customer Search</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0f0f0f;
+    --surface: #1a1a1a;
+    --surface2: #222222;
+    --border: #2e2e2e;
+    --border2: #3a3a3a;
+    --text: #f0f0f0;
+    --muted: #888;
+    --dim: #555;
+    --accent: #c8ff00;
+    --accent-dim: rgba(200,255,0,0.12);
+    --accent-text: #0f0f0f;
+    --hot: #ff4d4d;
+    --hot-bg: rgba(255,77,77,0.12);
+    --warm: #ff9a3c;
+    --warm-bg: rgba(255,154,60,0.12);
+    --cold: #4da6ff;
+    --cold-bg: rgba(77,166,255,0.12);
+    --new: #7dff8a;
+    --new-bg: rgba(125,255,138,0.12);
+    --pending: #c084fc;
+    --pending-bg: rgba(192,132,252,0.12);
+    --sold: #c8ff00;
+    --sold-bg: rgba(200,255,0,0.12);
+    --radius: 10px;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  .setup-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem;
+    gap: 1.5rem;
+    text-align: center;
+  }
+
+  .setup-logo {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .setup-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .setup-sub {
+    font-size: 13px;
+    color: var(--muted);
+    max-width: 340px;
+    line-height: 1.6;
+  }
+
+  .setup-form {
+    width: 100%;
+    max-width: 380px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .setup-input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .setup-input:focus { border-color: var(--accent); }
+  .setup-input::placeholder { color: var(--dim); }
+
+  .setup-btn {
+    background: var(--accent);
+    color: var(--accent-text);
+    border: none;
+    border-radius: var(--radius);
+    padding: 13px 24px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+    letter-spacing: 0.01em;
+  }
+
+  .setup-btn:hover { opacity: 0.9; }
+  .setup-btn:active { transform: scale(0.98); }
+
+  .setup-hint {
+    font-size: 11px;
+    color: var(--dim);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .setup-hint a { color: var(--muted); }
+
+  .main-screen { display: none; }
+
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 16px;
+  }
+
+  .header-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .brand {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    text-transform: uppercase;
+    flex: 1;
+  }
+
+  .reset-btn {
+    background: none;
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    color: var(--dim);
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .reset-btn:hover { color: var(--muted); border-color: var(--muted); }
+
+  .search-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 14px;
+    width: 16px;
+    height: 16px;
+    color: var(--muted);
+    pointer-events: none;
+    flex-shrink: 0;
+  }
+
+  .search-input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 11px 40px 11px 42px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .search-input:focus { border-color: var(--accent); }
+  .search-input::placeholder { color: var(--dim); font-size: 14px; }
+
+  .clear-btn {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--dim);
+    display: none;
+    line-height: 1;
+    padding: 4px;
+    border-radius: 4px;
+    transition: color 0.15s;
+  }
+
+  .clear-btn:hover { color: var(--muted); }
+  .clear-btn svg { width: 14px; height: 14px; }
+
+  .content { padding: 12px 16px; }
+
+  .state-msg {
+    text-align: center;
+    padding: 3rem 1rem;
+    font-size: 13px;
+    color: var(--dim);
+    font-family: 'DM Mono', monospace;
+    line-height: 1.8;
+  }
+
+  .state-msg .big { font-size: 28px; margin-bottom: 12px; }
+
+  .loading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+    padding: 3rem 1rem;
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .spinner {
+    width: 14px; height: 14px;
+    border: 1.5px solid var(--border2);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.65s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .results-count {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    color: var(--dim);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    padding: 0 2px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    transition: border-color 0.15s, background 0.15s;
+    cursor: default;
+  }
+
+  .card:hover { border-color: var(--border2); background: var(--surface2); }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .card-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.2;
+    flex: 1;
+  }
+
+  .card-phone {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    text-decoration: none;
+    flex-shrink: 0;
+    padding: 3px 8px;
+    border: 1px solid rgba(200,255,0,0.25);
+    border-radius: 6px;
+    transition: background 0.15s;
+  }
+
+  .card-phone:hover { background: var(--accent-dim); }
+
+  .badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 8px;
+  }
+
+  .badge {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .badge-hot { background: var(--hot-bg); color: var(--hot); border: 1px solid rgba(255,77,77,0.2); }
+  .badge-warm { background: var(--warm-bg); color: var(--warm); border: 1px solid rgba(255,154,60,0.2); }
+  .badge-cold { background: var(--cold-bg); color: var(--cold); border: 1px solid rgba(77,166,255,0.2); }
+  .badge-new { background: var(--new-bg); color: var(--new); border: 1px solid rgba(125,255,138,0.2); }
+  .badge-pending { background: var(--pending-bg); color: var(--pending); border: 1px solid rgba(192,132,252,0.2); }
+  .badge-sold { background: var(--sold-bg); color: var(--sold); border: 1px solid rgba(200,255,0,0.2); }
+  .badge-wish { background: var(--surface2); color: var(--muted); border: 1px solid var(--border2); }
+
+  .card-context {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 6px;
+  }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .card-next {
+    font-size: 10px;
+    color: var(--dim);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .card-when {
+    font-size: 10px;
+    color: var(--dim);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .no-match {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    text-align: center;
+  }
+
+  .no-match-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .no-match-sub {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .error-msg {
+    background: rgba(255,77,77,0.06);
+    border: 1px solid rgba(255,77,77,0.2);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    font-size: 12px;
+    color: var(--hot);
+    font-family: 'DM Mono', monospace;
+    text-align: center;
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+
+<div class="setup-screen" id="setup">
+  <div class="setup-logo">Store 00650</div>
+  <div class="setup-title">Customer Search</div>
+  <p class="setup-sub">Enter your Notion integration token to connect to the Contact Log. This is stored locally and never shared.</p>
+  <div class="setup-form">
+    <input type="password" class="setup-input" id="token-input" placeholder="secret_xxxxxxxxxxxxxxxxxxxxxxxx" autocomplete="off" />
+    <button class="setup-btn" id="connect-btn">Connect</button>
+  </div>
+  <p class="setup-hint">
+    Get your token at <a href="https://www.notion.so/my-integrations" target="_blank">notion.so/my-integrations</a>
+  </p>
+</div>
+
+<div class="main-screen" id="main">
+  <div class="header">
+    <div class="header-top">
+      <div class="brand">650 / Customer Search</div>
+      <button class="reset-btn" id="reset-btn">Change Token</button>
+    </div>
+    <div class="search-wrap">
+      <svg class="search-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input type="text" class="search-input" id="search-input" placeholder="Type a customer name..." autocomplete="off" autofocus />
+      <button class="clear-btn" id="clear-btn" aria-label="Clear">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="content" id="content">
+    <div class="state-msg">
+      <div class="big">&#x1F50D;</div>
+      Search before adding a new lead.<br>If they exist, update their record.<br>If not, add them fresh.
+    </div>
+  </div>
+</div>
+
+<script>
+const DB_ID = '08e4ef11b30d462ca4479a1d9045be72';
+const TOKEN_KEY = 'rac650_token';
+
+const setupEl = document.getElementById('setup');
+const mainEl = document.getElementById('main');
+const tokenInput = document.getElementById('token-input');
+const connectBtn = document.getElementById('connect-btn');
+const resetBtn = document.getElementById('reset-btn');
+const searchInput = document.getElementById('search-input');
+const clearBtn = document.getElementById('clear-btn');
+const content = document.getElementById('content');
+
+let token = localStorage.getItem(TOKEN_KEY) || '';
+let timer;
+
+function init() {
+  if (token) { show('main'); } else { show('setup'); }
+}
+
+function show(screen) {
+  setupEl.style.display = screen === 'setup' ? 'flex' : 'none';
+  mainEl.style.display = screen === 'main' ? 'block' : 'none';
+  if (screen === 'main') setTimeout(() => searchInput.focus(), 50);
+}
+
+connectBtn.addEventListener('click', () => {
+  const t = tokenInput.value.trim();
+  if (!t) { tokenInput.focus(); return; }
+  token = t;
+  localStorage.setItem(TOKEN_KEY, t);
+  tokenInput.value = '';
+  show('main');
+});
+
+tokenInput.addEventListener('keydown', e => { if (e.key === 'Enter') connectBtn.click(); });
+
+resetBtn.addEventListener('click', () => {
+  token = '';
+  localStorage.removeItem(TOKEN_KEY);
+  show('setup');
+});
+
+searchInput.addEventListener('input', () => {
+  const q = searchInput.value.trim();
+  clearBtn.style.display = q ? 'block' : 'none';
+  clearTimeout(timer);
+  if (!q) {
+    content.innerHTML = '<div class="state-msg"><div class="big">&#x1F50D;</div>Search before adding a new lead.<br>If they exist, update their record.<br>If not, add them fresh.</div>';
+    return;
+  }
+  if (q.length < 2) return;
+  timer = setTimeout(() => doSearch(q), 350);
+});
+
+clearBtn.addEventListener('click', () => {
+  searchInput.value = '';
+  clearBtn.style.display = 'none';
+  content.innerHTML = '<div class="state-msg"><div class="big">&#x1F50D;</div>Search before adding a new lead.<br>If they exist, update their record.<br>If not, add them fresh.</div>';
+  searchInput.focus();
+});
+
+async function doSearch(q) {
+  content.innerHTML = '<div class="loading"><div class="spinner"></div>Searching...</div>';
+  try {
+    const resp = await fetch(`https://api.notion.com/v1/databases/${DB_ID}/query`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Notion-Version': '2022-06-28',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        filter: {
+          property: 'Customer Name',
+          title: { contains: q }
+        },
+        sorts: [{ property: 'Customer Name', direction: 'ascending' }],
+        page_size: 20
+      })
+    });
+
+    if (resp.status === 401) {
+      content.innerHTML = '<div class="error-msg">Token invalid or expired.<br>Click "Change Token" and reconnect.</div>';
+      return;
+    }
+
+    if (!resp.ok) {
+      const err = await resp.json();
+      content.innerHTML = `<div class="error-msg">Notion error: ${err.message || resp.status}</div>`;
+      return;
+    }
+
+    const data = await resp.json();
+    render(data.results, q);
+  } catch(e) {
+    content.innerHTML = `<div class="error-msg">Connection failed.<br>Check CORS proxy or try again.<br><small>${e.message}</small></div>`;
+  }
+}
+
+function getTemp(page) {
+  try {
+    const v = page.properties['Temp'];
+    if (!v) return [];
+    if (v.type === 'select' && v.select) return [v.select.name];
+    if (v.type === 'multi_select') return v.multi_select.map(x => x.name);
+  } catch {}
+  return [];
+}
+
+function getWish(page) {
+  try {
+    const v = page.properties['Wish List'];
+    if (!v || v.type !== 'multi_select') return [];
+    return v.multi_select.map(x => x.name);
+  } catch {}
+  return [];
+}
+
+function getTitle(page) {
+  try {
+    const v = page.properties['Customer Name'];
+    if (v.title && v.title.length) return v.title.map(t => t.plain_text).join('');
+  } catch {}
+  return 'Unknown';
+}
+
+function getPhone(page) {
+  try {
+    const v = page.properties['Phone'];
+    return v && v.phone_number ? v.phone_number : '';
+  } catch {}
+  return '';
+}
+
+function getText(page, key) {
+  try {
+    const v = page.properties[key];
+    if (!v) return '';
+    if (v.type === 'rich_text') return v.rich_text.map(t => t.plain_text).join('');
+    if (v.type === 'select' && v.select) return v.select.name;
+    if (v.type === 'title') return v.title.map(t => t.plain_text).join('');
+  } catch {}
+  return '';
+}
+
+function getDate(page, key) {
+  try {
+    const v = page.properties[key];
+    if (v && v.date && v.date.start) {
+      const d = new Date(v.date.start);
+      return d.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' });
+    }
+  } catch {}
+  return '';
+}
+
+function tempBadge(t) {
+  const map = {'Hot':'hot','Warm':'warm','Cold':'cold','New Lead':'new','Pending':'pending','SOLD/ON RENT':'sold'};
+  const cls = map[t] || 'wish';
+  return `<span class="badge badge-${cls}">${t}</span>`;
+}
+
+function render(results, q) {
+  if (!results.length) {
+    content.innerHTML = `<div class="no-match"><div class="no-match-title">No match for "${q}"</div><div class="no-match-sub">New customer — safe to add as a new lead</div></div>`;
+    return;
+  }
+
+  const deduped = [];
+  const seen = new Set();
+  for (const r of results) {
+    const name = getTitle(r).toUpperCase();
+    if (!seen.has(name)) { seen.add(name); deduped.push(r); }
+  }
+
+  const html = deduped.map(r => {
+    const name = getTitle(r);
+    const phone = getPhone(r);
+    const temps = getTemp(r);
+    const wish = getWish(r);
+    const ctx = getText(r, 'Context');
+    const ns = getText(r, 'Next Step');
+    const when = getDate(r, 'WHEN');
+
+    const phonePart = phone ? `<a class="card-phone" href="tel:${phone}">${phone}</a>` : '';
+    const tempBadges = temps.map(tempBadge).join('');
+    const wishBadges = wish.map(w => `<span class="badge badge-wish">${w}</span>`).join('');
+    const ctxPart = ctx ? `<div class="card-context">${ctx}</div>` : '';
+    const nsPart = ns ? `<span class="card-next">${ns}</span>` : '';
+    const whenPart = when ? `<span class="card-when">${when}</span>` : '';
+
+    return `<div class="card">
+      <div class="card-top">
+        <div class="card-name">${name}</div>
+        ${phonePart}
+      </div>
+      ${(tempBadges || wishBadges) ? `<div class="badges">${tempBadges}${wishBadges}</div>` : ''}
+      ${ctxPart}
+      ${(nsPart || whenPart) ? `<div class="card-footer">${nsPart}${whenPart}</div>` : ''}
+    </div>`;
+  }).join('');
+
+  content.innerHTML = `<div class="results-count">${deduped.length} result${deduped.length > 1 ? 's' : ''}</div>${html}`;
+}
+
+init();
+</script>
+</body>
+</html>
