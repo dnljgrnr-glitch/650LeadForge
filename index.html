@@ -1,4 +1,4 @@
-<!-- v5.2 · 650 LeadForge · Entry-first UX · Today/Pipeline/Archive -->
+<!-- v5.3 · 650 LeadForge · Agent Assist Layer · Rule-Based Follow-Up Agent -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,12 +10,15 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  >
 
   <style>
     :root {
       --bg: #08080d;
-      --surface: rgba(20, 20, 28, 0.7);
+      --surface: rgba(20, 20, 28, 0.72);
       --surface-2: rgba(255, 255, 255, 0.025);
       --border: rgba(255, 255, 255, 0.07);
       --border-strong: rgba(201, 169, 110, 0.4);
@@ -36,64 +39,152 @@
       color-scheme: dark;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; color-scheme: dark; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      color-scheme: dark;
+    }
 
     body {
       min-height: 100vh;
-      background: var(--bg);
+      background:
+        radial-gradient(circle at 50% -10%, rgba(201, 169, 110, 0.07), transparent 32rem),
+        var(--bg);
       color: var(--text);
       font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
     }
 
-    button, input, textarea, select { font: inherit; color: inherit; }
-    button { cursor: pointer; }
-    .mono { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
-    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+      color: inherit;
+    }
 
-    /* ===== GATE ===== */
+    button {
+      cursor: pointer;
+    }
+
+    .mono {
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
     #gate {
-      position: fixed; inset: 0; z-index: 9999;
-      display: grid; place-items: center; padding: 24px;
-      background: radial-gradient(circle at 50% 20%, rgba(201, 169, 110, 0.08), transparent 30rem), var(--bg);
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background:
+        radial-gradient(circle at 50% 20%, rgba(201, 169, 110, 0.08), transparent 30rem),
+        var(--bg);
       overflow-y: auto;
     }
-    .gate-shell { width: min(100%, 460px); padding: 24px 0; }
+
+    .gate-shell {
+      width: min(100%, 460px);
+      padding: 24px 0;
+    }
+
     .gate-box {
       background: rgba(15, 15, 22, 0.96);
       border: 1px solid var(--border);
       border-radius: 22px;
       padding: 28px;
     }
+
     .gate-eyebrow {
-      display: inline-flex; align-items: center; gap: 7px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
       color: var(--muted);
-      font-size: 10px; font-weight: 600;
-      letter-spacing: 0.18em; text-transform: uppercase;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
       margin-bottom: 14px;
     }
-    .gate-dot { width: 6px; height: 6px; border-radius: 999px; background: var(--green); box-shadow: 0 0 10px var(--green); }
-    .gate-title { font-size: 34px; line-height: 1; font-weight: 800; letter-spacing: -0.045em; color: var(--text); margin-bottom: 6px; }
-    .gate-title span { color: var(--gold); }
-    .gate-copy { color: var(--muted); font-size: 12px; line-height: 1.55; margin-bottom: 22px; }
+
+    .gate-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--green);
+      box-shadow: 0 0 10px var(--green);
+    }
+
+    .gate-title {
+      font-size: 34px;
+      line-height: 1;
+      font-weight: 800;
+      letter-spacing: -0.045em;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .gate-title span {
+      color: var(--gold);
+    }
+
+    .gate-copy {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+      margin-bottom: 22px;
+    }
 
     .gate-step-label {
       color: var(--muted);
-      font-size: 10px; font-weight: 700;
-      letter-spacing: 0.16em; text-transform: uppercase;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
       margin-bottom: 9px;
-      display: flex; align-items: center; gap: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
+
     .gate-step-num {
-      width: 20px; height: 20px; border-radius: 999px;
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
       border: 1px solid var(--border-strong);
       color: var(--gold-2);
-      display: grid; place-items: center;
-      font-size: 10px; font-weight: 700;
+      display: grid;
+      place-items: center;
+      font-size: 10px;
+      font-weight: 700;
     }
-    .rep-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; margin-bottom: 20px; }
+
+    .rep-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 7px;
+      margin-bottom: 20px;
+    }
+
     .rep-card {
       border: 1px solid var(--border);
       background: var(--surface-2);
@@ -103,16 +194,63 @@
       transition: all 150ms ease;
       position: relative;
     }
-    .rep-card:hover { border-color: var(--border-strong); background: rgba(201, 169, 110, 0.04); }
-    .rep-card.selected { border-color: var(--gold); background: rgba(201, 169, 110, 0.08); }
-    .rep-card.selected::after { content: "✓"; position: absolute; top: 4px; right: 6px; color: var(--gold); font-weight: 800; font-size: 10px; }
-    .rep-initials { font-size: 18px; font-weight: 800; letter-spacing: -0.04em; color: var(--text); margin-bottom: 2px; }
-    .rep-card.selected .rep-initials { color: var(--gold-2); }
-    .rep-role { font-size: 8px; font-family: "JetBrains Mono", monospace; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
 
-    .gate-form { display: grid; gap: 9px; }
-    .gate-form.locked .gate-input, .gate-form.locked .primary-btn { opacity: 0.35; pointer-events: none; }
-    .gate-input, .search-input, .form-input, .form-textarea, .form-select {
+    .rep-card:hover {
+      border-color: var(--border-strong);
+      background: rgba(201, 169, 110, 0.04);
+    }
+
+    .rep-card.selected {
+      border-color: var(--gold);
+      background: rgba(201, 169, 110, 0.08);
+    }
+
+    .rep-card.selected::after {
+      content: "✓";
+      position: absolute;
+      top: 4px;
+      right: 6px;
+      color: var(--gold);
+      font-weight: 800;
+      font-size: 10px;
+    }
+
+    .rep-initials {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .rep-card.selected .rep-initials {
+      color: var(--gold-2);
+    }
+
+    .rep-role {
+      font-size: 8px;
+      font-family: "JetBrains Mono", monospace;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .gate-form {
+      display: grid;
+      gap: 9px;
+    }
+
+    .gate-form.locked .gate-input,
+    .gate-form.locked .primary-btn {
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    .gate-input,
+    .search-input,
+    .form-input,
+    .form-textarea,
+    .form-select {
       width: 100%;
       color: var(--text);
       background: #0c0c14;
@@ -121,77 +259,191 @@
       outline: none;
       transition: border-color 150ms ease, box-shadow 150ms ease;
     }
-    .gate-input { padding: 13px 14px; text-align: center; letter-spacing: 0.22em; font-size: 12px; }
-    .gate-input::placeholder, .search-input::placeholder, .form-input::placeholder, .form-textarea::placeholder { color: var(--faint); }
-    .gate-input:focus, .search-input:focus, .form-input:focus, .form-textarea:focus, .form-select:focus {
+
+    .gate-input {
+      padding: 13px 14px;
+      text-align: center;
+      letter-spacing: 0.22em;
+      font-size: 12px;
+    }
+
+    .gate-input::placeholder,
+    .search-input::placeholder,
+    .form-input::placeholder,
+    .form-textarea::placeholder {
+      color: var(--faint);
+    }
+
+    .gate-input:focus,
+    .search-input:focus,
+    .form-input:focus,
+    .form-textarea:focus,
+    .form-select:focus {
       border-color: var(--gold);
       box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.12);
     }
+
     .primary-btn {
-      border: 0; border-radius: var(--radius-md);
-      padding: 13px 14px; color: #090908;
+      border: 0;
+      border-radius: var(--radius-md);
+      padding: 13px 14px;
+      color: #090908;
       background: var(--gold);
-      font-weight: 700; letter-spacing: 0.08em;
+      font-weight: 700;
+      letter-spacing: 0.08em;
       font-size: 12px;
       transition: filter 150ms ease, transform 150ms ease;
     }
-    .primary-btn:hover { filter: brightness(1.08); }
-    .primary-btn:active { transform: translateY(1px); }
-    .primary-btn:disabled { opacity: 0.35; cursor: not-allowed; }
-    .gate-err { min-height: 14px; color: var(--red); font-size: 10px; letter-spacing: 0.06em; text-align: center; margin-top: 4px; }
-    .security-note { margin-top: 12px; color: var(--faint); font-size: 9px; line-height: 1.5; text-align: center; }
 
-    /* ===== APP ===== */
-    #app { display: none; width: min(100% - 24px, var(--max)); margin: 0 auto; padding: 18px 0 50px; }
+    .primary-btn:hover {
+      filter: brightness(1.08);
+    }
 
-    /* TOPBAR */
+    .primary-btn:active {
+      transform: translateY(1px);
+    }
+
+    .primary-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .gate-err {
+      min-height: 14px;
+      color: var(--red);
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      text-align: center;
+      margin-top: 4px;
+    }
+
+    .security-note {
+      margin-top: 12px;
+      color: var(--faint);
+      font-size: 9px;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    #app {
+      display: none;
+      width: min(100% - 24px, var(--max));
+      margin: 0 auto;
+      padding: 18px 0 50px;
+    }
+
     .topbar {
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 12px; margin-bottom: 12px; flex-wrap: wrap;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
     }
-    .brand-lockup { display: flex; align-items: center; gap: 10px; }
+
+    .brand-lockup {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
     .mark {
-      width: 34px; height: 34px; border-radius: 10px;
-      display: grid; place-items: center;
-      color: #080808; background: var(--gold);
-      font-weight: 800; letter-spacing: -0.06em; font-size: 12px;
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      color: #080808;
+      background: var(--gold);
+      font-weight: 800;
+      letter-spacing: -0.06em;
+      font-size: 12px;
     }
-    .logo { font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
-    .logo-sub { margin-top: 1px; color: var(--muted); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; }
-    .topbar-actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+
+    .logo {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .logo-sub {
+      margin-top: 1px;
+      color: var(--muted);
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .topbar-actions {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
     .rep-badge {
-      display: inline-flex; align-items: center; gap: 5px;
-      padding: 6px 9px; border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 9px;
+      border-radius: 999px;
       border: 1px solid var(--border-strong);
       color: var(--gold-2);
       background: rgba(201, 169, 110, 0.05);
-      font-size: 10px; font-weight: 700;
-      letter-spacing: 0.1em; text-transform: uppercase;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
     }
+
     .ghost-btn {
-      border: 1px solid var(--border); color: var(--muted);
+      border: 1px solid var(--border);
+      color: var(--muted);
       background: var(--surface-2);
-      padding: 6px 9px; border-radius: 999px;
-      font-size: 10px; font-weight: 700;
-      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 6px 9px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
       transition: all 150ms ease;
     }
-    .ghost-btn:hover { color: var(--text); border-color: var(--border-strong); }
+
+    .ghost-btn:hover {
+      color: var(--text);
+      border-color: var(--border-strong);
+    }
+
     .add-btn {
-      border: 0; border-radius: 999px;
+      border: 0;
+      border-radius: 999px;
       padding: 7px 13px;
-      color: #090908; background: var(--gold);
-      font-weight: 700; letter-spacing: 0.06em;
+      color: #090908;
+      background: var(--gold);
+      font-weight: 700;
+      letter-spacing: 0.06em;
       font-size: 10px;
       transition: filter 150ms ease;
-      display: inline-flex; align-items: center; gap: 4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
-    .add-btn:hover { filter: brightness(1.08); }
-    .add-btn .plus { font-size: 14px; line-height: 1; font-weight: 800; }
 
-    /* STATUS STRIP */
+    .add-btn:hover {
+      filter: brightness(1.08);
+    }
+
+    .add-btn .plus {
+      font-size: 14px;
+      line-height: 1;
+      font-weight: 800;
+    }
+
     .status-strip {
-      display: flex; align-items: center; justify-content: space-between;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       gap: 12px;
       border: 1px solid var(--border);
       background: var(--surface);
@@ -201,22 +453,60 @@
       margin-bottom: 10px;
       flex-wrap: wrap;
     }
-    .status-strip-left { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+
+    .status-strip-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
     .status-pill {
-      display: inline-flex; align-items: center; gap: 6px;
-      font-size: 10px; font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      font-weight: 600;
       color: var(--muted);
     }
-    .status-pill strong { color: var(--text); font-weight: 700; font-size: 12px; }
-    .status-pill .dot { width: 6px; height: 6px; border-radius: 999px; background: var(--green); box-shadow: 0 0 8px var(--green); }
-    .status-pill.idle .dot { background: var(--muted); box-shadow: none; }
-    .status-pill.err .dot { background: var(--red); box-shadow: 0 0 8px var(--red); }
-    .status-pill.err strong { color: var(--red); }
-    .status-strip-right { color: var(--faint); font-size: 10px; }
 
-    /* TABS */
+    .status-pill strong {
+      color: var(--text);
+      font-weight: 700;
+      font-size: 12px;
+    }
+
+    .status-pill .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+    }
+
+    .status-pill.idle .dot {
+      background: var(--muted);
+      box-shadow: none;
+    }
+
+    .status-pill.err .dot {
+      background: var(--red);
+      box-shadow: 0 0 8px var(--red);
+    }
+
+    .status-pill.err strong {
+      color: var(--red);
+    }
+
+    .status-strip-right {
+      color: var(--faint);
+      font-size: 10px;
+    }
+
     .tabs-row {
-      display: flex; gap: 3px; flex-wrap: wrap;
+      display: flex;
+      gap: 3px;
+      flex-wrap: wrap;
       border: 1px solid var(--border);
       background: var(--surface);
       backdrop-filter: blur(20px);
@@ -224,6 +514,7 @@
       padding: 5px;
       margin-bottom: 10px;
     }
+
     .tab-btn {
       flex: 1;
       min-width: 90px;
@@ -242,22 +533,33 @@
       justify-content: center;
       gap: 5px;
     }
-    .tab-btn:hover { color: var(--text); background: rgba(255,255,255,0.025); }
-    .tab-btn.active { color: #090908; background: var(--gold); }
-    .tab-btn .tab-emoji { font-size: 12px; }
-    .tab-btn .tab-count {
+
+    .tab-btn:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    .tab-btn.active {
+      color: #090908;
+      background: var(--gold);
+    }
+
+    .tab-count {
       font-family: "JetBrains Mono", monospace;
       font-size: 9px;
       opacity: 0.85;
       padding: 1px 4px;
       border-radius: 999px;
-      background: rgba(0,0,0,0.18);
+      background: rgba(0, 0, 0, 0.18);
     }
-    .tab-btn.active .tab-count { background: rgba(0,0,0,0.22); }
 
-    /* SEARCH CONTROLS */
+    .tab-btn.active .tab-count {
+      background: rgba(0, 0, 0, 0.22);
+    }
+
     .control-panel {
-      display: grid; gap: 8px;
+      display: grid;
+      gap: 8px;
       border: 1px solid var(--border);
       background: var(--surface);
       backdrop-filter: blur(20px);
@@ -265,59 +567,602 @@
       padding: 10px;
       margin-bottom: 10px;
     }
-    .search-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px; }
-    .search-input { padding: 11px 13px; font-size: 13px; }
-    .search-btn { min-width: 90px; padding: 11px 16px; font-size: 11px; }
-    .quick-filters { display: flex; gap: 5px; flex-wrap: wrap; }
-    .filter-btn {
-      border: 1px solid var(--border);
-      background: var(--surface-2);
-      color: var(--muted);
-      border-radius: 999px;
-      padding: 5px 9px;
-      font-size: 9px; font-weight: 700;
-      letter-spacing: 0.06em; text-transform: uppercase;
-      transition: all 150ms ease;
-    }
-    .filter-btn:hover, .filter-btn.active {
-      color: var(--gold-2);
-      border-color: var(--border-strong);
-      background: rgba(201,169,110,0.06);
-    }
-
 
     .entry-copy {
       display: grid;
       gap: 3px;
       margin-bottom: 2px;
     }
+
     .entry-title {
       color: var(--text);
       font-size: 13px;
       font-weight: 800;
       letter-spacing: -0.02em;
     }
+
     .entry-sub {
       color: var(--muted);
       font-size: 11px;
       line-height: 1.45;
     }
+
+    .search-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 6px;
+    }
+
+    .search-input {
+      padding: 11px 13px;
+      font-size: 13px;
+    }
+
+    .search-btn {
+      min-width: 90px;
+      padding: 11px 16px;
+      font-size: 11px;
+    }
+
+    .quick-filters {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: all 150ms ease;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+      color: var(--gold-2);
+      border-color: var(--border-strong);
+      background: rgba(201, 169, 110, 0.06);
+    }
+
+    .results-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 10px;
+      margin: 12px 2px 8px;
+    }
+
+    .section-title {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+
+    .section-kicker {
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .refresh-btn {
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: all 150ms ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .refresh-btn:hover {
+      color: var(--text);
+      border-color: var(--border-strong);
+    }
+
+    .results {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .card {
+      position: relative;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      backdrop-filter: blur(20px);
+      border-radius: var(--radius-md);
+      padding: 11px 14px;
+      transition: border-color 140ms ease, background 140ms ease;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 2px;
+      background: var(--gold);
+      opacity: 0.5;
+      border-radius: 2px 0 0 2px;
+    }
+
+    .card:hover {
+      border-color: var(--border-strong);
+      background: rgba(20, 20, 28, 0.85);
+    }
+
+    .card:hover::before {
+      opacity: 0.9;
+    }
+
+    .card.overdue::before {
+      background: var(--red);
+      opacity: 0.75;
+    }
+
+    .card.due-today::before {
+      background: var(--green);
+      opacity: 0.75;
+    }
+
+    .card.archived {
+      opacity: 0.55;
+    }
+
+    .card.archived::before {
+      background: var(--faint);
+    }
+
+    .card-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+
+    .card-main {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .card-name {
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+
+    .card-phone {
+      color: var(--muted);
+      font-size: 11px;
+      font-family: "JetBrains Mono", monospace;
+    }
+
+    .card-quick-meta {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 10px;
+      font-family: "JetBrains Mono", monospace;
+      flex-wrap: wrap;
+    }
+
+    .card-quick-meta strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .card-right {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      border-radius: 999px;
+      padding: 3px 7px;
+      font-size: 8px;
+      line-height: 1;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .pill.hot {
+      color: var(--red);
+      border-color: rgba(255, 100, 115, 0.4);
+      background: rgba(255, 100, 115, 0.07);
+    }
+
+    .pill.warm {
+      color: var(--orange);
+      border-color: rgba(245, 168, 75, 0.4);
+      background: rgba(245, 168, 75, 0.07);
+    }
+
+    .pill.cold {
+      color: var(--blue);
+      border-color: rgba(111, 156, 255, 0.4);
+      background: rgba(111, 156, 255, 0.07);
+    }
+
+    .pill.new {
+      color: var(--green);
+      border-color: rgba(66, 217, 160, 0.4);
+      background: rgba(66, 217, 160, 0.07);
+    }
+
+    .pill.verified {
+      color: var(--purple);
+      border-color: rgba(184, 140, 255, 0.4);
+      background: rgba(184, 140, 255, 0.07);
+    }
+
+    .pill.pending {
+      color: var(--purple);
+      border-color: rgba(184, 140, 255, 0.28);
+      opacity: 0.85;
+    }
+
+    .pill.owner {
+      color: var(--gold-2);
+      border-color: var(--border-strong);
+      background: rgba(201, 169, 110, 0.06);
+    }
+
+    .pill.overdue {
+      color: var(--red);
+      border-color: rgba(255, 100, 115, 0.4);
+      background: rgba(255, 100, 115, 0.07);
+    }
+
+    .pill.due-today {
+      color: var(--green);
+      border-color: rgba(66, 217, 160, 0.4);
+      background: rgba(66, 217, 160, 0.07);
+    }
+
+    .pill.archived {
+      color: var(--faint);
+      border-color: var(--border);
+    }
+
+    .expand-chevron {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-size: 11px;
+      transition: transform 200ms ease, color 150ms ease;
+    }
+
+    .card.expanded .expand-chevron {
+      transform: rotate(180deg);
+      color: var(--gold-2);
+    }
+
+    .card-detail {
+      display: none;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+
+    .card.expanded .card-detail {
+      display: block;
+    }
+
+    .detail-meta {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px 14px;
+      margin-bottom: 10px;
+      font-size: 11px;
+      font-family: "JetBrains Mono", monospace;
+      color: var(--muted);
+    }
+
+    .detail-meta div {
+      display: flex;
+      gap: 5px;
+      align-items: baseline;
+    }
+
+    .detail-meta label {
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--faint);
+    }
+
+    .detail-meta strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .detail-section {
+      margin-top: 10px;
+    }
+
+    .detail-section-label {
+      color: var(--faint);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .detail-section-body {
+      color: #dcdce6;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .detail-section-body.crm {
+      color: var(--gold-2);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+    }
+
+    .detail-extra-pills {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+
+    .agent-assist {
+      margin-top: 12px;
+      padding: 12px;
+      border: 1px solid rgba(201, 169, 110, 0.18);
+      background: rgba(201, 169, 110, 0.035);
+      border-radius: var(--radius-md);
+    }
+
+    .agent-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 9px;
+      flex-wrap: wrap;
+    }
+
+    .agent-title {
+      color: var(--gold-2);
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .agent-priority {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 8px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    .agent-priority.high {
+      color: var(--red);
+      border-color: rgba(255, 100, 115, 0.38);
+      background: rgba(255, 100, 115, 0.06);
+    }
+
+    .agent-priority.medium {
+      color: var(--orange);
+      border-color: rgba(245, 168, 75, 0.38);
+      background: rgba(245, 168, 75, 0.06);
+    }
+
+    .agent-priority.low {
+      color: var(--blue);
+      border-color: rgba(111, 156, 255, 0.34);
+      background: rgba(111, 156, 255, 0.05);
+    }
+
+    .agent-grid {
+      display: grid;
+      gap: 8px;
+    }
+
+    .agent-item {
+      border-top: 1px solid rgba(255, 255, 255, 0.055);
+      padding-top: 8px;
+    }
+
+    .agent-item:first-child {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .agent-label {
+      color: var(--faint);
+      font-size: 8px;
+      font-weight: 800;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      margin-bottom: 3px;
+    }
+
+    .agent-body {
+      color: #dedee8;
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .agent-script {
+      color: var(--text);
+      background: rgba(0, 0, 0, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.055);
+      border-radius: var(--radius-sm);
+      padding: 8px;
+      font-size: 11px;
+      line-height: 1.48;
+    }
+
+    .agent-actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 9px;
+    }
+
+    .copy-btn {
+      border: 1px solid var(--border-strong);
+      background: rgba(201, 169, 110, 0.055);
+      color: var(--gold-2);
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: all 150ms ease;
+    }
+
+    .copy-btn:hover {
+      background: rgba(201, 169, 110, 0.1);
+    }
+
+    .copy-btn.copied {
+      color: #090908;
+      background: var(--gold);
+      border-color: transparent;
+    }
+
+    .detail-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .log-touch-btn {
+      border: 0;
+      border-radius: var(--radius-md);
+      padding: 9px 16px;
+      color: #090908;
+      background: var(--gold);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      font-size: 11px;
+      transition: filter 150ms ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .log-touch-btn:hover {
+      filter: brightness(1.08);
+    }
+
+    .archive-btn {
+      border: 1px solid rgba(255, 100, 115, 0.32);
+      background: rgba(255, 100, 115, 0.04);
+      color: #ff9aa4;
+      border-radius: var(--radius-md);
+      padding: 9px 14px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      font-size: 11px;
+      transition: all 150ms;
+    }
+
+    .archive-btn:hover {
+      background: rgba(255, 100, 115, 0.08);
+    }
+
+    .open-notion-btn {
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      border-radius: var(--radius-md);
+      padding: 9px 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      font-size: 11px;
+      transition: all 150ms;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .open-notion-btn:hover {
+      color: var(--text);
+      border-color: var(--border-strong);
+    }
+
     .create-card {
       border: 1px solid var(--border-strong);
-      background: rgba(201,169,110,0.045);
+      background: rgba(201, 169, 110, 0.045);
       border-radius: var(--radius-lg);
       padding: 18px;
       display: grid;
       gap: 10px;
     }
+
     .create-title {
       color: var(--text);
       font-size: 14px;
       font-weight: 800;
       letter-spacing: -0.02em;
     }
-    .create-body { color: var(--muted); font-size: 12px; line-height: 1.5; }
-    .create-actions { display: flex; gap: 7px; flex-wrap: wrap; }
+
+    .create-body {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .create-actions {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
     .secondary-btn {
       border: 1px solid var(--border);
       background: var(--surface-2);
@@ -329,205 +1174,73 @@
       letter-spacing: 0.06em;
       text-transform: uppercase;
     }
-    .secondary-btn:hover { color: var(--text); border-color: var(--border-strong); }
 
-    /* RESULTS HEAD */
-    .results-head {
-      display: flex; align-items: end; justify-content: space-between;
-      gap: 10px; margin: 12px 2px 8px;
+    .secondary-btn:hover {
+      color: var(--text);
+      border-color: var(--border-strong);
     }
-    .section-title { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text); }
-    .section-kicker { margin-top: 2px; color: var(--muted); font-size: 11px; }
-    .refresh-btn {
-      border: 1px solid var(--border);
-      background: var(--surface-2);
-      color: var(--muted);
-      border-radius: 999px;
-      padding: 5px 10px;
-      font-size: 9px; font-weight: 700;
-      letter-spacing: 0.06em; text-transform: uppercase;
-      transition: all 150ms ease;
-      display: inline-flex; align-items: center; gap: 4px;
-    }
-    .refresh-btn:hover { color: var(--text); border-color: var(--border-strong); }
 
-    /* ===== RESULTS — SINGLE COLUMN TIGHT LIST ===== */
-    .results { display: flex; flex-direction: column; gap: 6px; }
-
-    .card {
-      position: relative;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      backdrop-filter: blur(20px);
-      border-radius: var(--radius-md);
-      padding: 11px 14px;
-      transition: border-color 140ms ease, background 140ms ease;
-    }
-    .card::before {
-      content: ""; position: absolute;
-      inset: 0 auto 0 0; width: 2px;
-      background: var(--gold);
-      opacity: 0.5;
-      border-radius: 2px 0 0 2px;
-    }
-    .card:hover { border-color: var(--border-strong); background: rgba(20, 20, 28, 0.85); }
-    .card:hover::before { opacity: 0.9; }
-    .card.overdue::before { background: var(--red); opacity: 0.75; }
-    .card.due-today::before { background: var(--green); opacity: 0.75; }
-    .card.archived { opacity: 0.5; }
-    .card.archived::before { background: var(--faint); }
-
-    /* Compact row — shown by default */
-    .card-row {
-      display: flex; align-items: center; gap: 10px;
-      cursor: pointer;
-    }
-    .card-main { flex: 1; min-width: 0; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
-    .card-name {
-      color: var(--text); font-size: 14px;
-      font-weight: 700; letter-spacing: -0.015em;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      max-width: 100%;
-    }
-    .card-phone { color: var(--muted); font-size: 11px; font-family: "JetBrains Mono", monospace; }
-    .card-quick-meta {
-      display: flex; gap: 8px; align-items: center;
-      color: var(--muted); font-size: 10px;
-      font-family: "JetBrains Mono", monospace;
-      flex-wrap: wrap;
-    }
-    .card-quick-meta strong { color: var(--text); font-weight: 600; }
-    .card-right { display: flex; gap: 5px; align-items: center; flex-shrink: 0; }
-
-    .pill {
-      display: inline-flex; align-items: center;
-      color: var(--muted);
-      border: 1px solid var(--border);
-      background: var(--surface-2);
-      border-radius: 999px; padding: 3px 7px;
-      font-size: 8px; line-height: 1;
-      font-weight: 700; letter-spacing: 0.1em;
-      text-transform: uppercase; white-space: nowrap;
-    }
-    .pill.hot { color: var(--red); border-color: rgba(255,100,115,0.4); background: rgba(255,100,115,0.07); }
-    .pill.warm { color: var(--orange); border-color: rgba(245,168,75,0.4); background: rgba(245,168,75,0.07); }
-    .pill.cold { color: var(--blue); border-color: rgba(111,156,255,0.4); background: rgba(111,156,255,0.07); }
-    .pill.new { color: var(--green); border-color: rgba(66,217,160,0.4); background: rgba(66,217,160,0.07); }
-    .pill.verified { color: var(--purple); border-color: rgba(184,140,255,0.4); background: rgba(184,140,255,0.07); }
-    .pill.pending { color: var(--purple); border-color: rgba(184,140,255,0.28); opacity: 0.7; }
-    .pill.owner { color: var(--gold-2); border-color: var(--border-strong); background: rgba(201,169,110,0.06); }
-    .pill.overdue { color: var(--red); border-color: rgba(255,100,115,0.4); background: rgba(255,100,115,0.07); }
-    .pill.due-today { color: var(--green); border-color: rgba(66,217,160,0.4); background: rgba(66,217,160,0.07); }
-    .pill.archived { color: var(--faint); border-color: var(--border); }
-
-    .expand-chevron {
-      width: 22px; height: 22px;
-      border-radius: 50%;
-      display: grid; place-items: center;
-      color: var(--muted);
-      font-size: 11px;
-      transition: transform 200ms ease, color 150ms ease;
-    }
-    .card.expanded .expand-chevron { transform: rotate(180deg); color: var(--gold-2); }
-
-    /* Expanded section — hidden by default */
-    .card-detail {
-      display: none;
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px solid var(--border);
-    }
-    .card.expanded .card-detail { display: block; }
-
-    .detail-meta {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 6px 14px;
-      margin-bottom: 10px;
-      font-size: 11px;
-      font-family: "JetBrains Mono", monospace;
-      color: var(--muted);
-    }
-    .detail-meta div { display: flex; gap: 5px; align-items: baseline; }
-    .detail-meta label { font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); }
-    .detail-meta strong { color: var(--text); font-weight: 600; }
-
-    .detail-section { margin-top: 10px; }
-    .detail-section-label {
-      color: var(--faint); font-size: 9px; font-weight: 700;
-      letter-spacing: 0.14em; text-transform: uppercase;
-      margin-bottom: 4px;
-    }
-    .detail-section-body { color: #dcdce6; font-size: 12px; line-height: 1.5; }
-    .detail-section-body.crm { color: var(--gold-2); font-family: "JetBrains Mono", monospace; font-size: 11px; }
-
-    .detail-extra-pills { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
-
-    .detail-actions {
-      display: flex; gap: 6px;
-      margin-top: 14px;
-      padding-top: 12px;
-      border-top: 1px solid var(--border);
-      flex-wrap: wrap;
-    }
-    .log-touch-btn {
-      border: 0; border-radius: var(--radius-md);
-      padding: 9px 16px;
-      color: #090908; background: var(--gold);
-      font-weight: 700; letter-spacing: 0.06em;
-      font-size: 11px;
-      transition: filter 150ms ease;
-      display: inline-flex; align-items: center; gap: 5px;
-    }
-    .log-touch-btn:hover { filter: brightness(1.08); }
-    .archive-btn {
-      border: 1px solid rgba(255,100,115,0.32);
-      background: rgba(255,100,115,0.04);
-      color: #ff9aa4;
-      border-radius: var(--radius-md);
-      padding: 9px 14px;
-      font-weight: 700; letter-spacing: 0.06em;
-      font-size: 11px;
-      transition: all 150ms;
-    }
-    .archive-btn:hover { background: rgba(255,100,115,0.08); }
-    .open-notion-btn {
-      border: 1px solid var(--border);
-      background: transparent;
-      color: var(--muted);
-      border-radius: var(--radius-md);
-      padding: 9px 12px;
-      font-weight: 700; letter-spacing: 0.06em;
-      font-size: 11px;
-      transition: all 150ms;
-      text-decoration: none;
-      display: inline-flex; align-items: center; gap: 5px;
-    }
-    .open-notion-btn:hover { color: var(--text); border-color: var(--border-strong); }
-
-    /* EMPTY / LOADING / ERROR */
-    .empty, .loading-card, .err-box {
+    .empty,
+    .loading-card,
+    .err-box {
       border: 1px solid var(--border);
       background: var(--surface);
       backdrop-filter: blur(20px);
       border-radius: var(--radius-lg);
-      padding: 20px; color: var(--muted); line-height: 1.55;
+      padding: 20px;
+      color: var(--muted);
+      line-height: 1.55;
     }
-    .empty { text-align: center; }
-    .empty-headline { color: var(--text); font-size: 13px; font-weight: 700; margin-bottom: 4px; letter-spacing: -0.01em; }
-    .loading-card { position: relative; overflow: hidden; min-height: 80px; }
-    .loading-card::after {
-      content: ""; position: absolute; inset: 0;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
-      animation: shimmer 1.2s infinite; transform: translateX(-100%);
-    }
-    @keyframes shimmer { to { transform: translateX(100%); } }
-    .err-box { color: #ff9aa4; border-color: rgba(255,100,115,0.35); background: rgba(255,100,115,0.06); word-break: break-word; font-size: 12px; }
-    .err-box strong { color: #ffd7db; }
 
-    /* MODALS */
+    .empty {
+      text-align: center;
+    }
+
+    .empty-headline {
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      letter-spacing: -0.01em;
+    }
+
+    .loading-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 80px;
+    }
+
+    .loading-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.04), transparent);
+      animation: shimmer 1.2s infinite;
+      transform: translateX(-100%);
+    }
+
+    @keyframes shimmer {
+      to {
+        transform: translateX(100%);
+      }
+    }
+
+    .err-box {
+      color: #ff9aa4;
+      border-color: rgba(255, 100, 115, 0.35);
+      background: rgba(255, 100, 115, 0.06);
+      word-break: break-word;
+      font-size: 12px;
+    }
+
+    .err-box strong {
+      color: #ffd7db;
+    }
+
     .modal-backdrop {
-      position: fixed; inset: 0; z-index: 5000;
+      position: fixed;
+      inset: 0;
+      z-index: 5000;
       background: rgba(5, 5, 10, 0.78);
       backdrop-filter: blur(8px);
       display: none;
@@ -536,7 +1249,11 @@
       padding: 18px;
       overflow-y: auto;
     }
-    .modal-backdrop.open { display: flex; }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
     .modal {
       width: min(100%, 600px);
       background: #0d0d14;
@@ -545,37 +1262,73 @@
       padding: 22px;
       margin: 18px 0;
     }
-    .modal-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
-    .modal-title { font-size: 16px; font-weight: 700; letter-spacing: -0.02em; }
-    .modal-sub { color: var(--muted); font-size: 10px; margin-top: 2px; letter-spacing: 0.04em; }
+
+    .modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .modal-sub {
+      color: var(--muted);
+      font-size: 10px;
+      margin-top: 2px;
+      letter-spacing: 0.04em;
+    }
+
     .modal-close {
-      width: 28px; height: 28px;
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
       border: 1px solid var(--border);
       background: var(--surface-2);
       color: var(--muted);
-      display: grid; place-items: center;
+      display: grid;
+      place-items: center;
       font-size: 12px;
       transition: all 150ms;
     }
-    .modal-close:hover { color: var(--text); border-color: rgba(255,100,115,0.4); }
+
+    .modal-close:hover {
+      color: var(--text);
+      border-color: rgba(255, 100, 115, 0.4);
+    }
 
     .mode-toggle {
-      display: inline-flex; gap: 3px;
+      display: inline-flex;
+      gap: 3px;
       border: 1px solid var(--border);
       border-radius: 999px;
       padding: 3px;
       margin-bottom: 12px;
       background: var(--surface-2);
     }
+
     .mode-btn {
-      border: 0; background: transparent; color: var(--muted);
-      padding: 5px 11px; border-radius: 999px;
-      font-size: 9px; font-weight: 700;
-      letter-spacing: 0.08em; text-transform: uppercase;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      padding: 5px 11px;
+      border-radius: 999px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
       transition: all 150ms;
     }
-    .mode-btn.active { color: #090908; background: var(--gold); }
+
+    .mode-btn.active {
+      color: #090908;
+      background: var(--gold);
+    }
 
     .customer-banner {
       border: 1px solid var(--border-strong);
@@ -584,44 +1337,128 @@
       padding: 10px 12px;
       margin-bottom: 12px;
     }
-    .customer-banner-label { color: var(--gold-2); font-size: 8px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 3px; }
-    .customer-banner-name { font-size: 14px; font-weight: 700; letter-spacing: -0.02em; }
-    .customer-banner-phone { color: var(--muted); font-size: 11px; margin-top: 1px; font-family: "JetBrains Mono", monospace; }
 
-    .form-grid { display: grid; gap: 10px; }
-    .form-row { display: grid; gap: 10px; }
-    .form-row.two { grid-template-columns: 1fr 1fr; }
-    .field-group { display: grid; gap: 4px; }
-    .field-label { color: var(--muted); font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
-    .field-label .req { color: var(--red); margin-left: 3px; }
-    .form-input, .form-textarea, .form-select { padding: 9px 11px; font-size: 12px; }
-    .form-textarea { min-height: 65px; resize: vertical; font-family: inherit; }
+    .customer-banner-label {
+      color: var(--gold-2);
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 3px;
+    }
+
+    .customer-banner-name {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .customer-banner-phone {
+      color: var(--muted);
+      font-size: 11px;
+      margin-top: 1px;
+      font-family: "JetBrains Mono", monospace;
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .form-row {
+      display: grid;
+      gap: 10px;
+    }
+
+    .form-row.two {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .field-group {
+      display: grid;
+      gap: 4px;
+    }
+
+    .field-label {
+      color: var(--muted);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .field-label .req {
+      color: var(--red);
+      margin-left: 3px;
+    }
+
+    .form-input,
+    .form-textarea,
     .form-select {
-      appearance: none; -webkit-appearance: none;
+      padding: 9px 11px;
+      font-size: 12px;
+    }
+
+    .form-textarea {
+      min-height: 65px;
+      resize: vertical;
+      font-family: inherit;
+    }
+
+    .form-select {
+      appearance: none;
+      -webkit-appearance: none;
       background-color: #0c0c14;
       color: var(--text);
-      background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%);
-      background-position: calc(100% - 14px) calc(50% - 3px), calc(100% - 10px) calc(50% - 3px);
+      background-image:
+        linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+        linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+      background-position:
+        calc(100% - 14px) calc(50% - 3px),
+        calc(100% - 10px) calc(50% - 3px);
       background-size: 5px 5px, 5px 5px;
       background-repeat: no-repeat;
       padding-right: 28px;
     }
-    .form-select option { background-color: #0c0c14; color: var(--text); }
-    .chip-grid { display: flex; flex-wrap: wrap; gap: 4px; }
+
+    .form-select option {
+      background-color: #0c0c14;
+      color: var(--text);
+    }
+
+    .chip-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
     .chip {
       border: 1px solid var(--border);
       background: var(--surface-2);
       color: var(--muted);
       border-radius: 999px;
       padding: 5px 9px;
-      font-size: 10px; font-weight: 600;
+      font-size: 10px;
+      font-weight: 600;
       transition: all 150ms ease;
       user-select: none;
     }
-    .chip:hover { color: var(--text); border-color: var(--border-strong); }
-    .chip.selected { color: #090908; background: var(--gold); border-color: transparent; }
+
+    .chip:hover {
+      color: var(--text);
+      border-color: var(--border-strong);
+    }
+
+    .chip.selected {
+      color: #090908;
+      background: var(--gold);
+      border-color: transparent;
+    }
+
     .checkbox-row {
-      display: flex; align-items: center; gap: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
       padding: 9px 11px;
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
@@ -629,56 +1466,171 @@
       cursor: pointer;
       user-select: none;
     }
-    .checkbox-row input[type="checkbox"] { width: 14px; height: 14px; accent-color: var(--gold); cursor: pointer; }
-    .checkbox-row span { font-size: 11px; color: var(--text); font-weight: 600; }
-    .checkbox-row.archive { border-color: rgba(255,100,115,0.32); background: rgba(255,100,115,0.04); }
-    .checkbox-row.archive span { color: #ff9aa4; }
-    .full-fields { display: none; gap: 10px; }
-    .full-fields.open { display: grid; }
-    .form-footer { margin-top: 14px; display: flex; gap: 6px; justify-content: space-between; align-items: center; flex-wrap: wrap; }
-    .form-msg { font-size: 10px; color: var(--muted); min-height: 12px; flex: 1; }
-    .form-msg.ok { color: var(--green); }
-    .form-msg.err { color: var(--red); }
-    .form-actions { display: flex; gap: 5px; }
-    .submit-btn { padding: 9px 16px; }
+
+    .checkbox-row input[type="checkbox"] {
+      width: 14px;
+      height: 14px;
+      accent-color: var(--gold);
+      cursor: pointer;
+    }
+
+    .checkbox-row span {
+      font-size: 11px;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .checkbox-row.archive {
+      border-color: rgba(255, 100, 115, 0.32);
+      background: rgba(255, 100, 115, 0.04);
+    }
+
+    .checkbox-row.archive span {
+      color: #ff9aa4;
+    }
+
+    .full-fields {
+      display: none;
+      gap: 10px;
+    }
+
+    .full-fields.open {
+      display: grid;
+    }
+
+    .form-footer {
+      margin-top: 14px;
+      display: flex;
+      gap: 6px;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .form-msg {
+      font-size: 10px;
+      color: var(--muted);
+      min-height: 12px;
+      flex: 1;
+    }
+
+    .form-msg.ok {
+      color: var(--green);
+    }
+
+    .form-msg.err {
+      color: var(--red);
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 5px;
+    }
+
+    .submit-btn {
+      padding: 9px 16px;
+    }
+
     .cancel-btn {
       border: 1px solid var(--border);
       background: transparent;
       color: var(--muted);
       padding: 9px 12px;
       border-radius: var(--radius-md);
-      font-weight: 700; letter-spacing: 0.06em;
+      font-weight: 700;
+      letter-spacing: 0.06em;
       font-size: 10px;
       transition: all 150ms;
     }
-    .cancel-btn:hover { color: var(--text); border-color: var(--border-strong); }
+
+    .cancel-btn:hover {
+      color: var(--text);
+      border-color: var(--border-strong);
+    }
 
     .footer {
       margin-top: 24px;
       padding-top: 12px;
       border-top: 1px solid var(--border);
-      display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap;
-      color: var(--faint); font-size: 9px;
-      letter-spacing: 0.1em; text-transform: uppercase;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      color: var(--faint);
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
     }
 
     @media (max-width: 640px) {
-      #app { width: min(100% - 18px, var(--max)); padding-top: 12px; }
-      .topbar { align-items: flex-start; flex-direction: column; gap: 8px; }
-      .topbar-actions { width: 100%; justify-content: flex-start; }
-      .search-row { grid-template-columns: 1fr; }
-      .search-btn { width: 100%; }
-      .gate-box { padding: 20px; border-radius: 16px; }
-      .footer { display: grid; }
-      .modal { padding: 16px; margin: 8px 0; border-radius: 12px; }
-      .form-row.two { grid-template-columns: 1fr; }
-      .tab-btn { min-width: auto; flex: 1 1 calc(50% - 3px); font-size: 9px; padding: 8px 6px; }
-      .card-row { flex-wrap: wrap; }
-      .card-right { width: 100%; justify-content: flex-end; }
-      .detail-meta { grid-template-columns: 1fr; }
+      #app {
+        width: min(100% - 18px, var(--max));
+        padding-top: 12px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .topbar-actions {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      .search-row {
+        grid-template-columns: 1fr;
+      }
+
+      .search-btn {
+        width: 100%;
+      }
+
+      .gate-box {
+        padding: 20px;
+        border-radius: 16px;
+      }
+
+      .footer {
+        display: grid;
+      }
+
+      .modal {
+        padding: 16px;
+        margin: 8px 0;
+        border-radius: 12px;
+      }
+
+      .form-row.two {
+        grid-template-columns: 1fr;
+      }
+
+      .tab-btn {
+        min-width: auto;
+        flex: 1 1 calc(50% - 3px);
+        font-size: 9px;
+        padding: 8px 6px;
+      }
+
+      .card-row {
+        flex-wrap: wrap;
+      }
+
+      .card-right {
+        width: 100%;
+        justify-content: flex-end;
+      }
+
+      .detail-meta {
+        grid-template-columns: 1fr;
+      }
     }
+
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
+      *,
+      *::before,
+      *::after {
         animation-duration: 0.001ms !important;
         animation-iteration-count: 1 !important;
         scroll-behavior: auto !important;
@@ -689,7 +1641,6 @@
 </head>
 
 <body>
-  <!-- GATE -->
   <main id="gate" aria-label="Access gate">
     <section class="gate-shell">
       <div class="gate-box">
@@ -719,12 +1670,12 @@
           <button class="primary-btn" type="submit" id="gate-submit" disabled>Unlock</button>
           <div id="gate-err" class="gate-err mono" role="alert" aria-live="polite"></div>
         </form>
+
         <p class="security-note mono">Rep selection presets Owner on new entries and Pipeline filters.</p>
       </div>
     </section>
   </main>
 
-  <!-- APP -->
   <div id="app">
     <header class="topbar">
       <div class="brand-lockup">
@@ -734,6 +1685,7 @@
           <div class="logo-sub mono">Workstation</div>
         </div>
       </div>
+
       <div class="topbar-actions">
         <div id="rep-badge" class="rep-badge">REP · DG</div>
         <button class="add-btn" type="button" onclick="openAddModal()"><span class="plus">+</span> New Lead</button>
@@ -770,28 +1722,40 @@
     <section class="control-panel" id="entry-controls" aria-label="Lead entry controls">
       <div class="entry-copy" id="entry-copy">
         <div class="entry-title">LeadForge Entry</div>
-        <div class="entry-sub">Check existing customers or start a new lead from one place. If they exist, update their timeline. If not, start a new lead.</div>
+        <div class="entry-sub">
+          Check existing customers or start a new lead from one place. If they exist, update their timeline. If not, start a new lead.
+        </div>
       </div>
+
       <div class="search-row" id="entry-search-row">
         <label class="sr-only" for="q">Enter customer name or phone</label>
-        <input id="q" class="search-input mono" type="search" placeholder="Enter customer name or phone" autocomplete="off" oninput="handleEntryInput()" onkeydown="if(event.key==='Enter'){event.preventDefault();handleEntrySubmit();}" />
+        <input
+          id="q"
+          class="search-input mono"
+          type="search"
+          placeholder="Enter customer name or phone"
+          autocomplete="off"
+          oninput="handleEntryInput()"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();handleEntrySubmit();}"
+        />
         <button class="primary-btn search-btn" type="button" onclick="handleEntrySubmit()">Continue</button>
       </div>
+
       <div class="quick-filters" id="pipeline-filters" aria-label="Pipeline filters" style="display:none;">
-        <button class="filter-btn mono active" type="button" onclick="setPipelineFilter('my')">My Leads</button>
-        <button class="filter-btn mono" type="button" onclick="setPipelineFilter('hot')">Hot</button>
-        <button class="filter-btn mono" type="button" onclick="setPipelineFilter('warm')">Warm</button>
-        <button class="filter-btn mono" type="button" onclick="setPipelineFilter('pending')">Pending</button>
-        <button class="filter-btn mono" type="button" onclick="setPipelineFilter('verified')">Verified</button>
-        <button class="filter-btn mono" type="button" onclick="setPipelineFilter('new')">New Leads</button>
-        <button class="filter-btn mono" type="button" onclick="setPipelineFilter('all')">All Active</button>
+        <button class="filter-btn mono active" type="button" data-pipeline-filter="my" onclick="setPipelineFilter('my')">My Leads</button>
+        <button class="filter-btn mono" type="button" data-pipeline-filter="hot" onclick="setPipelineFilter('hot')">Hot</button>
+        <button class="filter-btn mono" type="button" data-pipeline-filter="warm" onclick="setPipelineFilter('warm')">Warm</button>
+        <button class="filter-btn mono" type="button" data-pipeline-filter="pending" onclick="setPipelineFilter('pending')">Pending</button>
+        <button class="filter-btn mono" type="button" data-pipeline-filter="verified" onclick="setPipelineFilter('verified')">Verified</button>
+        <button class="filter-btn mono" type="button" data-pipeline-filter="new" onclick="setPipelineFilter('new')">New Leads</button>
+        <button class="filter-btn mono" type="button" data-pipeline-filter="all" onclick="setPipelineFilter('all')">All Active</button>
       </div>
     </section>
 
     <section class="results-head" aria-label="Results heading">
       <div>
         <h3 class="section-title" id="view-title">Entry</h3>
-        <p class="section-kicker" id="view-kicker">Tap a card to expand. Tap again to collapse.</p>
+        <p class="section-kicker" id="view-kicker">Start by typing a customer name or phone.</p>
       </div>
       <button class="refresh-btn mono" type="button" onclick="refreshCurrentTab()"><span>↻</span> Refresh</button>
     </section>
@@ -805,7 +1769,6 @@
     </footer>
   </div>
 
-  <!-- ADD LEAD MODAL -->
   <div id="add-modal" class="modal-backdrop" role="dialog" aria-modal="true">
     <div class="modal">
       <div class="modal-head">
@@ -815,10 +1778,12 @@
         </div>
         <button class="modal-close" type="button" onclick="closeAddModal()" aria-label="Close">✕</button>
       </div>
+
       <div class="mode-toggle">
         <button class="mode-btn active" type="button" onclick="setMode('quick')" id="mode-quick">Quick</button>
         <button class="mode-btn" type="button" onclick="setMode('full')" id="mode-full">Full Profile</button>
       </div>
+
       <form id="add-form" class="form-grid" onsubmit="event.preventDefault(); submitLead();">
         <div class="form-row two">
           <div class="field-group">
@@ -830,16 +1795,20 @@
             <input id="f-phone" class="form-input" type="tel" placeholder="(570) 555-0100" autocomplete="off" />
           </div>
         </div>
+
         <div class="field-group">
           <label class="field-label" for="f-context">Context / Notes</label>
           <textarea id="f-context" class="form-textarea" placeholder="What did they want? Promised callback? Capture it."></textarea>
         </div>
+
         <div class="form-row two">
           <div class="field-group">
             <label class="field-label" for="f-owner">Owner</label>
             <select id="f-owner" class="form-select">
-              <option value="DG">DG</option><option value="KB">KB</option>
-              <option value="TH">TH</option><option value="KT">KT</option>
+              <option value="DG">DG</option>
+              <option value="KB">KB</option>
+              <option value="TH">TH</option>
+              <option value="KT">KT</option>
             </select>
           </div>
           <div class="field-group">
@@ -853,6 +1822,7 @@
             </select>
           </div>
         </div>
+
         <div id="full-fields" class="full-fields">
           <div class="form-row two">
             <div class="field-group">
@@ -888,6 +1858,7 @@
               </select>
             </div>
           </div>
+
           <div class="form-row two">
             <div class="field-group">
               <label class="field-label" for="f-nextstep">Next Step</label>
@@ -905,6 +1876,7 @@
               <input id="f-when" class="form-input" type="date" />
             </div>
           </div>
+
           <div class="field-group">
             <label class="field-label">Temp</label>
             <div class="chip-grid" id="chips-temp">
@@ -913,9 +1885,10 @@
               <button class="chip" type="button" data-value="Warm">Warm</button>
               <button class="chip" type="button" data-value="Cold">Cold</button>
               <button class="chip" type="button" data-value="Pending">Pending</button>
-              <button class="chip" type="button" data-value="⭐ VERIFIED - Returning Customer">⭐ Verified</button>
+              <button class="chip" type="button" data-value="⭐ VERIFIED - Returning Customer">Verified</button>
             </div>
           </div>
+
           <div class="field-group">
             <label class="field-label">Wish List</label>
             <div class="chip-grid" id="chips-wishlist">
@@ -929,6 +1902,7 @@
               <button class="chip" type="button" data-value="Bundle / Multi-Item">Bundle</button>
             </div>
           </div>
+
           <div class="form-row two">
             <label class="checkbox-row archive">
               <input id="f-archived" type="checkbox" />
@@ -940,6 +1914,7 @@
             </label>
           </div>
         </div>
+
         <div class="form-footer">
           <div id="form-msg" class="form-msg mono"></div>
           <div class="form-actions">
@@ -951,7 +1926,6 @@
     </div>
   </div>
 
-  <!-- TOUCH MODAL -->
   <div id="touch-modal" class="modal-backdrop" role="dialog" aria-modal="true">
     <div class="modal">
       <div class="modal-head">
@@ -961,11 +1935,13 @@
         </div>
         <button class="modal-close" type="button" onclick="closeTouchModal()" aria-label="Close">✕</button>
       </div>
+
       <div class="customer-banner">
         <div class="customer-banner-label">Customer</div>
         <div class="customer-banner-name" id="touch-customer-name">—</div>
         <div class="customer-banner-phone" id="touch-customer-phone"></div>
       </div>
+
       <form id="touch-form" class="form-grid" onsubmit="event.preventDefault(); submitTouch();">
         <div class="form-row two">
           <div class="field-group">
@@ -990,6 +1966,7 @@
             </select>
           </div>
         </div>
+
         <div class="form-row two">
           <div class="field-group">
             <label class="field-label" for="t-result">Result <span class="req">*</span></label>
@@ -1023,14 +2000,17 @@
             </select>
           </div>
         </div>
+
         <div class="field-group">
           <label class="field-label" for="t-when">Follow-Up Date</label>
           <input id="t-when" class="form-input" type="date" />
         </div>
+
         <div class="field-group">
           <label class="field-label" for="t-context">Context / Notes</label>
           <textarea id="t-context" class="form-textarea" placeholder="What was discussed? Objections? Commitments? Next move?"></textarea>
         </div>
+
         <div class="field-group">
           <label class="field-label">Temp Update</label>
           <div class="chip-grid" id="chips-touch-temp">
@@ -1038,9 +2018,10 @@
             <button class="chip" type="button" data-value="Warm">Warm</button>
             <button class="chip" type="button" data-value="Cold">Cold</button>
             <button class="chip" type="button" data-value="Pending">Pending</button>
-            <button class="chip" type="button" data-value="⭐ VERIFIED - Returning Customer">⭐ Verified</button>
+            <button class="chip" type="button" data-value="⭐ VERIFIED - Returning Customer">Verified</button>
           </div>
         </div>
+
         <div class="form-row two">
           <label class="checkbox-row archive">
             <input id="t-archived" type="checkbox" />
@@ -1051,6 +2032,7 @@
             <span>Logged in Salesforce</span>
           </label>
         </div>
+
         <div class="form-footer">
           <div id="touch-msg" class="form-msg mono"></div>
           <div class="form-actions">
@@ -1063,23 +2045,18 @@
   </div>
 
   <script>
-    // =================================================================
-    // CONFIG
-    // =================================================================
-    const WORKER_URL  = 'https://650-search-proxy.dnljgrnr.workers.dev';
+    const WORKER_URL = 'https://650-search-proxy.dnljgrnr.workers.dev';
     const DATABASE_ID = '08e4ef11-b30d-462c-a447-9a1d9045be72';
     const ACCESS_CODE = 'GOATS650';
     const SESSION_KEY = 'lf_unlocked_v5';
     const REP_KEY = 'lf_rep_v5';
-    // =================================================================
 
     let currentTab = 'entry';
     let currentRep = null;
-    let activeFilter = null;
-    let pipelineFilter = 'my';
-    let entryDebounce = null;
     let pendingRepSelection = null;
     let activeCustomer = null;
+    let pipelineFilter = 'my';
+    let entryDebounce = null;
 
     const $ = (id) => document.getElementById(id);
 
@@ -1097,11 +2074,13 @@
       const input = $('gate-input');
       const err = $('gate-err');
       const value = input.value.trim();
+
       if (!pendingRepSelection) {
         err.textContent = 'SELECT YOUR REP FIRST';
         setTimeout(() => { err.textContent = ''; }, 1800);
         return;
       }
+
       if (value === ACCESS_CODE) {
         sessionStorage.setItem(SESSION_KEY, '1');
         sessionStorage.setItem(REP_KEY, pendingRepSelection);
@@ -1110,6 +2089,7 @@
         showApp();
         return;
       }
+
       err.textContent = 'ACCESS DENIED';
       input.value = '';
       input.focus();
@@ -1120,7 +2100,7 @@
       $('gate').style.display = 'none';
       $('app').style.display = 'block';
       $('rep-badge').textContent = 'REP · ' + currentRep;
-      $('f-owner').value = currentRep;
+      $('f-owner').value = currentRep || 'DG';
       setTab('entry');
     }
 
@@ -1129,6 +2109,7 @@
       sessionStorage.removeItem(REP_KEY);
       currentRep = null;
       pendingRepSelection = null;
+      activeCustomer = null;
       $('app').style.display = 'none';
       $('gate').style.display = 'grid';
       $('gate-input').value = '';
@@ -1138,8 +2119,6 @@
       setLiveStatus('Ready', 'idle');
       $('results').innerHTML = '';
       $('status-count').textContent = '0';
-      activeFilter = null;
-      clearActiveFilterButton();
       closeAddModal();
       closeTouchModal();
     }
@@ -1150,7 +2129,9 @@
         currentRep = savedRep;
         showApp();
       }
+
       initChipHandlers();
+
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
           if ($('add-modal').classList.contains('open')) closeAddModal();
@@ -1163,23 +2144,66 @@
       $('status-state').textContent = stateText;
       $('live-status').className = 'status-pill' + (className ? ' ' + className : '');
     }
+
     function setLastUpdated() {
       const now = new Date();
-      $('status-updated').textContent = 'Updated ' + now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-    }
-    function clearActiveFilterButton() {
-      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-    }
-    function setActiveFilterButton(label) {
-      clearActiveFilterButton();
-      document.querySelectorAll('.filter-btn').forEach(btn => {
-        if (btn.textContent.trim().toLowerCase() === label.toLowerCase()) btn.classList.add('active');
+      $('status-updated').textContent = 'Updated ' + now.toLocaleTimeString([], {
+        hour: 'numeric',
+        minute: '2-digit'
       });
     }
+
+    function todayISO() {
+      return new Date().toISOString().split('T')[0];
+    }
+
+    function tomorrowISO() {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      return tomorrow.toISOString().split('T')[0];
+    }
+
     function escapeHtml(value) {
       if (value === null || value === undefined) return '';
-      return String(value).replace(/[&<>"']/g, (m) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+      return String(value).replace(/[&<>"']/g, (m) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      }[m]));
     }
+
+    function decodeHtml(value) {
+      const txt = document.createElement('textarea');
+      txt.innerHTML = value || '';
+      return txt.value;
+    }
+
+    function normalizeText(value) {
+      if (Array.isArray(value)) return value.join(' ').toLowerCase();
+      return String(value || '').toLowerCase();
+    }
+
+    function hasValue(value, needle) {
+      return normalizeText(value).includes(String(needle || '').toLowerCase());
+    }
+
+    function looksLikePhone(value) {
+      const digits = String(value || '').replace(/\D/g, '');
+      return digits.length >= 7 && /^[\d\s()+.-]+$/.test(String(value || '').trim());
+    }
+
+    function isDateOverdue(dateValue) {
+      if (!dateValue) return false;
+      return String(dateValue).slice(0, 10) < todayISO();
+    }
+
+    function isDateToday(dateValue) {
+      if (!dateValue) return false;
+      return String(dateValue).slice(0, 10) === todayISO();
+    }
+
     function pillClass(value) {
       if (!value) return '';
       const text = String(value).toLowerCase();
@@ -1193,129 +2217,139 @@
       if (text.includes('pending')) return 'pending';
       return '';
     }
-    function todayISO() {
-      return new Date().toISOString().split('T')[0];
-    }
 
     function getProp(properties, name) {
       if (!properties || !properties[name]) return null;
       const prop = properties[name];
+
       switch (prop.type) {
-        case 'title': return prop.title.map(i => i.plain_text).join('');
-        case 'rich_text': return prop.rich_text.map(i => i.plain_text).join('');
-        case 'phone_number': return prop.phone_number;
-        case 'select': return prop.select ? prop.select.name : null;
-        case 'multi_select': return prop.multi_select.map(i => i.name);
-        case 'date': return prop.date ? prop.date.start : null;
-        case 'checkbox': return prop.checkbox;
+        case 'title':
+          return prop.title.map(i => i.plain_text).join('');
+        case 'rich_text':
+          return prop.rich_text.map(i => i.plain_text).join('');
+        case 'phone_number':
+          return prop.phone_number;
+        case 'select':
+          return prop.select ? prop.select.name : null;
+        case 'multi_select':
+          return prop.multi_select.map(i => i.name);
+        case 'date':
+          return prop.date ? prop.date.start : null;
+        case 'checkbox':
+          return prop.checkbox;
         case 'formula':
           if (prop.formula.type === 'string') return prop.formula.string;
           if (prop.formula.type === 'number') return prop.formula.number;
           if (prop.formula.type === 'boolean') return prop.formula.boolean;
           if (prop.formula.type === 'date') return prop.formula.date ? prop.formula.date.start : null;
           return null;
-        case 'number': return prop.number;
-        case 'url': return prop.url;
-        case 'email': return prop.email;
-        default: return null;
+        case 'last_edited_time':
+          return prop.last_edited_time;
+        case 'created_time':
+          return prop.created_time;
+        case 'number':
+          return prop.number;
+        case 'url':
+          return prop.url;
+        case 'email':
+          return prop.email;
+        default:
+          return null;
       }
     }
 
-    // ===== TIGHT LIST CARD RENDER =====
-    function renderCard(page, index) {
-      const p = page.properties || {};
-      const name = getProp(p, 'Customer Name') || 'Unnamed';
-      const phone = getProp(p, 'Phone') || '';
-      const temps = getProp(p, 'Temp') || [];
-      const purpose = getProp(p, 'Purpose') || '';
-      const result = getProp(p, 'Result') || '';
-      const nextStep = getProp(p, 'Next Step') || '';
-      const owner = getProp(p, 'Owner') || '';
-      const when = getProp(p, 'WHEN') || '';
-      const context = getProp(p, 'Context') || '';
-      const status = getProp(p, 'Status') || '';
-      const archived = getProp(p, 'Archived') === true;
-      const crmNote = getProp(p, 'Log in SalesForce') || '';
-      const pageId = page.id || '';
-      const pageUrl = page.url || '';
-
-      let cardClass = 'card';
-      if (archived) cardClass += ' archived';
-      else if (status && status.toLowerCase().includes('overdue')) cardClass += ' overdue';
-      else if (status && status.toLowerCase().includes('due today')) cardClass += ' due-today';
-
-      // Primary pill — most important state indicator
-      let primaryPill = '';
-      if (archived) primaryPill = `<span class="pill archived">Archived</span>`;
-      else if (status) primaryPill = `<span class="pill ${pillClass(status)}">${escapeHtml(status)}</span>`;
-      else if (Array.isArray(temps) && temps.length) primaryPill = `<span class="pill ${pillClass(temps[0])}">${escapeHtml(temps[0])}</span>`;
-
-      // Other temp pills for expanded view
-      const otherTempPills = (Array.isArray(temps) ? temps : [])
-        .filter(t => !primaryPill.includes(t))
-        .map(t => `<span class="pill ${pillClass(t)}">${escapeHtml(t)}</span>`)
-        .join('');
-
-      // Quick meta in collapsed view — only show what fits
-      const quickMeta = [];
-      if (nextStep) quickMeta.push(`<strong>${escapeHtml(nextStep)}</strong>`);
-      if (when) quickMeta.push(`${escapeHtml(when)}`);
-
-      const safeName = escapeHtml(name).replace(/"/g, '&quot;');
-      const safePhone = escapeHtml(phone).replace(/"/g, '&quot;');
-
-      // Build detail meta items
-      const detailMetaItems = [];
-      if (purpose) detailMetaItems.push(`<div><label>Purpose</label><strong>${escapeHtml(purpose)}</strong></div>`);
-      if (result) detailMetaItems.push(`<div><label>Result</label><strong>${escapeHtml(result)}</strong></div>`);
-      if (nextStep) detailMetaItems.push(`<div><label>Next</label><strong>${escapeHtml(nextStep)}</strong></div>`);
-      if (when) detailMetaItems.push(`<div><label>When</label><strong>${escapeHtml(when)}</strong></div>`);
-
-      return `
-        <article class="${cardClass}" data-name="${safeName}" data-phone="${safePhone}" data-page-id="${escapeHtml(pageId)}">
-          <div class="card-row" onclick="toggleCard(this.parentElement)">
-            <div class="card-main">
-              <span class="card-name">${escapeHtml(name)}</span>
-              ${phone ? `<span class="card-phone">${escapeHtml(phone)}</span>` : ''}
-              ${quickMeta.length ? `<span class="card-quick-meta">${quickMeta.join(' · ')}</span>` : ''}
-            </div>
-            <div class="card-right">
-              ${owner ? `<span class="pill owner">${escapeHtml(owner)}</span>` : ''}
-              ${primaryPill}
-              <span class="expand-chevron">▾</span>
-            </div>
-          </div>
-          <div class="card-detail">
-            ${detailMetaItems.length ? `<div class="detail-meta">${detailMetaItems.join('')}</div>` : ''}
-            ${otherTempPills ? `<div class="detail-extra-pills">${otherTempPills}</div>` : ''}
-            ${context ? `
-              <div class="detail-section">
-                <div class="detail-section-label">Context</div>
-                <div class="detail-section-body">${escapeHtml(context)}</div>
-              </div>
-            ` : ''}
-            ${crmNote ? `
-              <div class="detail-section">
-                <div class="detail-section-label">Last CRM Note</div>
-                <div class="detail-section-body crm">${escapeHtml(crmNote)}</div>
-              </div>
-            ` : ''}
-            <div class="detail-actions">
-              <button class="log-touch-btn" type="button" onclick="event.stopPropagation(); openTouchModalFromCard(this.closest('.card'))">Log New Touch</button>
-              ${pageUrl ? `<a class="open-notion-btn" href="${escapeHtml(pageUrl)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Open in Notion ↗</a>` : ''}
-              ${(!archived && pageId) ? `<button class="archive-btn" type="button" onclick="event.stopPropagation(); archivePageFromCard(this.closest('.card'))">Archive</button>` : ''}
-            </div>
-          </div>
-        </article>
-      `;
+    function getLastUpdated(page) {
+      return page.last_edited_time || '';
     }
 
-    function toggleCard(card) {
-      // Close other expanded cards (only one open at a time = focus)
-      document.querySelectorAll('.card.expanded').forEach(c => {
-        if (c !== card) c.classList.remove('expanded');
+    function getPageData(page) {
+      const p = page.properties || {};
+      return {
+        pageId: page.id || '',
+        pageUrl: page.url || '',
+        name: getProp(p, 'Customer Name') || 'Unnamed',
+        phone: getProp(p, 'Phone') || '',
+        date: getProp(p, 'Date') || '',
+        when: getProp(p, 'WHEN') || '',
+        owner: getProp(p, 'Owner') || '',
+        touch: getProp(p, 'Touch') || '',
+        purpose: getProp(p, 'Purpose') || '',
+        result: getProp(p, 'Result') || '',
+        nextStep: getProp(p, 'Next Step') || '',
+        temps: getProp(p, 'Temp') || [],
+        wishList: getProp(p, 'Wish List') || [],
+        context: getProp(p, 'Context') || '',
+        archived: getProp(p, 'Archived') === true,
+        logged: getProp(p, 'Logged?') === true,
+        status: getProp(p, 'Status') || '',
+        crmNote: getProp(p, 'Log in SalesForce') || '',
+        lastUpdated: getLastUpdated(page)
+      };
+    }
+
+    async function notionRequest(payload) {
+      const response = await fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
       });
-      card.classList.toggle('expanded');
+
+      let data;
+      try {
+        data = await response.json();
+      } catch (e) {
+        data = { error: 'Non-JSON response from Worker' };
+      }
+
+      if (!response.ok) {
+        throw { status: response.status, data };
+      }
+
+      return data;
+    }
+
+    function archivedFilter(isArchived) {
+      return {
+        property: 'Archived',
+        checkbox: {
+          equals: isArchived
+        }
+      };
+    }
+
+    async function queryPages(filter, sorts, pageSize) {
+      const all = [];
+      let cursor = undefined;
+
+      do {
+        const data = await notionRequest({
+          action: 'query',
+          databaseId: DATABASE_ID,
+          filter,
+          sorts,
+          page_size: pageSize || 50,
+          start_cursor: cursor
+        });
+
+        if (Array.isArray(data.results)) {
+          all.push(...data.results);
+        }
+
+        cursor = data.has_more ? data.next_cursor : null;
+      } while (cursor);
+
+      return all;
+    }
+
+    function sortNewest(a, b) {
+      return new Date(b.last_edited_time || 0) - new Date(a.last_edited_time || 0);
+    }
+
+    function sortByWhen(a, b) {
+      const ad = getProp(a.properties, 'WHEN') || '9999-12-31';
+      const bd = getProp(b.properties, 'WHEN') || '9999-12-31';
+      if (ad !== bd) return ad.localeCompare(bd);
+      return sortNewest(a, b);
     }
 
     function renderLoading() {
@@ -1329,399 +2363,736 @@
           ${escapeHtml(message)}
         </div>
       `;
+      $('status-count').textContent = '0';
     }
 
     function renderError(httpStatus, data) {
       setLiveStatus('Error', 'err');
       $('status-count').textContent = '0';
+
       const message = (data && (data.error || data.message)) || 'Unknown error';
       const code = (data && data.code) ? data.code : '';
+
       let hint = '';
-      if (httpStatus === 500 && /NOTION_TOKEN/i.test(message)) hint = '<br><br><strong>Fix:</strong> Cloudflare → 650-search-proxy → Settings → Variables and Secrets → NOTION_TOKEN.';
-      else if (httpStatus === 401 || code === 'unauthorized') hint = '<br><br><strong>Fix:</strong> Notion token invalid. Refresh at notion.so/my-integrations.';
-      else if (httpStatus === 404 || /object_not_found|could not find/i.test(message)) hint = '<br><br><strong>Fix:</strong> Open Contact Log → ⋯ → Connections → add integration.';
-      else if (httpStatus === 400 && /validation/i.test(message)) hint = '<br><br><strong>Fix:</strong> Check property names match Notion exactly.';
+      if (httpStatus === 500 && /NOTION_TOKEN/i.test(message)) {
+        hint = '<br><br><strong>Fix:</strong> Cloudflare → Worker → Settings → Variables and Secrets → NOTION_TOKEN.';
+      } else if (httpStatus === 401 || code === 'unauthorized') {
+        hint = '<br><br><strong>Fix:</strong> Notion token invalid. Refresh at notion.so/my-integrations.';
+      } else if (httpStatus === 404 || /object_not_found|could not find/i.test(message)) {
+        hint = '<br><br><strong>Fix:</strong> Open Contact Log → ⋯ → Connections → add integration.';
+      } else if (httpStatus === 400 && /validation/i.test(message)) {
+        hint = '<br><br><strong>Fix:</strong> Check Notion property names and select options exactly.';
+      }
+
       let raw = '';
-      try { raw = JSON.stringify(data).slice(0, 500); } catch (e) { raw = String(data).slice(0, 500); }
-      $('results').innerHTML = `<div class="err-box mono"><strong>HTTP ${escapeHtml(httpStatus)}${code ? ' · ' + escapeHtml(code) : ''}</strong><br>${escapeHtml(message)}${hint}<br><br><strong>Raw:</strong> ${escapeHtml(raw)}</div>`;
+      try {
+        raw = JSON.stringify(data).slice(0, 800);
+      } catch (e) {
+        raw = String(data).slice(0, 800);
+      }
+
+      $('results').innerHTML = `
+        <div class="err-box mono">
+          <strong>HTTP ${escapeHtml(httpStatus)}${code ? ' · ' + escapeHtml(code) : ''}</strong><br>
+          ${escapeHtml(message)}
+          ${hint}
+          <br><br><strong>Raw:</strong> ${escapeHtml(raw)}
+        </div>
+      `;
       setLastUpdated();
     }
 
     const TAB_CONFIG = {
-      'entry': {
-        title: 'LeadForge Entry',
-        kicker: 'Type a customer name or phone. Match existing history or start a clean new lead.',
-        statName: 'Entry'
+      entry: {
+        title: 'Entry',
+        kicker: 'Start by typing a customer name or phone.',
+        status: 'Entry'
       },
-      'today': {
+      today: {
         title: 'Today',
-        kicker: 'Overdue and due-today follow-ups. Work this first.',
-        statName: 'Today'
+        kicker: 'Overdue and due-today work. Hit these first.',
+        status: 'Today'
       },
-      'pipeline': {
+      pipeline: {
         title: 'Pipeline',
-        kicker: 'Active lead inventory. Use filters to work the book without extra tabs.',
-        statName: 'Pipeline'
+        kicker: 'Active opportunities by rep, temp, and status.',
+        status: 'Pipeline'
       },
-      'archive': {
+      archive: {
         title: 'Archive',
-        kicker: 'Archived, sold, closed, or inactive records. Kept separate from active work.',
-        statName: 'Archive'
+        kicker: 'Archived contacts and closed history.',
+        status: 'Archive'
       }
     };
 
     function setTab(tab) {
       currentTab = tab;
+
       document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.tab === tab);
       });
+
       const cfg = TAB_CONFIG[tab];
       $('view-title').textContent = cfg.title;
       $('view-kicker').textContent = cfg.kicker;
-      $('status-tab').textContent = cfg.statName;
+      $('status-tab').textContent = cfg.status;
 
       const isEntry = tab === 'entry';
       const isPipeline = tab === 'pipeline';
-      $('entry-controls').style.display = (isEntry || isPipeline) ? '' : 'none';
-      $('entry-copy').style.display = isEntry ? '' : 'none';
-      $('entry-search-row').style.display = isEntry ? '' : 'none';
-      $('pipeline-filters').style.display = isPipeline ? '' : 'none';
 
-      if (isEntry) {
-        $('q').value = '';
-        renderEntryHome();
-        setLiveStatus('Ready', 'idle');
-        $('status-count').textContent = '0';
-        return;
+      $('entry-copy').style.display = isEntry ? 'grid' : 'none';
+      $('entry-search-row').style.display = isEntry ? 'grid' : 'none';
+      $('pipeline-filters').style.display = isPipeline ? 'flex' : 'none';
+
+      setLiveStatus('Ready', 'idle');
+
+      if (tab === 'entry') {
+        showEntryHome();
+      } else {
+        loadTab();
       }
-
-      if (isPipeline) {
-        pipelineFilter = pipelineFilter || 'my';
-        syncPipelineFilterButtons();
-      }
-
-      loadTab();
     }
 
     function refreshCurrentTab() {
-      if (currentTab === 'entry') return handleEntrySubmit();
+      if (currentTab === 'entry') {
+        const q = $('q').value.trim();
+        if (q) handleEntrySubmit();
+        else showEntryHome();
+        return;
+      }
       loadTab();
     }
 
-    function archivedFalseFilter() {
-      return { property: 'Archived', checkbox: { equals: false } };
-    }
-
-    function activeCustomerSearchFilter(query) {
-      return {
-        and: [
-          archivedFalseFilter(),
-          {
-            or: [
-              { property: 'Customer Name', title: { contains: query } },
-              { property: 'Phone', phone_number: { contains: query } }
-            ]
-          }
-        ]
-      };
-    }
-
-    function buildEntrySearchBody(query) {
-      return {
-        action: 'query',
-        databaseId: DATABASE_ID,
-        page_size: 25,
-        sorts: [{ property: 'Last Updated', direction: 'descending' }],
-        filter: activeCustomerSearchFilter(query)
-      };
-    }
-
-    function buildTodayBody() {
-      const today = todayISO();
-      return {
-        action: 'query',
-        databaseId: DATABASE_ID,
-        page_size: 75,
-        sorts: [{ property: 'WHEN', direction: 'ascending' }],
-        filter: {
-          and: [
-            archivedFalseFilter(),
-            { property: 'WHEN', date: { on_or_before: today } }
-          ]
-        }
-      };
-    }
-
-    function buildPipelineBody() {
-      const filters = [archivedFalseFilter()];
-      const f = pipelineFilter || 'my';
-
-      if (f === 'my') {
-        filters.push({ property: 'Owner', select: { equals: currentRep } });
-      } else if (f === 'hot') {
-        filters.push({ property: 'Temp', multi_select: { contains: 'Hot' } });
-      } else if (f === 'warm') {
-        filters.push({ property: 'Temp', multi_select: { contains: 'Warm' } });
-      } else if (f === 'pending') {
-        filters.push({ property: 'Temp', multi_select: { contains: 'Pending' } });
-      } else if (f === 'verified') {
-        filters.push({ property: 'Temp', multi_select: { contains: '⭐ VERIFIED - Returning Customer' } });
-      } else if (f === 'new') {
-        filters.push({ property: 'Temp', multi_select: { contains: 'New Lead' } });
-      }
-
-      return {
-        action: 'query',
-        databaseId: DATABASE_ID,
-        page_size: 75,
-        sorts: [{ property: 'Last Updated', direction: 'descending' }],
-        filter: filters.length === 1 ? filters[0] : { and: filters }
-      };
-    }
-
-    function buildArchiveBody() {
-      return {
-        action: 'query',
-        databaseId: DATABASE_ID,
-        page_size: 75,
-        sorts: [{ property: 'Last Updated', direction: 'descending' }],
-        filter: { property: 'Archived', checkbox: { equals: true } }
-      };
-    }
-
-    function setPipelineFilter(value) {
-      pipelineFilter = value;
-      syncPipelineFilterButtons();
-      loadTab();
-    }
-
-    function syncPipelineFilterButtons() {
-      document.querySelectorAll('#pipeline-filters .filter-btn').forEach(btn => btn.classList.remove('active'));
-      const labels = { my: 'My Leads', hot: 'Hot', warm: 'Warm', pending: 'Pending', verified: 'Verified', new: 'New Leads', all: 'All Active' };
-      document.querySelectorAll('#pipeline-filters .filter-btn').forEach(btn => {
-        if (btn.textContent.trim().toLowerCase() === labels[pipelineFilter].toLowerCase()) btn.classList.add('active');
-      });
-    }
-
-    async function loadTab() {
-      let body;
-      switch (currentTab) {
-        case 'today': body = buildTodayBody(); break;
-        case 'pipeline': body = buildPipelineBody(); break;
-        case 'archive': body = buildArchiveBody(); break;
-        default: return;
-      }
-      setLiveStatus('Loading', 'idle');
-      renderLoading();
-      try {
-        const response = await fetch(WORKER_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body)
-        });
-        let data;
-        try { data = await response.json(); } catch (e) { data = { error: 'Non-JSON response from Worker.' }; }
-        if (!response.ok) { renderError(response.status, data); return; }
-        const pages = Array.isArray(data.results) ? data.results : [];
-        $('status-count').textContent = String(pages.length);
-        setLiveStatus('Live', '');
-        updateTabCount(currentTab, pages.length);
-        setLastUpdated();
-        if (!pages.length) { renderTabEmptyState(currentTab); return; }
-        $('results').innerHTML = pages.map(renderCard).join('');
-      } catch (error) {
-        setLiveStatus('Network', 'err');
-        $('status-count').textContent = '0';
-        $('results').innerHTML = `<div class="err-box mono"><strong>Network / CORS Error</strong><br>${escapeHtml(error.message)}</div>`;
-        setLastUpdated();
-      }
-    }
-
-    function updateTabCount(tab, count) {
-      const el = $('count-' + tab);
-      if (el) el.textContent = count;
-    }
-
-    function renderTabEmptyState(tab) {
-      const messages = {
-        'today': { headline: 'Clean slate', body: 'Nothing overdue or due today. Work fresh leads or add new customer activity from Entry.' },
-        'pipeline': { headline: 'Empty pipeline', body: `No active contacts found for this filter.` },
-        'archive': { headline: 'Empty archive', body: 'No archived contacts yet.' }
-      };
-      const m = messages[tab] || { headline: 'No results', body: 'Nothing to show.' };
-      renderEmpty(m.body, m.headline);
-    }
-
-    function renderEntryHome() {
+    function showEntryHome() {
+      $('q').value = '';
+      $('status-count').textContent = '0';
+      setLiveStatus('Ready', 'idle');
       $('results').innerHTML = `
         <div class="empty mono">
           <div class="empty-headline">Find or start a customer</div>
-          Type a name or phone number above. Existing customers will show as possible matches. No match will open a new lead path.
+          Type a name or phone number above. If they exist, update their timeline. If not, start a new lead.
         </div>
       `;
-      setLastUpdated();
     }
 
     function handleEntryInput() {
       clearTimeout(entryDebounce);
+      const q = $('q').value.trim();
+
+      if (!q) {
+        showEntryHome();
+        return;
+      }
+
+      if (q.length < 2) return;
+
       entryDebounce = setTimeout(() => {
-        const query = $('q').value.trim();
-        if (query.length >= 2) runEntrySearch(query, false);
-        else renderEntryHome();
-      }, 250);
+        handleEntrySubmit();
+      }, 350);
     }
 
-    function handleEntrySubmit() {
-      const query = $('q').value.trim();
-      if (!query) { renderEntryHome(); return; }
-      runEntrySearch(query, true);
+    async function handleEntrySubmit() {
+      const q = $('q').value.trim();
+
+      if (!q) {
+        showEntryHome();
+        return;
+      }
+
+      renderLoading();
+      setLiveStatus('Searching', '');
+
+      try {
+        const filter = archivedFilter(false);
+        const sorts = [{ timestamp: 'last_edited_time', direction: 'descending' }];
+        const pages = await queryPages(filter, sorts, 100);
+
+        const needle = q.toLowerCase().replace(/\D/g, '');
+        const words = q.toLowerCase();
+
+        const matches = pages.filter(page => {
+          const d = getPageData(page);
+          const phoneDigits = String(d.phone || '').replace(/\D/g, '');
+          const nameMatch = d.name.toLowerCase().includes(words);
+          const phoneMatch = needle.length >= 3 && phoneDigits.includes(needle);
+          return nameMatch || phoneMatch;
+        }).slice(0, 25);
+
+        if (matches.length) {
+          $('status-count').textContent = String(matches.length);
+          $('view-title').textContent = 'Possible Matches';
+          $('view-kicker').textContent = 'Select the customer and log the latest touch.';
+          $('results').innerHTML = matches.map(renderCard).join('') + `
+            <div class="create-card">
+              <div class="create-title">Not the right customer?</div>
+              <div class="create-body">Create a new lead using: <strong>${escapeHtml(q)}</strong></div>
+              <div class="create-actions">
+                <button class="primary-btn" type="button" onclick="openAddModal('${escapeHtml(q).replace(/'/g, '&#39;')}')">Start Lead</button>
+              </div>
+            </div>
+          `;
+        } else {
+          $('status-count').textContent = '0';
+          $('view-title').textContent = 'No Match';
+          $('view-kicker').textContent = 'Start a new lead from the typed value.';
+          $('results').innerHTML = `
+            <div class="create-card">
+              <div class="create-title">No existing customer found.</div>
+              <div class="create-body">Create a new lead for: <strong>${escapeHtml(q)}</strong></div>
+              <div class="create-actions">
+                <button class="primary-btn" type="button" onclick="openAddModal('${escapeHtml(q).replace(/'/g, '&#39;')}')">Start Lead</button>
+              </div>
+            </div>
+          `;
+        }
+
+        setLiveStatus('Ready', 'idle');
+        setLastUpdated();
+      } catch (err) {
+        renderError(err.status || 500, err.data || { error: err.message || 'Unknown error' });
+      }
     }
 
-    function looksLikePhone(value) {
-      const digits = String(value || '').replace(/\D/g, '');
-      return digits.length >= 7 && digits.length >= String(value || '').replace(/\s/g, '').length * 0.55;
+    function setPipelineFilter(filter) {
+      pipelineFilter = filter;
+
+      document.querySelectorAll('[data-pipeline-filter]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.pipelineFilter === filter);
+      });
+
+      if (currentTab !== 'pipeline') setTab('pipeline');
+      else loadTab();
     }
 
-    function startLeadFromEntry(rawValue) {
-      const value = (rawValue || $('q').value || '').trim();
-      openAddModal({ prefill: value });
+    async function loadTab() {
+      renderLoading();
+      setLiveStatus('Loading', '');
+
+      try {
+        let pages = [];
+        let filter = archivedFilter(false);
+        let sorts = [{ timestamp: 'last_edited_time', direction: 'descending' }];
+
+        if (currentTab === 'archive') {
+          filter = archivedFilter(true);
+          pages = await queryPages(filter, sorts, 100);
+          pages.sort(sortNewest);
+        } else {
+          pages = await queryPages(filter, sorts, 100);
+
+          if (currentTab === 'today') {
+            pages = pages.filter(page => {
+              const d = getPageData(page);
+              return !d.archived && d.when && (isDateToday(d.when) || isDateOverdue(d.when));
+            }).sort(sortByWhen);
+          }
+
+          if (currentTab === 'pipeline') {
+            pages = applyPipelineFilter(pages).sort(sortNewest);
+          }
+        }
+
+        renderPages(pages);
+        updateTabCounts();
+        setLiveStatus('Ready', 'idle');
+        setLastUpdated();
+      } catch (err) {
+        renderError(err.status || 500, err.data || { error: err.message || 'Unknown error' });
+      }
     }
 
-    function renderCreateLeadState(query) {
-      $('status-count').textContent = '0';
-      setLiveStatus('Ready', 'idle');
-      $('results').innerHTML = `
-        <div class="create-card mono">
-          <div class="create-title">No existing customer found.</div>
-          <div class="create-body">Create a new lead for: <strong>${escapeHtml(query)}</strong></div>
-          <div class="create-actions">
-            <button class="primary-btn" type="button" onclick="startLeadFromEntry()">Start Lead</button>
-            <button class="secondary-btn" type="button" onclick="$('q').focus()">Edit Entry</button>
+    function applyPipelineFilter(pages) {
+      return pages.filter(page => {
+        const d = getPageData(page);
+        if (d.archived) return false;
+
+        if (pipelineFilter === 'my') return d.owner === currentRep;
+        if (pipelineFilter === 'hot') return hasValue(d.temps, 'Hot');
+        if (pipelineFilter === 'warm') return hasValue(d.temps, 'Warm');
+        if (pipelineFilter === 'pending') return hasValue(d.temps, 'Pending');
+        if (pipelineFilter === 'verified') return hasValue(d.temps, '⭐ VERIFIED - Returning Customer') || hasValue(d.temps, 'Verified');
+        if (pipelineFilter === 'new') return hasValue(d.temps, 'New Lead');
+        return true;
+      });
+    }
+
+    async function updateTabCounts() {
+      try {
+        const activePages = await queryPages(archivedFilter(false), [{ timestamp: 'last_edited_time', direction: 'descending' }], 100);
+        const archivedPages = await queryPages(archivedFilter(true), [{ timestamp: 'last_edited_time', direction: 'descending' }], 100);
+
+        const todayCount = activePages.filter(page => {
+          const d = getPageData(page);
+          return d.when && (isDateToday(d.when) || isDateOverdue(d.when));
+        }).length;
+
+        $('count-today').textContent = todayCount;
+        $('count-pipeline').textContent = activePages.length;
+        $('count-archive').textContent = archivedPages.length;
+      } catch (e) {
+        $('count-today').textContent = '·';
+        $('count-pipeline').textContent = '·';
+        $('count-archive').textContent = '·';
+      }
+    }
+
+    function renderPages(pages) {
+      $('status-count').textContent = String(pages.length);
+
+      if (!pages.length) {
+        if (currentTab === 'today') renderEmpty('No due or overdue work found.', 'Today is clear');
+        else if (currentTab === 'pipeline') renderEmpty('No active contacts found for this filter.', 'Pipeline clear');
+        else if (currentTab === 'archive') renderEmpty('No archived contacts found.', 'Archive empty');
+        else renderEmpty('No records found.', 'Empty');
+        return;
+      }
+
+      $('results').innerHTML = pages.map(renderCard).join('');
+    }
+
+    function cleanCategoryLabel(value) {
+      const text = String(value || '').trim();
+
+      if (!text) return '';
+      if (/washer|dryer/i.test(text)) return 'washer and dryer options';
+      if (/refrigerator|appliance/i.test(text)) return 'appliance options';
+      if (/bedroom|mattress/i.test(text)) return 'bedroom options';
+      if (/living|furniture/i.test(text)) return 'furniture options';
+      if (/tv|entertainment/i.test(text)) return 'TV and entertainment options';
+      if (/laptop|computer/i.test(text)) return 'laptop options';
+      if (/gaming|console/i.test(text)) return 'gaming options';
+      if (/bundle|multi/i.test(text)) return 'bundle options';
+      if (/ac|air conditioner|portable|window/i.test(text)) return 'AC options';
+
+      return text.toLowerCase();
+    }
+
+    function detectCategory(wishList, context, purpose) {
+      const wishes = Array.isArray(wishList) ? wishList : [];
+      const combined = `${wishes.join(' ')} ${context || ''} ${purpose || ''}`;
+
+      const direct = wishes.find(w =>
+        /washer|dryer|refrigerator|appliance|bedroom|mattress|living|furniture|tv|entertainment|laptop|computer|gaming|console|bundle|multi|ac|air conditioner|portable|window/i.test(w)
+      );
+
+      if (direct) return cleanCategoryLabel(direct);
+
+      if (/washer|dryer/i.test(combined)) return 'washer and dryer options';
+      if (/refrigerator|appliance/i.test(combined)) return 'appliance options';
+      if (/bedroom|mattress/i.test(combined)) return 'bedroom options';
+      if (/living|furniture|sofa|couch/i.test(combined)) return 'furniture options';
+      if (/tv|entertainment/i.test(combined)) return 'TV and entertainment options';
+      if (/laptop|computer/i.test(combined)) return 'laptop options';
+      if (/gaming|console|ps5|xbox/i.test(combined)) return 'gaming options';
+      if (/bundle|multi/i.test(combined)) return 'bundle options';
+      if (/\bac\b|air conditioner|portable|window unit|btu/i.test(combined)) return 'AC options';
+
+      return 'what you were looking at';
+    }
+
+    function summarizeReason(data) {
+      if (data.archived) return 'This record is archived. Use for history only unless it needs to be reopened.';
+      if (isDateOverdue(data.when)) return `Follow-up date is overdue${data.nextStep ? ` and the next step is ${data.nextStep}` : ''}.`;
+      if (isDateToday(data.when)) return `Follow-up is due today${data.nextStep ? ` and the next step is ${data.nextStep}` : ''}.`;
+      if (hasValue(data.result, 'OBJ')) return `Customer has an unresolved objection: ${data.result}.`;
+      if (hasValue(data.temps, 'Hot')) return 'Customer is marked Hot, so the next contact should be direct and conversion-focused.';
+      if (hasValue(data.temps, '⭐ VERIFIED - Returning Customer')) return 'Verified returning customer. Use a comeback tone and make the next step simple.';
+      if (hasValue(data.purpose, 'Conversion/Reactivation')) return 'Reactivation/conversion opportunity. Focus on getting them set back up.';
+      if (hasValue(data.temps, 'Warm')) return 'Warm lead. Keep the follow-up helpful, specific, and low-friction.';
+      if (hasValue(data.temps, 'Pending')) return 'Pending lead. Use a status-check angle and move the decision forward.';
+      return 'No urgent trigger found. Use a simple follow-up to clarify interest and next step.';
+    }
+
+    function solveConcernPhrase(result, temps, purpose) {
+      if (hasValue(result, 'OBJ — Price / Weekly')) return 'find a weekly option that fits better';
+      if (hasValue(result, 'OBJ — Total Cost')) return 'keep the setup flexible and focused on solving the immediate home need';
+      if (hasValue(result, 'OBJ — Timing')) return 'work around your timing or payday window';
+      if (hasValue(result, 'OBJ — Needs to Think')) return 'clear up the part you are unsure about';
+      if (hasValue(result, 'OBJ — Needs Partner')) return 'make this easy to explain and review together';
+      if (hasValue(purpose, 'Conversion/Reactivation')) return 'help get you set back up without making it complicated';
+      if (hasValue(temps, 'Hot')) return 'keep this simple and move quickly';
+      if (hasValue(temps, 'Warm')) return 'send over a realistic option';
+      if (hasValue(temps, 'Pending')) return 'confirm where things stand';
+      return 'help you compare the best available option';
+    }
+
+    function nextActionPhrase(data) {
+      if (data.archived) return 'Review only. Do not contact unless the record should be reopened.';
+      if (hasValue(data.result, 'No Answer') || hasValue(data.result, 'Left Message')) return 'Send a short text, then call again later if the lead is Hot or due today.';
+      if (hasValue(data.result, 'OBJ')) return 'Follow up with the objection-specific angle and ask for a simple next step.';
+      if (hasValue(data.nextStep, 'Write Agreement')) return 'Call directly and move toward writing the agreement.';
+      if (hasValue(data.nextStep, 'Come Into Store')) return 'Confirm visit timing and remove friction around what they need to bring.';
+      if (hasValue(data.purpose, 'Conversion/Reactivation')) return 'Use a returning-customer message and offer to check current options.';
+      if (hasValue(data.temps, 'Hot')) return 'Call first. If no answer, send the suggested text immediately after.';
+      if (hasValue(data.temps, 'Warm') || hasValue(data.temps, 'Pending')) return 'Send the suggested text and ask one clear question.';
+      return 'Send a light follow-up to confirm whether they are still looking.';
+    }
+
+    function simpleChoiceQuestion(data) {
+      if (hasValue(data.result, 'OBJ — Price / Weekly')) return 'Would you want me to check lower weekly options?';
+      if (hasValue(data.result, 'OBJ — Total Cost')) return 'Would it help if I showed you the most flexible option first?';
+      if (hasValue(data.result, 'OBJ — Timing')) return 'Would today or your next payday be better to look at options?';
+      if (hasValue(data.result, 'OBJ — Needs to Think')) return 'What part are you still weighing out?';
+      if (hasValue(data.result, 'OBJ — Needs Partner')) return 'Would it help if I gave you the simple version to review together?';
+      if (hasValue(data.result, 'No Answer') || hasValue(data.result, 'Left Message')) return 'Would a quick call or text be easier?';
+      if (hasValue(data.nextStep, 'Come Into Store')) return 'Would today or tomorrow be better for you to stop in?';
+      if (hasValue(data.nextStep, 'Write Agreement')) return 'Would you like me to get the agreement started?';
+      if (hasValue(data.temps, 'Hot')) return 'Do you want me to check the best option for you today?';
+      return 'Are you still looking, or should I check back another time?';
+    }
+
+    function callQuestion(data) {
+      if (hasValue(data.result, 'OBJ — Price / Weekly')) return 'Was the weekly payment the main thing, or was there another concern too?';
+      if (hasValue(data.result, 'OBJ — Total Cost')) return 'Was the total cost the main concern, or are you mainly trying to solve the immediate need?';
+      if (hasValue(data.result, 'OBJ — Timing')) return 'Are we still working around the same payday window, or did anything change?';
+      if (hasValue(data.result, 'OBJ — Needs to Think')) return 'What part of the decision are you still unsure about?';
+      if (hasValue(data.result, 'OBJ — Needs Partner')) return 'What would your partner need to feel comfortable with the option?';
+      if (hasValue(data.result, 'No Answer') || hasValue(data.result, 'Left Message')) return 'I wanted to see if you were still looking or if timing changed.';
+      if (hasValue(data.nextStep, 'Come Into Store')) return 'Are you still able to stop in, or should we adjust the timing?';
+      if (hasValue(data.nextStep, 'Write Agreement')) return 'Are you ready for me to get the agreement started?';
+      return 'Are you still looking at this, or has anything changed on your end?';
+    }
+
+    function computePriority(data) {
+      if (data.archived) return 'Low';
+
+      const high =
+        isDateOverdue(data.when) ||
+        hasValue(data.temps, 'Hot') ||
+        String(data.result || '').startsWith('OBJ') ||
+        (hasValue(data.nextStep, 'CB/Follow Up') && (isDateToday(data.when) || isDateOverdue(data.when))) ||
+        (hasValue(data.temps, '⭐ VERIFIED - Returning Customer') && !hasValue(data.nextStep, 'No Further Action'));
+
+      if (high) return 'High';
+
+      const medium =
+        isDateToday(data.when) ||
+        hasValue(data.temps, 'Warm') ||
+        hasValue(data.temps, 'Pending') ||
+        data.result === 'Needs Follow-Up' ||
+        hasValue(data.purpose, 'Conversion/Reactivation');
+
+      if (medium) return 'Medium';
+
+      return 'Low';
+    }
+
+    function buildAgentAssist(data) {
+      const rep = data.owner || currentRep || 'Daniel';
+      const name = data.name || 'there';
+      const category = detectCategory(data.wishList, data.context, data.purpose);
+      const reason = summarizeReason(data);
+      const nextBestAction = nextActionPhrase(data);
+      const concern = solveConcernPhrase(data.result, data.temps, data.purpose);
+      const choice = simpleChoiceQuestion(data);
+      const callAsk = callQuestion(data);
+      const priority = computePriority(data);
+
+      const suggestedText =
+        `Hey ${name}, this is ${rep} with Rent-A-Center on Hepburn. I wanted to follow up about ${category}. ${reason.replace(/\.$/, '')}. ${choice}`;
+
+      const callOpener =
+        `Hey ${name}, this is ${rep} with Rent-A-Center on Hepburn. I’m following up from when we talked about ${category}. ${callAsk}`;
+
+      const close =
+        `If I can ${concern}, would it make sense to ${
+          hasValue(data.nextStep, 'Come Into Store')
+            ? 'stop in and look at the best option'
+            : hasValue(data.nextStep, 'Write Agreement')
+              ? 'get the next step started'
+              : 'look at the best option today'
+        }?`;
+
+      return {
+        priority,
+        reason,
+        nextBestAction,
+        suggestedText,
+        callOpener,
+        close
+      };
+    }
+
+    function renderAgentAssist(agent) {
+      const priorityClass = String(agent.priority || 'Low').toLowerCase();
+
+      return `
+        <div class="agent-assist">
+          <div class="agent-head">
+            <div class="agent-title mono">Agent Assist · Follow-Up</div>
+            <div class="agent-priority ${escapeHtml(priorityClass)}">${escapeHtml(agent.priority)} Priority</div>
+          </div>
+
+          <div class="agent-grid">
+            <div class="agent-item">
+              <div class="agent-label">Reason</div>
+              <div class="agent-body">${escapeHtml(agent.reason)}</div>
+            </div>
+
+            <div class="agent-item">
+              <div class="agent-label">Next Best Action</div>
+              <div class="agent-body">${escapeHtml(agent.nextBestAction)}</div>
+            </div>
+
+            <div class="agent-item">
+              <div class="agent-label">Suggested Text</div>
+              <div class="agent-script" data-copy-text="${escapeHtml(agent.suggestedText)}">${escapeHtml(agent.suggestedText)}</div>
+            </div>
+
+            <div class="agent-item">
+              <div class="agent-label">Suggested Call Opener</div>
+              <div class="agent-script" data-copy-call="${escapeHtml(agent.callOpener)}">${escapeHtml(agent.callOpener)}</div>
+            </div>
+
+            <div class="agent-item">
+              <div class="agent-label">Suggested Close</div>
+              <div class="agent-body">${escapeHtml(agent.close)}</div>
+            </div>
+          </div>
+
+          <div class="agent-actions">
+            <button class="copy-btn mono" type="button" onclick="event.stopPropagation(); copyFromAgentButton(this, 'text')">Copy Text</button>
+            <button class="copy-btn mono" type="button" onclick="event.stopPropagation(); copyFromAgentButton(this, 'call')">Copy Call Opener</button>
           </div>
         </div>
       `;
-      setLastUpdated();
     }
 
-    async function runEntrySearch(query, forceCreateState) {
-      setLiveStatus('Checking', 'idle');
-      renderLoading();
+    async function copyToClipboard(text) {
       try {
-        const response = await fetch(WORKER_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(buildEntrySearchBody(query))
-        });
-        let data;
-        try { data = await response.json(); } catch (e) { data = { error: 'Non-JSON response from Worker.' }; }
-        if (!response.ok) { renderError(response.status, data); return; }
-        const pages = Array.isArray(data.results) ? data.results : [];
-        $('status-count').textContent = String(pages.length);
-        setLiveStatus('Live', '');
-        setLastUpdated();
-        if (!pages.length) { renderCreateLeadState(query); return; }
-        $('results').innerHTML = `
-          <div class="results-head" style="margin-top:0;">
-            <div>
-              <h3 class="section-title">Possible Matches</h3>
-              <p class="section-kicker">Select the customer to log a new touch, or start a new lead if this is a different person.</p>
-            </div>
-            <button class="refresh-btn mono" type="button" onclick="startLeadFromEntry()">Start New Anyway</button>
-          </div>
-          ${pages.map(renderCard).join('')}
-        `;
-      } catch (error) {
-        setLiveStatus('Network', 'err');
-        $('status-count').textContent = '0';
-        $('results').innerHTML = `<div class="err-box mono"><strong>Network / CORS Error</strong><br>${escapeHtml(error.message)}</div>`;
-        setLastUpdated();
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch (err) {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+
+        let ok = false;
+        try {
+          ok = document.execCommand('copy');
+        } catch (e) {
+          ok = false;
+        }
+
+        document.body.removeChild(ta);
+        return ok;
       }
     }
 
+    async function copyFromAgentButton(button, type) {
+      const box = button.closest('.agent-assist');
+
+      const target =
+        type === 'call'
+          ? box.querySelector('[data-copy-call]')
+          : box.querySelector('[data-copy-text]');
+
+      const attr = type === 'call' ? 'data-copy-call' : 'data-copy-text';
+      const text = target ? (target.getAttribute(attr) || target.textContent || '') : '';
+
+      const original = button.textContent;
+      const ok = await copyToClipboard(text);
+
+      button.textContent = ok ? 'Copied' : 'Copy Failed';
+      button.classList.toggle('copied', ok);
+
+      setTimeout(() => {
+        button.textContent = original;
+        button.classList.remove('copied');
+      }, 1100);
+    }
+
+    function renderCard(page, index) {
+      const d = getPageData(page);
+      const agent = buildAgentAssist(d);
+
+      let cardClass = 'card';
+      if (d.archived) cardClass += ' archived';
+      else if (d.status && d.status.toLowerCase().includes('overdue')) cardClass += ' overdue';
+      else if (d.status && d.status.toLowerCase().includes('due today')) cardClass += ' due-today';
+      else if (isDateOverdue(d.when)) cardClass += ' overdue';
+      else if (isDateToday(d.when)) cardClass += ' due-today';
+
+      let primaryPill = '';
+      if (d.archived) primaryPill = `<span class="pill archived">Archived</span>`;
+      else if (d.status) primaryPill = `<span class="pill ${pillClass(d.status)}">${escapeHtml(d.status)}</span>`;
+      else if (Array.isArray(d.temps) && d.temps.length) primaryPill = `<span class="pill ${pillClass(d.temps[0])}">${escapeHtml(d.temps[0])}</span>`;
+
+      const otherTempPills = (Array.isArray(d.temps) ? d.temps : [])
+        .filter(t => !primaryPill.includes(t))
+        .map(t => `<span class="pill ${pillClass(t)}">${escapeHtml(t)}</span>`)
+        .join('');
+
+      const quickMeta = [];
+      if (d.nextStep) quickMeta.push(`<strong>${escapeHtml(d.nextStep)}</strong>`);
+      if (d.when) quickMeta.push(`${escapeHtml(d.when)}`);
+
+      const detailMetaItems = [];
+      if (d.purpose) detailMetaItems.push(`<div><label>Purpose</label><strong>${escapeHtml(d.purpose)}</strong></div>`);
+      if (d.touch) detailMetaItems.push(`<div><label>Touch</label><strong>${escapeHtml(d.touch)}</strong></div>`);
+      if (d.result) detailMetaItems.push(`<div><label>Result</label><strong>${escapeHtml(d.result)}</strong></div>`);
+      if (d.nextStep) detailMetaItems.push(`<div><label>Next</label><strong>${escapeHtml(d.nextStep)}</strong></div>`);
+      if (d.when) detailMetaItems.push(`<div><label>When</label><strong>${escapeHtml(d.when)}</strong></div>`);
+      if (d.lastUpdated) detailMetaItems.push(`<div><label>Updated</label><strong>${escapeHtml(String(d.lastUpdated).slice(0, 10))}</strong></div>`);
+
+      const wishlistPills = (Array.isArray(d.wishList) ? d.wishList : [])
+        .map(w => `<span class="pill">${escapeHtml(w)}</span>`)
+        .join('');
+
+      const safeName = escapeHtml(d.name).replace(/"/g, '&quot;');
+      const safePhone = escapeHtml(d.phone).replace(/"/g, '&quot;');
+
+      return `
+        <article class="${cardClass}" data-name="${safeName}" data-phone="${safePhone}" data-page-id="${escapeHtml(d.pageId)}">
+          <div class="card-row" onclick="toggleCard(this.parentElement)">
+            <div class="card-main">
+              <span class="card-name">${escapeHtml(d.name)}</span>
+              ${d.phone ? `<span class="card-phone">${escapeHtml(d.phone)}</span>` : ''}
+              ${quickMeta.length ? `<span class="card-quick-meta">${quickMeta.join(' · ')}</span>` : ''}
+            </div>
+            <div class="card-right">
+              ${d.owner ? `<span class="pill owner">${escapeHtml(d.owner)}</span>` : ''}
+              ${primaryPill}
+              <span class="expand-chevron">▾</span>
+            </div>
+          </div>
+
+          <div class="card-detail">
+            ${detailMetaItems.length ? `<div class="detail-meta">${detailMetaItems.join('')}</div>` : ''}
+
+            ${otherTempPills ? `<div class="detail-extra-pills">${otherTempPills}</div>` : ''}
+            ${wishlistPills ? `<div class="detail-extra-pills">${wishlistPills}</div>` : ''}
+
+            ${d.context ? `
+              <div class="detail-section">
+                <div class="detail-section-label">Context</div>
+                <div class="detail-section-body">${escapeHtml(d.context)}</div>
+              </div>
+            ` : ''}
+
+            ${d.crmNote ? `
+              <div class="detail-section">
+                <div class="detail-section-label">Last CRM Note</div>
+                <div class="detail-section-body crm">${escapeHtml(d.crmNote)}</div>
+              </div>
+            ` : ''}
+
+            ${renderAgentAssist(agent)}
+
+            <div class="detail-actions">
+              <button class="log-touch-btn" type="button" onclick="event.stopPropagation(); openTouchModalFromCard(this.closest('.card'))">Log New Touch</button>
+              ${d.pageUrl ? `<a class="open-notion-btn" href="${escapeHtml(d.pageUrl)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Open in Notion ↗</a>` : ''}
+              ${(!d.archived && d.pageId) ? `<button class="archive-btn" type="button" onclick="event.stopPropagation(); archivePageFromCard(this.closest('.card'))">Archive</button>` : ''}
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function toggleCard(card) {
+      document.querySelectorAll('.card.expanded').forEach(c => {
+        if (c !== card) c.classList.remove('expanded');
+      });
+      card.classList.toggle('expanded');
+    }
 
     async function archivePageFromCard(cardEl) {
-      const pageId = cardEl ? cardEl.dataset.pageId : '';
+      const pageId = cardEl.dataset.pageId;
       if (!pageId) return;
-      setLiveStatus('Archiving', 'idle');
+
+      if (!confirm('Archive this contact from active views?')) return;
+
+      setLiveStatus('Archiving', '');
+
       try {
-        const response = await fetch(WORKER_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            action: 'update',
-            pageId,
-            properties: { 'Archived': { checkbox: true } }
-          })
+        await notionRequest({
+          action: 'update',
+          pageId,
+          properties: {
+            'Archived': {
+              checkbox: true
+            }
+          }
         });
-        let data;
-        try { data = await response.json(); } catch (e) { data = { error: 'Non-JSON response from Worker.' }; }
-        if (!response.ok) { renderError(response.status, data); return; }
-        setLiveStatus('Live', '');
-        if (currentTab === 'entry') handleEntrySubmit();
-        else loadTab();
-      } catch (error) {
-        setLiveStatus('Network', 'err');
-        $('results').innerHTML = `<div class="err-box mono"><strong>Network / CORS Error</strong><br>${escapeHtml(error.message)}</div>`;
+
+        refreshCurrentTab();
+      } catch (err) {
+        renderError(err.status || 500, err.data || { error: err.message || 'Archive failed' });
       }
     }
 
-    // ===== ADD LEAD =====
-    function openAddModal(options = {}) {
-      const prefill = (options && options.prefill ? String(options.prefill) : '').trim();
+    function openAddModal(prefill) {
+      resetAddForm();
+
       $('add-modal').classList.add('open');
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      $('f-when').value = tomorrow.toISOString().split('T')[0];
       $('f-owner').value = currentRep || 'DG';
-      $('f-archived').checked = false;
-      if (prefill) {
-        if (looksLikePhone(prefill)) {
-          $('f-phone').value = prefill;
-          $('f-name').value = '';
+      $('f-when').value = tomorrowISO();
+
+      const value = decodeHtml(prefill || '').trim();
+
+      if (value) {
+        if (looksLikePhone(value)) {
+          $('f-phone').value = value;
           $('f-name').focus();
         } else {
-          $('f-name').value = prefill;
-          $('f-phone').value = '';
+          $('f-name').value = value;
           $('f-context').focus();
         }
       } else {
         $('f-name').focus();
       }
+
       $('form-msg').textContent = '';
       $('form-msg').className = 'form-msg mono';
     }
+
     function closeAddModal() {
       $('add-modal').classList.remove('open');
       resetAddForm();
     }
+
     function resetAddForm() {
-      $('f-name').value = ''; $('f-phone').value = ''; $('f-context').value = '';
+      $('f-name').value = '';
+      $('f-phone').value = '';
+      $('f-context').value = '';
       $('f-owner').value = currentRep || 'DG';
       $('f-touch').value = 'New Lead';
       $('f-purpose').value = 'New Lead';
-      $('f-result').value = ''; $('f-nextstep').value = '';
+      $('f-result').value = '';
+      $('f-nextstep').value = '';
       $('f-when').value = '';
-      $('f-archived').checked = false; $('f-logged').checked = false;
+      $('f-archived').checked = false;
+      $('f-logged').checked = false;
+
       document.querySelectorAll('#chips-temp .chip').forEach(c => {
         c.classList.toggle('selected', c.dataset.value === 'New Lead');
       });
+
       document.querySelectorAll('#chips-wishlist .chip').forEach(c => c.classList.remove('selected'));
+
       $('form-msg').textContent = '';
       $('form-msg').className = 'form-msg mono';
       $('submit-btn').disabled = false;
       $('submit-btn').textContent = 'Save Lead';
       setMode('quick');
     }
+
     function setMode(mode) {
       $('mode-quick').classList.toggle('active', mode === 'quick');
       $('mode-full').classList.toggle('active', mode === 'full');
       $('full-fields').classList.toggle('open', mode === 'full');
     }
+
     function initChipHandlers() {
       document.querySelectorAll('.chip').forEach(chip => {
         chip.addEventListener('click', () => chip.classList.toggle('selected'));
       });
     }
+
     function getSelectedChips(groupId) {
       return Array.from(document.querySelectorAll(`#${groupId} .chip.selected`)).map(c => c.dataset.value);
     }
@@ -1756,6 +3127,7 @@
       if (wishlist.length) properties['Wish List'] = { multi_select: wishlist.map(n => ({ name: n })) };
       properties['Archived'] = { checkbox: archived };
       properties['Logged?'] = { checkbox: logged };
+
       return properties;
     }
 
@@ -1763,60 +3135,55 @@
       const msg = $('form-msg');
       const btn = $('submit-btn');
       const name = $('f-name').value.trim();
+
       if (!name) {
         msg.textContent = 'Customer Name is required.';
         msg.className = 'form-msg mono err';
         $('f-name').focus();
         return;
       }
+
       btn.disabled = true;
       btn.textContent = 'Saving…';
       msg.textContent = 'Creating contact in Notion…';
       msg.className = 'form-msg mono';
+
       try {
         const properties = buildAddLeadPayload();
-        const response = await fetch(WORKER_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'create', databaseId: DATABASE_ID, properties })
+
+        await notionRequest({
+          action: 'create',
+          databaseId: DATABASE_ID,
+          properties
         });
-        let data;
-        try { data = await response.json(); } catch (e) { data = { error: 'Non-JSON response' }; }
-        if (!response.ok) {
-          msg.textContent = `Failed (HTTP ${response.status}): ${data.error || data.message || 'Unknown error'}`;
-          msg.className = 'form-msg mono err';
-          btn.disabled = false;
-          btn.textContent = 'Save Lead';
-          return;
-        }
-        msg.textContent = `✓ ${name} saved. Refreshing…`;
+
+        msg.textContent = `${name} saved. Refreshing…`;
         msg.className = 'form-msg mono ok';
-        setTimeout(() => { closeAddModal(); currentTab === 'entry' ? handleEntrySubmit() : loadTab(); }, 900);
-      } catch (error) {
-        msg.textContent = `Network error: ${error.message}`;
+
+        setTimeout(() => {
+          closeAddModal();
+          if (currentTab === 'entry') handleEntrySubmit();
+          else loadTab();
+        }, 900);
+      } catch (err) {
+        msg.textContent = `Failed: ${(err.data && (err.data.error || err.data.message)) || err.message || 'Unknown error'}`;
         msg.className = 'form-msg mono err';
         btn.disabled = false;
         btn.textContent = 'Save Lead';
       }
     }
 
-    // ===== TOUCH MODAL =====
     function openTouchModalFromCard(cardEl) {
-      const decode = (s) => {
-        const txt = document.createElement('textarea');
-        txt.innerHTML = s;
-        return txt.value;
-      };
       activeCustomer = {
-        name: decode(cardEl.dataset.name || ''),
-        phone: decode(cardEl.dataset.phone || '')
+        name: decodeHtml(cardEl.dataset.name || ''),
+        phone: decodeHtml(cardEl.dataset.phone || '')
       };
+
       $('touch-customer-name').textContent = activeCustomer.name;
       $('touch-customer-phone').textContent = activeCustomer.phone;
+
       $('touch-modal').classList.add('open');
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      $('t-when').value = tomorrow.toISOString().split('T')[0];
+      $('t-when').value = tomorrowISO();
       $('t-touch').value = 'Phone Call';
       $('t-purpose').value = 'Follow-Up';
       $('t-result').value = '';
@@ -1824,7 +3191,9 @@
       $('t-context').value = '';
       $('t-archived').checked = false;
       $('t-logged').checked = false;
+
       document.querySelectorAll('#chips-touch-temp .chip').forEach(c => c.classList.remove('selected'));
+
       $('touch-msg').textContent = '';
       $('touch-msg').className = 'form-msg mono';
       $('touch-submit-btn').disabled = false;
@@ -1862,6 +3231,7 @@
       if (temps.length) properties['Temp'] = { multi_select: temps.map(n => ({ name: n })) };
       properties['Archived'] = { checkbox: archived };
       properties['Logged?'] = { checkbox: logged };
+
       return properties;
     }
 
@@ -1869,37 +3239,38 @@
       const msg = $('touch-msg');
       const btn = $('touch-submit-btn');
       const result = $('t-result').value;
+
       if (!result) {
         msg.textContent = 'Result is required.';
         msg.className = 'form-msg mono err';
         $('t-result').focus();
         return;
       }
+
       btn.disabled = true;
       btn.textContent = 'Logging…';
       msg.textContent = 'Logging new touch in Notion…';
       msg.className = 'form-msg mono';
+
       try {
         const properties = buildTouchPayload();
-        const response = await fetch(WORKER_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'create', databaseId: DATABASE_ID, properties })
+
+        await notionRequest({
+          action: 'create',
+          databaseId: DATABASE_ID,
+          properties
         });
-        let data;
-        try { data = await response.json(); } catch (e) { data = { error: 'Non-JSON response' }; }
-        if (!response.ok) {
-          msg.textContent = `Failed (HTTP ${response.status}): ${data.error || data.message || 'Unknown error'}`;
-          msg.className = 'form-msg mono err';
-          btn.disabled = false;
-          btn.textContent = 'Log New Touch';
-          return;
-        }
-        msg.textContent = `✓ Touch logged for ${activeCustomer.name}. Refreshing…`;
+
+        msg.textContent = `Touch logged for ${activeCustomer.name}. Refreshing…`;
         msg.className = 'form-msg mono ok';
-        setTimeout(() => { closeTouchModal(); currentTab === 'entry' ? handleEntrySubmit() : loadTab(); }, 900);
-      } catch (error) {
-        msg.textContent = `Network error: ${error.message}`;
+
+        setTimeout(() => {
+          closeTouchModal();
+          if (currentTab === 'entry') handleEntrySubmit();
+          else loadTab();
+        }, 900);
+      } catch (err) {
+        msg.textContent = `Failed: ${(err.data && (err.data.error || err.data.message)) || err.message || 'Unknown error'}`;
         msg.className = 'form-msg mono err';
         btn.disabled = false;
         btn.textContent = 'Log New Touch';
