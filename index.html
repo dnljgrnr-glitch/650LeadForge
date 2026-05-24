@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>650 LeadForge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080810;
+  --panel:#111118;
+  --panel2:#1a1a24;
+  --border:#252533;
+  --gold:#c9a96e;
+  --green:#42d9a0;
+  --blue:#5b8df5;
+  --red:#e85c6a;
+  --orange:#f0a040;
+  --purple:#b07adb;
+  --text:#e8e8f0;
+  --muted:#7a7a8a;
+}
+html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;-webkit-font-smoothing:antialiased}
+.mono{font-family:'DM Mono',monospace}
+
+/* PASSWORD GATE */
+#gate{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px}
+.gate-box{max-width:380px;width:100%;text-align:center}
+.gate-title{font-family:'Syne';font-weight:800;font-size:30px;letter-spacing:5px;color:var(--gold);margin-bottom:6px}
+.gate-sub{font-family:'DM Mono';font-size:10px;color:var(--muted);letter-spacing:3px;margin-bottom:36px}
+.gate-input{width:100%;background:var(--panel);border:1px solid var(--border);color:var(--text);padding:14px 16px;font-family:'DM Mono';font-size:14px;letter-spacing:3px;text-align:center;border-radius:4px;margin-bottom:12px}
+.gate-input:focus{outline:none;border-color:var(--gold)}
+.gate-btn{width:100%;background:var(--gold);color:#000;border:none;padding:14px;font-family:'Syne';font-weight:700;letter-spacing:3px;font-size:13px;cursor:pointer;border-radius:4px;text-transform:uppercase}
+.gate-btn:hover{background:#d4b87a}
+.gate-err{color:var(--red);font-family:'DM Mono';font-size:10px;letter-spacing:1px;margin-top:14px;min-height:14px}
+
+/* APP */
+#app{display:none;max-width:980px;margin:0 auto;padding:24px 20px 60px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border);gap:10px}
+.logo{font-family:'Syne';font-weight:800;font-size:22px;letter-spacing:4px;color:var(--gold)}
+.logo-sub{font-family:'DM Mono';font-size:9px;color:var(--muted);letter-spacing:2px;margin-top:2px}
+.badge{font-family:'DM Mono';font-size:9px;color:var(--green);letter-spacing:1.5px;padding:5px 10px;border:1px solid var(--green);border-radius:2px;white-space:nowrap}
+.badge.err{color:var(--red);border-color:var(--red)}
+.badge.idle{color:var(--muted);border-color:var(--border)}
+
+.search-row{display:flex;gap:8px;margin-bottom:16px}
+.search-input{flex:1;background:var(--panel);border:1px solid var(--border);color:var(--text);padding:14px 16px;font-family:'DM Mono';font-size:14px;border-radius:4px}
+.search-input:focus{outline:none;border-color:var(--gold)}
+.search-btn{background:var(--gold);color:#000;border:none;padding:0 22px;font-family:'Syne';font-weight:700;letter-spacing:2px;cursor:pointer;border-radius:4px;font-size:12px}
+.search-btn:hover{background:#d4b87a}
+
+.status{font-family:'DM Mono';font-size:11px;color:var(--muted);letter-spacing:1px;margin-bottom:16px;min-height:14px}
+.status.ok{color:var(--green)}
+.status.err{color:var(--red)}
+
+.results{display:grid;gap:12px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:16px;transition:border-color 0.15s}
+.card:hover{border-color:var(--gold)}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.card-name{font-family:'Syne';font-weight:700;font-size:16px;letter-spacing:1.5px;color:var(--text)}
+.card-phone{font-family:'DM Mono';font-size:13px;color:var(--muted);margin-top:3px}
+.pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.pill{font-family:'DM Mono';font-size:9px;letter-spacing:1.5px;padding:3px 8px;border-radius:2px;border:1px solid var(--border);color:var(--muted);text-transform:uppercase}
+.pill.hot{color:var(--red);border-color:var(--red)}
+.pill.warm{color:var(--orange);border-color:var(--orange)}
+.pill.cold{color:var(--blue);border-color:var(--blue)}
+.pill.new{color:var(--green);border-color:var(--green)}
+.pill.verified{color:var(--purple);border-color:var(--purple)}
+.pill.pending{color:var(--purple);border-color:var(--purple);opacity:0.55}
+.pill.owner{color:var(--gold);border-color:var(--gold)}
+.card-meta{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;margin-top:12px;font-family:'DM Mono';font-size:11px;color:var(--muted);letter-spacing:0.5px}
+.card-meta strong{color:var(--text);font-weight:500}
+.card-ctx{margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-family:'DM Mono';font-size:12px;color:var(--text);line-height:1.55}
+
+.empty{text-align:center;padding:40px 20px;color:var(--muted);font-family:'DM Mono';font-size:13px;letter-spacing:1px}
+.err-box{background:rgba(232,92,106,0.08);border:1px solid var(--red);border-radius:6px;padding:16px;font-family:'DM Mono';font-size:12px;color:var(--red);line-height:1.6;word-break:break-word}
+.err-box strong{color:#ff8a96}
+
+.footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--border);text-align:center;font-family:'DM Mono';font-size:9px;color:var(--muted);letter-spacing:2px}
+
+@media (max-width:560px){
+  .card-meta{grid-template-columns:1fr}
+  .logo{font-size:18px;letter-spacing:3px}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== PASSWORD GATE ===== -->
+<div id="gate">
+  <div class="gate-box">
+    <div class="gate-title">650 LEADFORGE</div>
+    <div class="gate-sub">STORE 00650 · WILLIAMSPORT</div>
+    <input id="gate-input" class="gate-input mono" type="password" placeholder="ACCESS CODE" autocomplete="off" onkeydown="if(event.key==='Enter')tryGate()" />
+    <button class="gate-btn" onclick="tryGate()">UNLOCK</button>
+    <div id="gate-err" class="gate-err"></div>
+  </div>
+</div>
+
+<!-- ===== APP ===== -->
+<div id="app">
+  <div class="header">
+    <div>
+      <div class="logo">650 LEADFORGE</div>
+      <div class="logo-sub">CONTACT LOG · LIVE SEARCH</div>
+    </div>
+    <div id="status-badge" class="badge idle">READY</div>
+  </div>
+
+  <div class="search-row">
+    <input id="q" class="search-input" type="text" placeholder="Search by name or phone — leave blank for recent" autocomplete="off" onkeydown="if(event.key==='Enter')runSearch()" />
+    <button class="search-btn" onclick="runSearch()">SEARCH</button>
+  </div>
+
+  <div id="status" class="status mono"></div>
+  <div id="results" class="results"></div>
+
+  <div class="footer">
+    437 HEPBURN ST · WILLIAMSPORT, PA · (570) 322-4900
+  </div>
+</div>
+
+<script>
+// =================================================================
+// CONFIG — change ACCESS_CODE to anything you want (no spaces)
+// =================================================================
+var WORKER_URL  = 'https://650-search-proxy.dnljgrnr.workers.dev';
+var DATABASE_ID = '08e4ef11-b30d-462c-a447-9a1d9045be72';
+var ACCESS_CODE = 'GOATS650';
+// =================================================================
+
+function showApp() {
+  document.getElementById('gate').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('q').focus();
+  runSearch();
+}
+
+function tryGate() {
+  var v = document.getElementById('gate-input').value;
+  var err = document.getElementById('gate-err');
+  if (v === ACCESS_CODE) {
+    sessionStorage.setItem('lf_unlocked', '1');
+    showApp();
+  } else {
+    err.textContent = 'ACCESS DENIED';
+    document.getElementById('gate-input').value = '';
+    setTimeout(function() { err.textContent = ''; }, 1800);
+  }
+}
+
+// Auto-unlock if already authenticated in this session
+if (sessionStorage.getItem('lf_unlocked') === '1') {
+  window.addEventListener('DOMContentLoaded', showApp);
+}
+
+function setStatus(msg, cls) {
+  var s = document.getElementById('status');
+  s.textContent = msg;
+  s.className = 'status mono' + (cls ? ' ' + cls : '');
+}
+
+function setBadge(text, cls) {
+  var b = document.getElementById('status-badge');
+  b.textContent = text;
+  b.className = 'badge' + (cls ? ' ' + cls : '');
+}
+
+function escapeHtml(s) {
+  if (s === null || s === undefined) return '';
+  return String(s).replace(/[&<>"']/g, function(m) {
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];
+  });
+}
+
+function pillClass(t) {
+  if (!t) return '';
+  var s = t.toLowerCase();
+  if (s.indexOf('hot') > -1) return 'hot';
+  if (s.indexOf('warm') > -1) return 'warm';
+  if (s.indexOf('cold') > -1) return 'cold';
+  if (s.indexOf('new') > -1) return 'new';
+  if (s.indexOf('verified') > -1) return 'verified';
+  if (s.indexOf('pending') > -1) return 'pending';
+  return '';
+}
+
+function getProp(props, name) {
+  if (!props || !props[name]) return null;
+  var p = props[name];
+  switch (p.type) {
+    case 'title':       return p.title.map(function(t){return t.plain_text;}).join('');
+    case 'rich_text':   return p.rich_text.map(function(t){return t.plain_text;}).join('');
+    case 'phone_number':return p.phone_number;
+    case 'select':      return p.select ? p.select.name : null;
+    case 'multi_select':return p.multi_select.map(function(o){return o.name;});
+    case 'date':        return p.date ? p.date.start : null;
+    case 'checkbox':    return p.checkbox;
+    case 'formula':
+      if (p.formula.type === 'string') return p.formula.string;
+      if (p.formula.type === 'number') return p.formula.number;
+      if (p.formula.type === 'boolean') return p.formula.boolean;
+      return null;
+    default: return null;
+  }
+}
+
+function renderCard(page) {
+  var p = page.properties;
+  var name     = getProp(p, 'Customer Name') || '—';
+  var phone    = getProp(p, 'Phone') || '';
+  var temps    = getProp(p, 'Temp') || [];
+  var purpose  = getProp(p, 'Purpose') || '';
+  var result   = getProp(p, 'Result') || '';
+  var nextStep = getProp(p, 'Next Step') || '';
+  var owner    = getProp(p, 'Owner') || '';
+  var when     = getProp(p, 'WHEN') || '';
+  var ctx      = getProp(p, 'Context') || '';
+  var status   = getProp(p, 'Status') || '';
+
+  var pillsHtml = '';
+  if (status) pillsHtml += '<span class="pill">' + escapeHtml(status) + '</span>';
+  pillsHtml += temps.map(function(t){
+    return '<span class="pill ' + pillClass(t) + '">' + escapeHtml(t) + '</span>';
+  }).join('');
+
+  return '<div class="card">' +
+    '<div class="card-top">' +
+      '<div>' +
+        '<div class="card-name">' + escapeHtml(name) + '</div>' +
+        (phone ? '<div class="card-phone">' + escapeHtml(phone) + '</div>' : '') +
+      '</div>' +
+      (owner ? '<span class="pill owner">' + escapeHtml(owner) + '</span>' : '') +
+    '</div>' +
+    (pillsHtml ? '<div class="pills">' + pillsHtml + '</div>' : '') +
+    '<div class="card-meta">' +
+      (purpose  ? '<div>PURPOSE · <strong>' + escapeHtml(purpose) + '</strong></div>' : '') +
+      (result   ? '<div>RESULT · <strong>' + escapeHtml(result) + '</strong></div>' : '') +
+      (nextStep ? '<div>NEXT · <strong>' + escapeHtml(nextStep) + '</strong></div>' : '') +
+      (when     ? '<div>WHEN · <strong>' + escapeHtml(when) + '</strong></div>' : '') +
+    '</div>' +
+    (ctx ? '<div class="card-ctx">' + escapeHtml(ctx) + '</div>' : '') +
+  '</div>';
+}
+
+function showError(httpStatus, data) {
+  setBadge('ERROR', 'err');
+  var msg  = (data && (data.error || data.message)) || 'Unknown error';
+  var code = (data && data.code) ? data.code : '';
+  var hint = '';
+  if (httpStatus === 500 && /NOTION_TOKEN/i.test(msg)) {
+    hint = '<br><br><strong>FIX:</strong> In Cloudflare → Workers → 650-search-proxy → Settings → Variables and Secrets → add Secret named NOTION_TOKEN with your Notion integration token.';
+  } else if (httpStatus === 401 || code === 'unauthorized') {
+    hint = '<br><br><strong>FIX:</strong> Notion token is invalid or expired. Generate a new one at notion.so/my-integrations and update the NOTION_TOKEN secret in Cloudflare.';
+  } else if (httpStatus === 404 || /object_not_found|could not find/i.test(msg)) {
+    hint = '<br><br><strong>FIX:</strong> Open the Contact Log in Notion → ... menu → Connections → add your 650 Search integration. The integration token works but it needs database access.';
+  } else if (httpStatus === 400 && /validation/i.test(msg)) {
+    hint = '<br><br><strong>FIX:</strong> Database ID or filter mismatch. Confirm DATABASE_ID in this file matches the Contact Log.';
+  }
+  var raw = '';
+  try { raw = JSON.stringify(data).slice(0, 400); } catch(e) { raw = String(data).slice(0, 400); }
+  document.getElementById('results').innerHTML =
+    '<div class="err-box"><strong>HTTP ' + httpStatus + (code ? ' · ' + code : '') + '</strong><br>' +
+    escapeHtml(msg) + hint +
+    '<br><br><strong>RAW:</strong> ' + escapeHtml(raw) + '</div>';
+  setStatus('Request failed — see error above', 'err');
+}
+
+function runSearch() {
+  var q = document.getElementById('q').value.trim();
+  setBadge('SEARCHING', 'idle');
+  setStatus(q ? 'Searching "' + q + '"...' : 'Loading recent contacts...', '');
+  document.getElementById('results').innerHTML = '';
+
+  var body = {
+    databaseId: DATABASE_ID,
+    page_size: 25,
+    sorts: [{ property: 'Last Updated', direction: 'descending' }]
+  };
+
+  if (q) {
+    body.filter = {
+      or: [
+        { property: 'Customer Name', title: { contains: q } },
+        { property: 'Phone',         phone_number: { contains: q } }
+      ]
+    };
+  }
+
+  fetch(WORKER_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  })
+  .then(function(res) {
+    return res.json().then(function(data) {
+      return { ok: res.ok, status: res.status, data: data };
+    }).catch(function() {
+      return { ok: res.ok, status: res.status, data: { error: 'Non-JSON response' } };
+    });
+  })
+  .then(function(r) {
+    if (!r.ok) { showError(r.status, r.data); return; }
+    var pages = r.data.results || [];
+    setBadge('LIVE', '');
+    setStatus(
+      pages.length + ' result' + (pages.length === 1 ? '' : 's') +
+      (q ? ' for "' + q + '"' : ' · most recent'),
+      'ok'
+    );
+    if (pages.length === 0) {
+      document.getElementById('results').innerHTML = '<div class="empty">No matches</div>';
+    } else {
+      document.getElementById('results').innerHTML = pages.map(renderCard).join('');
+    }
+  })
+  .catch(function(err) {
+    setBadge('NETWORK', 'err');
+    document.getElementById('results').innerHTML =
+      '<div class="err-box"><strong>NETWORK / CORS ERROR</strong><br>' + escapeHtml(err.message) +
+      '<br><br><strong>FIX:</strong> The Worker may be down, the URL may be wrong, or your network blocked the request. Confirm the Worker URL in this file matches your live Cloudflare Worker.</div>';
+    setStatus('Network error', 'err');
+  });
+}
+</script>
+</body>
+</html>
