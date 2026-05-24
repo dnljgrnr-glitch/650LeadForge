@@ -1,4 +1,4 @@
-<!-- v5.1 · 650 LeadForge · single-column tight list · WHEN-based Due Today -->
+<!-- v5.2 · 650 LeadForge · Entry-first UX · Today/Pipeline/Archive -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -284,6 +284,52 @@
       border-color: var(--border-strong);
       background: rgba(201,169,110,0.06);
     }
+
+
+    .entry-copy {
+      display: grid;
+      gap: 3px;
+      margin-bottom: 2px;
+    }
+    .entry-title {
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .entry-sub {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.45;
+    }
+    .create-card {
+      border: 1px solid var(--border-strong);
+      background: rgba(201,169,110,0.045);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      display: grid;
+      gap: 10px;
+    }
+    .create-title {
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .create-body { color: var(--muted); font-size: 12px; line-height: 1.5; }
+    .create-actions { display: flex; gap: 7px; flex-wrap: wrap; }
+    .secondary-btn {
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--muted);
+      border-radius: var(--radius-md);
+      padding: 10px 13px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .secondary-btn:hover { color: var(--text); border-color: var(--border-strong); }
 
     /* RESULTS HEAD */
     .results-head {
@@ -649,7 +695,7 @@
       <div class="gate-box">
         <div class="gate-eyebrow"><span class="gate-dot"></span> Store 00650 · Workstation</div>
         <h1 class="gate-title">650 <span>LeadForge</span></h1>
-        <p class="gate-copy">Search, log touches, keep the book moving.</p>
+        <p class="gate-copy">Find customers, start leads, log touches, keep the book moving.</p>
 
         <div class="gate-step-label"><span class="gate-step-num">1</span> Select your rep</div>
         <div class="rep-grid">
@@ -673,7 +719,7 @@
           <button class="primary-btn" type="submit" id="gate-submit" disabled>Unlock</button>
           <div id="gate-err" class="gate-err mono" role="alert" aria-live="polite"></div>
         </form>
-        <p class="security-note mono">Rep selection presets Owner on new entries and powers My Work.</p>
+        <p class="security-note mono">Rep selection presets Owner on new entries and Pipeline filters.</p>
       </div>
     </section>
   </main>
@@ -690,7 +736,7 @@
       </div>
       <div class="topbar-actions">
         <div id="rep-badge" class="rep-badge">REP · DG</div>
-        <button class="add-btn" type="button" onclick="openAddModal()"><span class="plus">+</span> Add Lead</button>
+        <button class="add-btn" type="button" onclick="openAddModal()"><span class="plus">+</span> New Lead</button>
         <button class="ghost-btn mono" type="button" onclick="lockApp()">Lock</button>
       </div>
     </header>
@@ -701,50 +747,50 @@
           <span class="dot"></span> <strong id="status-state">Ready</strong>
         </div>
         <div class="status-pill"><strong id="status-count">0</strong> in view</div>
-        <div class="status-pill"><strong id="status-tab">Search</strong></div>
+        <div class="status-pill"><strong id="status-tab">Entry</strong></div>
       </div>
       <div class="status-strip-right mono" id="status-updated">Awaiting</div>
     </section>
 
     <nav class="tabs-row" aria-label="Workstation views">
-      <button class="tab-btn active" type="button" data-tab="search" onclick="setTab('search')">
-        <span class="tab-emoji">🔎</span> Search
+      <button class="tab-btn active" type="button" data-tab="entry" onclick="setTab('entry')">
+        Entry
       </button>
-      <button class="tab-btn" type="button" data-tab="due-today" onclick="setTab('due-today')">
-        <span class="tab-emoji">🟢</span> Due Today <span class="tab-count" id="count-due-today">·</span>
+      <button class="tab-btn" type="button" data-tab="today" onclick="setTab('today')">
+        Today <span class="tab-count" id="count-today">·</span>
       </button>
-      <button class="tab-btn" type="button" data-tab="hot" onclick="setTab('hot')">
-        <span class="tab-emoji">🔥</span> Hot <span class="tab-count" id="count-hot">·</span>
-      </button>
-      <button class="tab-btn" type="button" data-tab="my-work" onclick="setTab('my-work')">
-        <span class="tab-emoji">👥</span> My Work <span class="tab-count" id="count-my-work">·</span>
-      </button>
-      <button class="tab-btn" type="button" data-tab="all" onclick="setTab('all')">
-        <span class="tab-emoji">📋</span> All
+      <button class="tab-btn" type="button" data-tab="pipeline" onclick="setTab('pipeline')">
+        Pipeline <span class="tab-count" id="count-pipeline">·</span>
       </button>
       <button class="tab-btn" type="button" data-tab="archive" onclick="setTab('archive')">
-        <span class="tab-emoji">📦</span> Archive
+        Archive <span class="tab-count" id="count-archive">·</span>
       </button>
     </nav>
 
-    <section class="control-panel" id="search-controls" aria-label="Search controls">
-      <div class="search-row">
-        <label class="sr-only" for="q">Search by name or phone</label>
-        <input id="q" class="search-input mono" type="search" placeholder="Search by name or phone" autocomplete="off" onkeydown="if(event.key==='Enter')runSearch()" />
-        <button class="primary-btn search-btn" type="button" onclick="runSearch()">Search</button>
+    <section class="control-panel" id="entry-controls" aria-label="Lead entry controls">
+      <div class="entry-copy" id="entry-copy">
+        <div class="entry-title">LeadForge Entry</div>
+        <div class="entry-sub">Check existing customers or start a new lead from one place. If they exist, update their timeline. If not, start a new lead.</div>
       </div>
-      <div class="quick-filters" aria-label="Quick searches">
-        <button class="filter-btn mono" type="button" onclick="quickFilter('recent')">Recent</button>
-        <button class="filter-btn mono" type="button" onclick="quickFilter('Hot')">Hot</button>
-        <button class="filter-btn mono" type="button" onclick="quickFilter('Warm')">Warm</button>
-        <button class="filter-btn mono" type="button" onclick="quickFilter('Pending')">Pending</button>
-        <button class="filter-btn mono" type="button" onclick="quickFilter('Verified')">Verified</button>
+      <div class="search-row" id="entry-search-row">
+        <label class="sr-only" for="q">Enter customer name or phone</label>
+        <input id="q" class="search-input mono" type="search" placeholder="Enter customer name or phone" autocomplete="off" oninput="handleEntryInput()" onkeydown="if(event.key==='Enter'){event.preventDefault();handleEntrySubmit();}" />
+        <button class="primary-btn search-btn" type="button" onclick="handleEntrySubmit()">Continue</button>
+      </div>
+      <div class="quick-filters" id="pipeline-filters" aria-label="Pipeline filters" style="display:none;">
+        <button class="filter-btn mono active" type="button" onclick="setPipelineFilter('my')">My Leads</button>
+        <button class="filter-btn mono" type="button" onclick="setPipelineFilter('hot')">Hot</button>
+        <button class="filter-btn mono" type="button" onclick="setPipelineFilter('warm')">Warm</button>
+        <button class="filter-btn mono" type="button" onclick="setPipelineFilter('pending')">Pending</button>
+        <button class="filter-btn mono" type="button" onclick="setPipelineFilter('verified')">Verified</button>
+        <button class="filter-btn mono" type="button" onclick="setPipelineFilter('new')">New Leads</button>
+        <button class="filter-btn mono" type="button" onclick="setPipelineFilter('all')">All Active</button>
       </div>
     </section>
 
     <section class="results-head" aria-label="Results heading">
       <div>
-        <h3 class="section-title" id="view-title">Search</h3>
+        <h3 class="section-title" id="view-title">Entry</h3>
         <p class="section-kicker" id="view-kicker">Tap a card to expand. Tap again to collapse.</p>
       </div>
       <button class="refresh-btn mono" type="button" onclick="refreshCurrentTab()"><span>↻</span> Refresh</button>
@@ -764,7 +810,7 @@
     <div class="modal">
       <div class="modal-head">
         <div>
-          <div class="modal-title">Add New Lead</div>
+          <div class="modal-title">Start New Lead</div>
           <div class="modal-sub mono">First touch — Notion logs the entry instantly</div>
         </div>
         <button class="modal-close" type="button" onclick="closeAddModal()" aria-label="Close">✕</button>
@@ -1009,7 +1055,7 @@
           <div id="touch-msg" class="form-msg mono"></div>
           <div class="form-actions">
             <button class="cancel-btn" type="button" onclick="closeTouchModal()">Cancel</button>
-            <button class="primary-btn submit-btn" type="submit" id="touch-submit-btn">Log Touch</button>
+            <button class="primary-btn submit-btn" type="submit" id="touch-submit-btn">Log New Touch</button>
           </div>
         </div>
       </form>
@@ -1027,9 +1073,11 @@
     const REP_KEY = 'lf_rep_v5';
     // =================================================================
 
-    let currentTab = 'search';
+    let currentTab = 'entry';
     let currentRep = null;
     let activeFilter = null;
+    let pipelineFilter = 'my';
+    let entryDebounce = null;
     let pendingRepSelection = null;
     let activeCustomer = null;
 
@@ -1073,7 +1121,7 @@
       $('app').style.display = 'block';
       $('rep-badge').textContent = 'REP · ' + currentRep;
       $('f-owner').value = currentRep;
-      setTab('due-today');
+      setTab('entry');
     }
 
     function lockApp() {
@@ -1198,7 +1246,7 @@
 
       // Primary pill — most important state indicator
       let primaryPill = '';
-      if (archived) primaryPill = `<span class="pill archived">📦 Archived</span>`;
+      if (archived) primaryPill = `<span class="pill archived">Archived</span>`;
       else if (status) primaryPill = `<span class="pill ${pillClass(status)}">${escapeHtml(status)}</span>`;
       else if (Array.isArray(temps) && temps.length) primaryPill = `<span class="pill ${pillClass(temps[0])}">${escapeHtml(temps[0])}</span>`;
 
@@ -1253,8 +1301,9 @@
               </div>
             ` : ''}
             <div class="detail-actions">
-              <button class="log-touch-btn" type="button" onclick="event.stopPropagation(); openTouchModalFromCard(this.closest('.card'))">+ Log Touch</button>
+              <button class="log-touch-btn" type="button" onclick="event.stopPropagation(); openTouchModalFromCard(this.closest('.card'))">Log New Touch</button>
               ${pageUrl ? `<a class="open-notion-btn" href="${escapeHtml(pageUrl)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Open in Notion ↗</a>` : ''}
+              ${(!archived && pageId) ? `<button class="archive-btn" type="button" onclick="event.stopPropagation(); archivePageFromCard(this.closest('.card'))">Archive</button>` : ''}
             </div>
           </div>
         </article>
@@ -1299,12 +1348,26 @@
     }
 
     const TAB_CONFIG = {
-      'search': { title: 'Search', kicker: 'Tap a card to expand. Tap again to collapse.', showSearchControls: true, statName: 'Search' },
-      'due-today': { title: 'Due Today', kicker: 'Today + overdue. Hit these first.', showSearchControls: false, statName: 'Due Today' },
-      'hot': { title: 'Hot Leads', kicker: 'Active closes. Call first, follow up hardest.', showSearchControls: false, statName: 'Hot' },
-      'my-work': { title: 'My Work', kicker: 'Your assigned contacts, sorted by follow-up date.', showSearchControls: false, statName: 'My Work' },
-      'all': { title: 'All Contacts', kicker: 'Every active contact. Sorted by most recently updated.', showSearchControls: false, statName: 'All' },
-      'archive': { title: 'Archive', kicker: 'Sold or closed contacts. Read-only history.', showSearchControls: false, statName: 'Archive' }
+      'entry': {
+        title: 'LeadForge Entry',
+        kicker: 'Type a customer name or phone. Match existing history or start a clean new lead.',
+        statName: 'Entry'
+      },
+      'today': {
+        title: 'Today',
+        kicker: 'Overdue and due-today follow-ups. Work this first.',
+        statName: 'Today'
+      },
+      'pipeline': {
+        title: 'Pipeline',
+        kicker: 'Active lead inventory. Use filters to work the book without extra tabs.',
+        statName: 'Pipeline'
+      },
+      'archive': {
+        title: 'Archive',
+        kicker: 'Archived, sold, closed, or inactive records. Kept separate from active work.',
+        statName: 'Archive'
+      }
     };
 
     function setTab(tab) {
@@ -1316,48 +1379,69 @@
       $('view-title').textContent = cfg.title;
       $('view-kicker').textContent = cfg.kicker;
       $('status-tab').textContent = cfg.statName;
-      $('search-controls').style.display = cfg.showSearchControls ? '' : 'none';
-      if (tab !== 'search') { activeFilter = null; clearActiveFilterButton(); }
+
+      const isEntry = tab === 'entry';
+      const isPipeline = tab === 'pipeline';
+      $('entry-controls').style.display = (isEntry || isPipeline) ? '' : 'none';
+      $('entry-copy').style.display = isEntry ? '' : 'none';
+      $('entry-search-row').style.display = isEntry ? '' : 'none';
+      $('pipeline-filters').style.display = isPipeline ? '' : 'none';
+
+      if (isEntry) {
+        $('q').value = '';
+        renderEntryHome();
+        setLiveStatus('Ready', 'idle');
+        $('status-count').textContent = '0';
+        return;
+      }
+
+      if (isPipeline) {
+        pipelineFilter = pipelineFilter || 'my';
+        syncPipelineFilterButtons();
+      }
+
       loadTab();
     }
 
-    function refreshCurrentTab() { loadTab(); }
+    function refreshCurrentTab() {
+      if (currentTab === 'entry') return handleEntrySubmit();
+      loadTab();
+    }
 
     function archivedFalseFilter() {
       return { property: 'Archived', checkbox: { equals: false } };
     }
 
-    function buildSearchBody(query) {
-      const body = {
-        action: 'query',
-        databaseId: DATABASE_ID,
-        page_size: 50,
-        sorts: [{ property: 'Last Updated', direction: 'descending' }]
+    function activeCustomerSearchFilter(query) {
+      return {
+        and: [
+          archivedFalseFilter(),
+          {
+            or: [
+              { property: 'Customer Name', title: { contains: query } },
+              { property: 'Phone', phone_number: { contains: query } }
+            ]
+          }
+        ]
       };
-      const filters = [archivedFalseFilter()];
-      if (activeFilter) {
-        const tempValue = activeFilter === 'Verified' ? '⭐ VERIFIED - Returning Customer' : activeFilter;
-        filters.push({ property: 'Temp', multi_select: { contains: tempValue } });
-      } else if (query) {
-        filters.push({
-          or: [
-            { property: 'Customer Name', title: { contains: query } },
-            { property: 'Phone', phone_number: { contains: query } }
-          ]
-        });
-      }
-      body.filter = filters.length === 1 ? filters[0] : { and: filters };
-      return body;
     }
 
-    // FIX: Due Today filters by WHEN date instead of Status formula
-    // Overdue = WHEN < today, Due Today = WHEN = today
-    function buildDueTodayBody() {
+    function buildEntrySearchBody(query) {
+      return {
+        action: 'query',
+        databaseId: DATABASE_ID,
+        page_size: 25,
+        sorts: [{ property: 'Last Updated', direction: 'descending' }],
+        filter: activeCustomerSearchFilter(query)
+      };
+    }
+
+    function buildTodayBody() {
       const today = todayISO();
       return {
         action: 'query',
         databaseId: DATABASE_ID,
-        page_size: 50,
+        page_size: 75,
         sorts: [{ property: 'WHEN', direction: 'ascending' }],
         filter: {
           and: [
@@ -1368,43 +1452,30 @@
       };
     }
 
-    function buildHotBody() {
-      return {
-        action: 'query',
-        databaseId: DATABASE_ID,
-        page_size: 50,
-        sorts: [{ property: 'Last Updated', direction: 'descending' }],
-        filter: {
-          and: [
-            archivedFalseFilter(),
-            { property: 'Temp', multi_select: { contains: 'Hot' } }
-          ]
-        }
-      };
-    }
+    function buildPipelineBody() {
+      const filters = [archivedFalseFilter()];
+      const f = pipelineFilter || 'my';
 
-    function buildMyWorkBody() {
-      return {
-        action: 'query',
-        databaseId: DATABASE_ID,
-        page_size: 50,
-        sorts: [{ property: 'WHEN', direction: 'ascending' }],
-        filter: {
-          and: [
-            archivedFalseFilter(),
-            { property: 'Owner', select: { equals: currentRep } }
-          ]
-        }
-      };
-    }
+      if (f === 'my') {
+        filters.push({ property: 'Owner', select: { equals: currentRep } });
+      } else if (f === 'hot') {
+        filters.push({ property: 'Temp', multi_select: { contains: 'Hot' } });
+      } else if (f === 'warm') {
+        filters.push({ property: 'Temp', multi_select: { contains: 'Warm' } });
+      } else if (f === 'pending') {
+        filters.push({ property: 'Temp', multi_select: { contains: 'Pending' } });
+      } else if (f === 'verified') {
+        filters.push({ property: 'Temp', multi_select: { contains: '⭐ VERIFIED - Returning Customer' } });
+      } else if (f === 'new') {
+        filters.push({ property: 'Temp', multi_select: { contains: 'New Lead' } });
+      }
 
-    function buildAllBody() {
       return {
         action: 'query',
         databaseId: DATABASE_ID,
-        page_size: 50,
+        page_size: 75,
         sorts: [{ property: 'Last Updated', direction: 'descending' }],
-        filter: archivedFalseFilter()
+        filter: filters.length === 1 ? filters[0] : { and: filters }
       };
     }
 
@@ -1412,20 +1483,31 @@
       return {
         action: 'query',
         databaseId: DATABASE_ID,
-        page_size: 50,
+        page_size: 75,
         sorts: [{ property: 'Last Updated', direction: 'descending' }],
         filter: { property: 'Archived', checkbox: { equals: true } }
       };
     }
 
+    function setPipelineFilter(value) {
+      pipelineFilter = value;
+      syncPipelineFilterButtons();
+      loadTab();
+    }
+
+    function syncPipelineFilterButtons() {
+      document.querySelectorAll('#pipeline-filters .filter-btn').forEach(btn => btn.classList.remove('active'));
+      const labels = { my: 'My Leads', hot: 'Hot', warm: 'Warm', pending: 'Pending', verified: 'Verified', new: 'New Leads', all: 'All Active' };
+      document.querySelectorAll('#pipeline-filters .filter-btn').forEach(btn => {
+        if (btn.textContent.trim().toLowerCase() === labels[pipelineFilter].toLowerCase()) btn.classList.add('active');
+      });
+    }
+
     async function loadTab() {
-      if (currentTab === 'search') return runSearch();
       let body;
       switch (currentTab) {
-        case 'due-today': body = buildDueTodayBody(); break;
-        case 'hot': body = buildHotBody(); break;
-        case 'my-work': body = buildMyWorkBody(); break;
-        case 'all': body = buildAllBody(); break;
+        case 'today': body = buildTodayBody(); break;
+        case 'pipeline': body = buildPipelineBody(); break;
         case 'archive': body = buildArchiveBody(); break;
         default: return;
       }
@@ -1462,40 +1544,73 @@
 
     function renderTabEmptyState(tab) {
       const messages = {
-        'search': { headline: 'No matches', body: 'Try a shorter name or partial phone.' },
-        'due-today': { headline: 'Clean slate', body: 'Nothing overdue or due today. Either ahead of the curve or time to add new leads.' },
-        'hot': { headline: 'No Hot tagged', body: 'Tag existing contacts Hot via a touch entry.' },
-        'my-work': { headline: 'Empty queue', body: `No contacts assigned to ${currentRep}.` },
-        'all': { headline: 'Nothing active', body: 'No active contacts. + Add Lead to start.' },
-        'archive': { headline: 'Empty archive', body: 'No sold/closed contacts yet.' }
+        'today': { headline: 'Clean slate', body: 'Nothing overdue or due today. Work fresh leads or add new customer activity from Entry.' },
+        'pipeline': { headline: 'Empty pipeline', body: `No active contacts found for this filter.` },
+        'archive': { headline: 'Empty archive', body: 'No archived contacts yet.' }
       };
       const m = messages[tab] || { headline: 'No results', body: 'Nothing to show.' };
       renderEmpty(m.body, m.headline);
     }
 
-    function quickFilter(value) {
-      $('q').value = '';
-      if (value === 'recent' || !value) {
-        activeFilter = null;
-        clearActiveFilterButton();
-        setActiveFilterButton('Recent');
-      } else {
-        activeFilter = value;
-        setActiveFilterButton(value);
-      }
-      runSearch();
+    function renderEntryHome() {
+      $('results').innerHTML = `
+        <div class="empty mono">
+          <div class="empty-headline">Find or start a customer</div>
+          Type a name or phone number above. Existing customers will show as possible matches. No match will open a new lead path.
+        </div>
+      `;
+      setLastUpdated();
     }
 
-    async function runSearch() {
+    function handleEntryInput() {
+      clearTimeout(entryDebounce);
+      entryDebounce = setTimeout(() => {
+        const query = $('q').value.trim();
+        if (query.length >= 2) runEntrySearch(query, false);
+        else renderEntryHome();
+      }, 250);
+    }
+
+    function handleEntrySubmit() {
       const query = $('q').value.trim();
-      if (query) { activeFilter = null; clearActiveFilterButton(); }
-      setLiveStatus('Searching', 'idle');
+      if (!query) { renderEntryHome(); return; }
+      runEntrySearch(query, true);
+    }
+
+    function looksLikePhone(value) {
+      const digits = String(value || '').replace(/\D/g, '');
+      return digits.length >= 7 && digits.length >= String(value || '').replace(/\s/g, '').length * 0.55;
+    }
+
+    function startLeadFromEntry(rawValue) {
+      const value = (rawValue || $('q').value || '').trim();
+      openAddModal({ prefill: value });
+    }
+
+    function renderCreateLeadState(query) {
+      $('status-count').textContent = '0';
+      setLiveStatus('Ready', 'idle');
+      $('results').innerHTML = `
+        <div class="create-card mono">
+          <div class="create-title">No existing customer found.</div>
+          <div class="create-body">Create a new lead for: <strong>${escapeHtml(query)}</strong></div>
+          <div class="create-actions">
+            <button class="primary-btn" type="button" onclick="startLeadFromEntry()">Start Lead</button>
+            <button class="secondary-btn" type="button" onclick="$('q').focus()">Edit Entry</button>
+          </div>
+        </div>
+      `;
+      setLastUpdated();
+    }
+
+    async function runEntrySearch(query, forceCreateState) {
+      setLiveStatus('Checking', 'idle');
       renderLoading();
       try {
         const response = await fetch(WORKER_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(buildSearchBody(query))
+          body: JSON.stringify(buildEntrySearchBody(query))
         });
         let data;
         try { data = await response.json(); } catch (e) { data = { error: 'Non-JSON response from Worker.' }; }
@@ -1504,8 +1619,17 @@
         $('status-count').textContent = String(pages.length);
         setLiveStatus('Live', '');
         setLastUpdated();
-        if (!pages.length) { renderTabEmptyState('search'); return; }
-        $('results').innerHTML = pages.map(renderCard).join('');
+        if (!pages.length) { renderCreateLeadState(query); return; }
+        $('results').innerHTML = `
+          <div class="results-head" style="margin-top:0;">
+            <div>
+              <h3 class="section-title">Possible Matches</h3>
+              <p class="section-kicker">Select the customer to log a new touch, or start a new lead if this is a different person.</p>
+            </div>
+            <button class="refresh-btn mono" type="button" onclick="startLeadFromEntry()">Start New Anyway</button>
+          </div>
+          ${pages.map(renderCard).join('')}
+        `;
       } catch (error) {
         setLiveStatus('Network', 'err');
         $('status-count').textContent = '0';
@@ -1514,14 +1638,55 @@
       }
     }
 
+
+    async function archivePageFromCard(cardEl) {
+      const pageId = cardEl ? cardEl.dataset.pageId : '';
+      if (!pageId) return;
+      setLiveStatus('Archiving', 'idle');
+      try {
+        const response = await fetch(WORKER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'update',
+            pageId,
+            properties: { 'Archived': { checkbox: true } }
+          })
+        });
+        let data;
+        try { data = await response.json(); } catch (e) { data = { error: 'Non-JSON response from Worker.' }; }
+        if (!response.ok) { renderError(response.status, data); return; }
+        setLiveStatus('Live', '');
+        if (currentTab === 'entry') handleEntrySubmit();
+        else loadTab();
+      } catch (error) {
+        setLiveStatus('Network', 'err');
+        $('results').innerHTML = `<div class="err-box mono"><strong>Network / CORS Error</strong><br>${escapeHtml(error.message)}</div>`;
+      }
+    }
+
     // ===== ADD LEAD =====
-    function openAddModal() {
+    function openAddModal(options = {}) {
+      const prefill = (options && options.prefill ? String(options.prefill) : '').trim();
       $('add-modal').classList.add('open');
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
       $('f-when').value = tomorrow.toISOString().split('T')[0];
       $('f-owner').value = currentRep || 'DG';
-      $('f-name').focus();
+      $('f-archived').checked = false;
+      if (prefill) {
+        if (looksLikePhone(prefill)) {
+          $('f-phone').value = prefill;
+          $('f-name').value = '';
+          $('f-name').focus();
+        } else {
+          $('f-name').value = prefill;
+          $('f-phone').value = '';
+          $('f-context').focus();
+        }
+      } else {
+        $('f-name').focus();
+      }
       $('form-msg').textContent = '';
       $('form-msg').className = 'form-msg mono';
     }
@@ -1626,7 +1791,7 @@
         }
         msg.textContent = `✓ ${name} saved. Refreshing…`;
         msg.className = 'form-msg mono ok';
-        setTimeout(() => { closeAddModal(); loadTab(); }, 900);
+        setTimeout(() => { closeAddModal(); currentTab === 'entry' ? handleEntrySubmit() : loadTab(); }, 900);
       } catch (error) {
         msg.textContent = `Network error: ${error.message}`;
         msg.className = 'form-msg mono err';
@@ -1663,7 +1828,7 @@
       $('touch-msg').textContent = '';
       $('touch-msg').className = 'form-msg mono';
       $('touch-submit-btn').disabled = false;
-      $('touch-submit-btn').textContent = 'Log Touch';
+      $('touch-submit-btn').textContent = 'Log New Touch';
       $('t-result').focus();
     }
 
@@ -1712,7 +1877,7 @@
       }
       btn.disabled = true;
       btn.textContent = 'Logging…';
-      msg.textContent = 'Logging touch in Notion…';
+      msg.textContent = 'Logging new touch in Notion…';
       msg.className = 'form-msg mono';
       try {
         const properties = buildTouchPayload();
@@ -1727,17 +1892,17 @@
           msg.textContent = `Failed (HTTP ${response.status}): ${data.error || data.message || 'Unknown error'}`;
           msg.className = 'form-msg mono err';
           btn.disabled = false;
-          btn.textContent = 'Log Touch';
+          btn.textContent = 'Log New Touch';
           return;
         }
         msg.textContent = `✓ Touch logged for ${activeCustomer.name}. Refreshing…`;
         msg.className = 'form-msg mono ok';
-        setTimeout(() => { closeTouchModal(); loadTab(); }, 900);
+        setTimeout(() => { closeTouchModal(); currentTab === 'entry' ? handleEntrySubmit() : loadTab(); }, 900);
       } catch (error) {
         msg.textContent = `Network error: ${error.message}`;
         msg.className = 'form-msg mono err';
         btn.disabled = false;
-        btn.textContent = 'Log Touch';
+        btn.textContent = 'Log New Touch';
       }
     }
   </script>
