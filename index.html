@@ -1,12 +1,12 @@
-<!-- v4.0 · 650 LeadForge · read + write capability -->
+<!-- v5.0 · 650 LeadForge · apple-clean · tabs · rep selection · touch logging · archive system -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#080810" />
-  <meta name="description" content="650 LeadForge contact search dashboard for Store 00650." />
-  <title>650 LeadForge · Contact Search & Add</title>
+  <meta name="theme-color" content="#08080d" />
+  <meta name="description" content="650 LeadForge workstation for Store 00650." />
+  <title>650 LeadForge</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,13 +14,12 @@
 
   <style>
     :root {
-      --bg: #07070c;
-      --bg-2: #0c0c14;
-      --surface: rgba(18, 18, 28, 0.82);
-      --surface-strong: #14141f;
-      --surface-soft: rgba(255, 255, 255, 0.035);
-      --border: rgba(255, 255, 255, 0.09);
-      --border-strong: rgba(201, 169, 110, 0.42);
+      --bg: #08080d;
+      --bg-2: #0d0d13;
+      --surface: rgba(20, 20, 28, 0.7);
+      --surface-2: rgba(255, 255, 255, 0.025);
+      --border: rgba(255, 255, 255, 0.07);
+      --border-strong: rgba(201, 169, 110, 0.4);
       --gold: #c9a96e;
       --gold-2: #f0d08a;
       --green: #42d9a0;
@@ -31,24 +30,19 @@
       --text: #f3f3f7;
       --muted: #9b9baa;
       --faint: #686878;
-      --shadow: 0 24px 80px rgba(0, 0, 0, 0.46);
-      --radius-xl: 28px;
-      --radius-lg: 20px;
-      --radius-md: 14px;
+      --radius-lg: 18px;
+      --radius-md: 12px;
       --radius-sm: 10px;
-      --max: 1160px;
+      --max: 1180px;
+      color-scheme: dark;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; color-scheme: dark; }
 
     body {
       min-height: 100vh;
-      background:
-        radial-gradient(circle at top left, rgba(201, 169, 110, 0.18), transparent 34rem),
-        radial-gradient(circle at 80% 10%, rgba(111, 156, 255, 0.11), transparent 28rem),
-        radial-gradient(circle at 50% 110%, rgba(66, 217, 160, 0.09), transparent 34rem),
-        linear-gradient(135deg, var(--bg), var(--bg-2));
+      background: var(--bg);
       color: var(--text);
       font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       -webkit-font-smoothing: antialiased;
@@ -56,488 +50,582 @@
       overflow-x: hidden;
     }
 
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.028) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.028) 1px, transparent 1px);
-      background-size: 44px 44px;
-      mask-image: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent 82%);
-      z-index: -1;
-    }
-
-    body::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.28));
-      z-index: -1;
-    }
-
     button, input, textarea, select { font: inherit; color: inherit; }
     button { cursor: pointer; }
     .mono { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
     .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
 
-    /* PASSWORD GATE */
+    /* ===== GATE ===== */
     #gate {
       position: fixed; inset: 0; z-index: 9999;
       display: grid; place-items: center; padding: 24px;
       background:
-        radial-gradient(circle at 50% 0%, rgba(201, 169, 110, 0.16), transparent 30rem),
-        linear-gradient(135deg, #050508, #0c0c14);
+        radial-gradient(circle at 50% 20%, rgba(201, 169, 110, 0.08), transparent 30rem),
+        var(--bg);
+      overflow-y: auto;
     }
-    .gate-shell { width: min(100%, 460px); position: relative; }
-    .gate-shell::before {
-      content: ""; position: absolute; inset: -1px; border-radius: 30px; padding: 1px;
-      background: linear-gradient(145deg, rgba(201,169,110,0.72), rgba(255,255,255,0.08), rgba(111,156,255,0.24));
-      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      pointer-events: none;
-    }
+    .gate-shell { width: min(100%, 480px); padding: 24px 0; }
     .gate-box {
-      background: rgba(15, 15, 23, 0.92);
+      background: rgba(15, 15, 22, 0.96);
       border: 1px solid var(--border);
-      box-shadow: var(--shadow);
-      border-radius: 30px;
-      padding: 34px;
-      backdrop-filter: blur(18px);
+      border-radius: 22px;
+      padding: 30px;
     }
-    .micro-label {
-      display: inline-flex; align-items: center; gap: 8px;
-      color: var(--gold-2);
-      border: 1px solid rgba(201, 169, 110, 0.28);
-      background: rgba(201, 169, 110, 0.07);
-      padding: 7px 10px; border-radius: 999px;
-      font-size: 10px; font-weight: 700;
-      letter-spacing: 0.17em; text-transform: uppercase;
-      margin-bottom: 18px;
+    .gate-eyebrow {
+      display: inline-flex; align-items: center; gap: 7px;
+      color: var(--muted);
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      margin-bottom: 16px;
     }
-    .micro-dot {
-      width: 7px; height: 7px; border-radius: 999px;
+    .gate-dot {
+      width: 6px; height: 6px; border-radius: 999px;
       background: var(--green);
-      box-shadow: 0 0 20px rgba(66, 217, 160, 0.72);
+      box-shadow: 0 0 10px var(--green);
     }
     .gate-title {
-      font-size: clamp(34px, 8vw, 58px);
-      line-height: 0.9; font-weight: 900; letter-spacing: -0.08em;
-      color: var(--text); margin-bottom: 12px;
+      font-size: 38px; line-height: 1; font-weight: 800;
+      letter-spacing: -0.045em;
+      color: var(--text); margin-bottom: 8px;
     }
-    .gate-title span { color: var(--gold); letter-spacing: -0.045em; }
-    .gate-copy { color: var(--muted); font-size: 14px; line-height: 1.6; max-width: 34rem; margin-bottom: 24px; }
-    .gate-form { display: grid; gap: 12px; }
+    .gate-title span { color: var(--gold); }
+    .gate-copy { color: var(--muted); font-size: 13px; line-height: 1.55; margin-bottom: 24px; }
+
+    .gate-step-label {
+      color: var(--muted);
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      margin-bottom: 10px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .gate-step-num {
+      width: 20px; height: 20px;
+      border-radius: 999px;
+      border: 1px solid var(--border-strong);
+      color: var(--gold-2);
+      display: grid; place-items: center;
+      font-size: 10px; font-weight: 700;
+    }
+
+    .rep-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 22px;
+    }
+    .rep-card {
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      border-radius: var(--radius-md);
+      padding: 14px 8px;
+      text-align: center;
+      transition: all 150ms ease;
+      position: relative;
+    }
+    .rep-card:hover { border-color: var(--border-strong); background: rgba(201, 169, 110, 0.04); }
+    .rep-card.selected {
+      border-color: var(--gold);
+      background: rgba(201, 169, 110, 0.08);
+    }
+    .rep-card.selected::after {
+      content: "✓";
+      position: absolute;
+      top: 5px; right: 7px;
+      color: var(--gold);
+      font-weight: 800;
+      font-size: 10px;
+    }
+    .rep-initials {
+      font-size: 20px; font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+    .rep-card.selected .rep-initials { color: var(--gold-2); }
+    .rep-role {
+      font-size: 9px;
+      font-family: "JetBrains Mono", monospace;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .gate-form { display: grid; gap: 10px; }
+    .gate-form.locked .gate-input,
+    .gate-form.locked .primary-btn { opacity: 0.35; pointer-events: none; }
     .gate-input, .search-input, .form-input, .form-textarea, .form-select {
       width: 100%;
       color: var(--text);
-      background: rgba(255, 255, 255, 0.045);
+      background: #0c0c14;
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
       outline: none;
-      transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+      transition: border-color 150ms ease, box-shadow 150ms ease;
     }
-    .gate-input { padding: 16px 18px; text-align: center; letter-spacing: 0.28em; font-size: 14px; }
+    .gate-input { padding: 14px 16px; text-align: center; letter-spacing: 0.24em; font-size: 13px; }
     .gate-input::placeholder, .search-input::placeholder, .form-input::placeholder, .form-textarea::placeholder { color: var(--faint); }
     .gate-input:focus, .search-input:focus, .form-input:focus, .form-textarea:focus, .form-select:focus {
-      border-color: rgba(201, 169, 110, 0.74);
-      background: rgba(255, 255, 255, 0.065);
-      box-shadow: 0 0 0 4px rgba(201, 169, 110, 0.12);
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.12);
     }
     .primary-btn {
       border: 0; border-radius: var(--radius-md);
-      padding: 16px 18px; color: #090908;
-      background: linear-gradient(135deg, var(--gold-2), var(--gold));
-      font-weight: 900; letter-spacing: 0.13em; text-transform: uppercase;
-      box-shadow: 0 18px 40px rgba(201, 169, 110, 0.18);
-      transition: transform 150ms ease, filter 150ms ease, box-shadow 150ms ease;
+      padding: 14px 16px; color: #090908;
+      background: var(--gold);
+      font-weight: 700; letter-spacing: 0.08em;
+      font-size: 13px;
+      transition: filter 150ms ease, transform 150ms ease;
     }
-    .primary-btn:hover { transform: translateY(-1px); filter: brightness(1.05); box-shadow: 0 24px 52px rgba(201, 169, 110, 0.22); }
-    .primary-btn:active { transform: translateY(0); }
-    .primary-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-    .gate-err { min-height: 18px; color: var(--red); font-size: 12px; letter-spacing: 0.08em; text-align: center; margin-top: 6px; }
-    .security-note { margin-top: 18px; color: var(--faint); font-size: 11px; line-height: 1.55; text-align: center; }
+    .primary-btn:hover { filter: brightness(1.08); }
+    .primary-btn:active { transform: translateY(1px); }
+    .primary-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .gate-err { min-height: 16px; color: var(--red); font-size: 11px; letter-spacing: 0.06em; text-align: center; margin-top: 4px; }
+    .security-note { margin-top: 14px; color: var(--faint); font-size: 10px; line-height: 1.5; text-align: center; }
 
-    /* APP SHELL */
-    #app { display: none; width: min(100% - 32px, var(--max)); margin: 0 auto; padding: 28px 0 64px; }
-    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-bottom: 28px; flex-wrap: wrap; }
-    .brand-lockup { display: flex; align-items: center; gap: 14px; }
+    /* ===== APP ===== */
+    #app { display: none; width: min(100% - 28px, var(--max)); margin: 0 auto; padding: 20px 0 60px; }
+
+    /* TOPBAR */
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 14px; margin-bottom: 16px; flex-wrap: wrap;
+    }
+    .brand-lockup { display: flex; align-items: center; gap: 12px; }
     .mark {
-      width: 46px; height: 46px; border-radius: 16px;
+      width: 38px; height: 38px; border-radius: 12px;
       display: grid; place-items: center;
       color: #080808;
-      background: linear-gradient(135deg, var(--gold-2), var(--gold));
-      font-weight: 900; letter-spacing: -0.08em;
-      box-shadow: 0 16px 38px rgba(201, 169, 110, 0.18);
+      background: var(--gold);
+      font-weight: 800; letter-spacing: -0.06em;
+      font-size: 13px;
     }
-    .logo { font-size: 17px; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; }
-    .logo-sub { margin-top: 3px; color: var(--muted); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; }
-    .badge-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
-    .badge {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 8px 11px; border-radius: 999px;
-      border: 1px solid rgba(66, 217, 160, 0.38);
-      color: var(--green);
-      background: rgba(66, 217, 160, 0.07);
-      font-size: 10px; font-weight: 800;
-      letter-spacing: 0.14em; text-transform: uppercase;
-      white-space: nowrap;
+    .logo { font-size: 14px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+    .logo-sub { margin-top: 2px; color: var(--muted); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; }
+
+    .topbar-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .rep-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 10px; border-radius: 999px;
+      border: 1px solid var(--border-strong);
+      color: var(--gold-2);
+      background: rgba(201, 169, 110, 0.05);
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
     }
-    .badge::before {
-      content: "";
-      width: 7px; height: 7px; border-radius: 999px;
-      background: currentColor;
-      box-shadow: 0 0 18px currentColor;
-    }
-    .badge.err { color: var(--red); border-color: rgba(255, 100, 115, 0.42); background: rgba(255, 100, 115, 0.08); }
-    .badge.idle { color: var(--muted); border-color: var(--border); background: rgba(255,255,255,0.035); }
     .ghost-btn {
       border: 1px solid var(--border); color: var(--muted);
-      background: rgba(255,255,255,0.035);
-      padding: 8px 11px; border-radius: 999px;
-      font-size: 10px; font-weight: 800;
-      letter-spacing: 0.14em; text-transform: uppercase;
-      transition: border-color 150ms ease, color 150ms ease, background 150ms ease;
+      background: var(--surface-2);
+      padding: 7px 10px; border-radius: 999px;
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      transition: all 150ms ease;
     }
-    .ghost-btn:hover { color: var(--text); border-color: rgba(201, 169, 110, 0.45); background: rgba(201, 169, 110, 0.07); }
+    .ghost-btn:hover { color: var(--text); border-color: var(--border-strong); }
     .add-btn {
       border: 0; border-radius: 999px;
-      padding: 10px 16px;
+      padding: 8px 14px;
       color: #090908;
-      background: linear-gradient(135deg, var(--gold-2), var(--gold));
-      font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+      background: var(--gold);
+      font-weight: 700; letter-spacing: 0.08em;
       font-size: 11px;
-      box-shadow: 0 12px 30px rgba(201, 169, 110, 0.22);
-      transition: transform 150ms ease, filter 150ms ease, box-shadow 150ms ease;
-      display: inline-flex; align-items: center; gap: 6px;
+      transition: filter 150ms ease;
+      display: inline-flex; align-items: center; gap: 5px;
     }
-    .add-btn:hover { transform: translateY(-1px); filter: brightness(1.05); box-shadow: 0 16px 40px rgba(201, 169, 110, 0.28); }
-    .add-btn .plus { font-size: 16px; line-height: 1; font-weight: 900; }
+    .add-btn:hover { filter: brightness(1.08); }
+    .add-btn .plus { font-size: 15px; line-height: 1; font-weight: 800; }
 
-    /* HERO */
-    .hero {
-      position: relative; overflow: hidden;
+    /* STATUS STRIP — replaces the old hero */
+    .status-strip {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 14px;
       border: 1px solid var(--border);
-      background:
-        linear-gradient(135deg, rgba(255,255,255,0.075), rgba(255,255,255,0.025)),
-        rgba(16, 16, 24, 0.78);
-      box-shadow: var(--shadow);
-      border-radius: var(--radius-xl);
-      padding: clamp(24px, 4vw, 46px);
-      margin-bottom: 18px;
-      backdrop-filter: blur(18px);
+      background: var(--surface);
+      backdrop-filter: blur(20px);
+      border-radius: var(--radius-lg);
+      padding: 12px 16px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
     }
-    .hero::after {
-      content: ""; position: absolute;
-      inset: auto -10% -50% 45%; height: 360px;
-      background: radial-gradient(circle, rgba(201, 169, 110, 0.14), transparent 68%);
-      transform: rotate(-12deg); pointer-events: none;
+    .status-strip-left { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-size: 11px; font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.04em;
     }
-    .hero-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.1fr) minmax(300px, 0.9fr);
-      gap: 30px; align-items: end;
-      position: relative; z-index: 1;
+    .status-pill strong {
+      color: var(--text);
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: -0.01em;
     }
-    .eyebrow {
-      color: var(--gold-2); font-size: 11px; font-weight: 900;
-      letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 12px;
+    .status-pill .dot {
+      width: 6px; height: 6px; border-radius: 999px;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
     }
-    .headline {
-      max-width: 720px;
-      font-size: clamp(42px, 7vw, 88px);
-      line-height: 0.88; letter-spacing: -0.08em; font-weight: 900;
-      margin-bottom: 18px;
-    }
-    .headline span { color: var(--gold); }
-    .hero-copy { max-width: 650px; color: var(--muted); font-size: 15px; line-height: 1.7; }
-    .stat-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-    .stat-card { border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; background: rgba(255,255,255,0.04); }
-    .stat-value { color: var(--text); font-size: 27px; line-height: 1; font-weight: 900; letter-spacing: -0.04em; }
-    .stat-label { margin-top: 8px; color: var(--muted); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; line-height: 1.4; }
+    .status-pill.idle .dot { background: var(--muted); box-shadow: none; }
+    .status-pill.err .dot { background: var(--red); box-shadow: 0 0 8px var(--red); }
+    .status-pill.err strong { color: var(--red); }
+    .status-strip-right { color: var(--faint); font-size: 11px; letter-spacing: 0.04em; }
 
-    /* CONTROL PANEL */
+    /* TABS */
+    .tabs-row {
+      display: flex; gap: 4px; flex-wrap: wrap;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      backdrop-filter: blur(20px);
+      border-radius: var(--radius-lg);
+      padding: 6px;
+      margin-bottom: 12px;
+    }
+    .tab-btn {
+      flex: 1;
+      min-width: 100px;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      padding: 10px 12px;
+      border-radius: 11px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: all 150ms ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .tab-btn:hover { color: var(--text); background: rgba(255,255,255,0.025); }
+    .tab-btn.active {
+      color: #090908;
+      background: var(--gold);
+    }
+    .tab-btn .tab-emoji { font-size: 13px; }
+    .tab-btn .tab-count {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px;
+      opacity: 0.85;
+      padding: 1px 5px;
+      border-radius: 999px;
+      background: rgba(0,0,0,0.18);
+    }
+    .tab-btn.active .tab-count { background: rgba(0,0,0,0.22); }
+
+    /* SEARCH CONTROLS */
     .control-panel {
-      display: grid; gap: 14px;
+      display: grid; gap: 10px;
       border: 1px solid var(--border);
-      background: rgba(16, 16, 24, 0.76);
-      border-radius: var(--radius-xl);
-      padding: 16px; margin-bottom: 18px;
-      backdrop-filter: blur(18px);
-      box-shadow: 0 18px 60px rgba(0,0,0,0.24);
+      background: var(--surface);
+      backdrop-filter: blur(20px);
+      border-radius: var(--radius-lg);
+      padding: 12px;
+      margin-bottom: 12px;
     }
-    .search-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 10px; }
-    .search-input { padding: 16px 18px; font-size: 14px; }
-    .search-btn { min-width: 128px; }
-    .quick-filters { display: flex; gap: 8px; flex-wrap: wrap; }
+    .search-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
+    .search-input { padding: 12px 14px; font-size: 14px; }
+    .search-btn { min-width: 100px; padding: 12px 18px; }
+    .quick-filters { display: flex; gap: 6px; flex-wrap: wrap; }
     .filter-btn {
       border: 1px solid var(--border);
-      background: rgba(255,255,255,0.035);
+      background: var(--surface-2);
       color: var(--muted);
       border-radius: 999px;
-      padding: 8px 11px;
-      font-size: 10px; font-weight: 800;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      transition: color 150ms ease, border-color 150ms ease, background 150ms ease;
+      padding: 6px 10px;
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      transition: all 150ms ease;
     }
     .filter-btn:hover, .filter-btn.active {
       color: var(--gold-2);
-      border-color: rgba(201,169,110,0.42);
-      background: rgba(201,169,110,0.07);
+      border-color: var(--border-strong);
+      background: rgba(201,169,110,0.06);
     }
-    .panel-meta {
-      display: flex; justify-content: space-between;
-      gap: 12px; flex-wrap: wrap;
-      color: var(--muted);
-      font-size: 11px; letter-spacing: 0.06em;
-    }
-    .status.ok { color: var(--green); }
-    .status.err { color: var(--red); }
 
-    /* RESULTS */
+    /* RESULTS HEAD */
     .results-head {
       display: flex; align-items: end; justify-content: space-between;
-      gap: 16px; margin: 26px 2px 12px;
+      gap: 12px; margin: 14px 2px 10px;
     }
-    .section-title { font-size: 16px; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; }
-    .section-kicker { margin-top: 4px; color: var(--muted); font-size: 12px; }
-    .results { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .section-title { font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text); }
+    .section-kicker { margin-top: 3px; color: var(--muted); font-size: 12px; }
+    .refresh-btn {
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 6px 11px;
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      transition: all 150ms ease;
+      display: inline-flex; align-items: center; gap: 5px;
+    }
+    .refresh-btn:hover { color: var(--text); border-color: var(--border-strong); }
 
+    /* RESULTS GRID */
+    .results { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
     .card {
       position: relative; overflow: hidden;
       border: 1px solid var(--border);
-      background:
-        linear-gradient(135deg, rgba(255,255,255,0.062), rgba(255,255,255,0.026)),
-        rgba(18, 18, 28, 0.78);
+      background: var(--surface);
+      backdrop-filter: blur(20px);
       border-radius: var(--radius-lg);
-      padding: 18px; min-height: 214px;
-      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+      padding: 16px; min-height: 200px;
+      cursor: pointer;
+      transition: all 160ms ease;
     }
     .card::before {
       content: ""; position: absolute;
-      inset: 0 auto 0 0; width: 3px;
-      background: linear-gradient(to bottom, var(--gold), transparent);
-      opacity: 0.72;
+      inset: 0 auto 0 0; width: 2px;
+      background: var(--gold);
+      opacity: 0.5;
     }
-    .card:hover { transform: translateY(-2px); border-color: rgba(201,169,110,0.38); box-shadow: 0 20px 60px rgba(0,0,0,0.26); }
-    .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
-    .card-name { color: var(--text); font-size: 18px; line-height: 1.15; font-weight: 900; letter-spacing: -0.025em; }
-    .card-phone { color: var(--muted); margin-top: 6px; font-size: 13px; }
-    .pills { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 14px; }
+    .card:hover {
+      border-color: var(--border-strong);
+      background: rgba(20, 20, 28, 0.85);
+    }
+    .card:hover::before { opacity: 0.9; }
+    .card.overdue::before { background: var(--red); opacity: 0.75; }
+    .card.due-today::before { background: var(--green); opacity: 0.75; }
+    .card.archived { opacity: 0.65; }
+    .card.archived::before { background: var(--faint); }
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+    .card-name { color: var(--text); font-size: 16px; line-height: 1.2; font-weight: 700; letter-spacing: -0.02em; }
+    .card-phone { color: var(--muted); margin-top: 4px; font-size: 12px; }
+    .pills { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 10px; }
     .pill {
-      display: inline-flex; align-items: center; gap: 6px;
+      display: inline-flex; align-items: center; gap: 5px;
       color: var(--muted);
       border: 1px solid var(--border);
-      background: rgba(255,255,255,0.032);
-      border-radius: 999px; padding: 5px 8px;
+      background: var(--surface-2);
+      border-radius: 999px; padding: 4px 8px;
       font-size: 9px; line-height: 1;
-      font-weight: 800; letter-spacing: 0.12em;
+      font-weight: 700; letter-spacing: 0.1em;
       text-transform: uppercase; white-space: nowrap;
     }
-    .pill.hot { color: var(--red); border-color: rgba(255,100,115,0.48); background: rgba(255,100,115,0.07); }
-    .pill.warm { color: var(--orange); border-color: rgba(245,168,75,0.48); background: rgba(245,168,75,0.07); }
-    .pill.cold { color: var(--blue); border-color: rgba(111,156,255,0.48); background: rgba(111,156,255,0.07); }
-    .pill.new { color: var(--green); border-color: rgba(66,217,160,0.48); background: rgba(66,217,160,0.07); }
-    .pill.verified { color: var(--purple); border-color: rgba(184,140,255,0.48); background: rgba(184,140,255,0.07); }
-    .pill.pending { color: var(--purple); border-color: rgba(184,140,255,0.32); opacity: 0.62; }
-    .pill.owner { color: var(--gold-2); border-color: rgba(201,169,110,0.48); background: rgba(201,169,110,0.07); }
-    .card-meta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 16px; }
-    .meta-item { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; background: rgba(255,255,255,0.026); min-width: 0; }
-    .meta-label { color: var(--faint); font-size: 9px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 5px; }
-    .meta-value { color: var(--text); font-size: 12px; line-height: 1.35; overflow-wrap: anywhere; }
-    .card-ctx { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); color: #dcdcE6; font-size: 12px; line-height: 1.65; }
+    .pill.hot { color: var(--red); border-color: rgba(255,100,115,0.4); background: rgba(255,100,115,0.07); }
+    .pill.warm { color: var(--orange); border-color: rgba(245,168,75,0.4); background: rgba(245,168,75,0.07); }
+    .pill.cold { color: var(--blue); border-color: rgba(111,156,255,0.4); background: rgba(111,156,255,0.07); }
+    .pill.new { color: var(--green); border-color: rgba(66,217,160,0.4); background: rgba(66,217,160,0.07); }
+    .pill.verified { color: var(--purple); border-color: rgba(184,140,255,0.4); background: rgba(184,140,255,0.07); }
+    .pill.pending { color: var(--purple); border-color: rgba(184,140,255,0.28); opacity: 0.7; }
+    .pill.owner { color: var(--gold-2); border-color: var(--border-strong); background: rgba(201,169,110,0.06); }
+    .pill.overdue { color: var(--red); border-color: rgba(255,100,115,0.4); background: rgba(255,100,115,0.07); }
+    .pill.due-today { color: var(--green); border-color: rgba(66,217,160,0.4); background: rgba(66,217,160,0.07); }
+    .pill.archived { color: var(--faint); border-color: var(--border); }
 
+    .card-meta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
+    .meta-item { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 9px; background: var(--surface-2); min-width: 0; }
+    .meta-label { color: var(--faint); font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 3px; }
+    .meta-value { color: var(--text); font-size: 12px; line-height: 1.3; overflow-wrap: anywhere; }
+
+    .card-section {
+      margin-top: 12px; padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+    .card-section-label {
+      color: var(--faint); font-size: 9px; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+    .card-section-body {
+      color: #dcdce6; font-size: 12px; line-height: 1.55;
+    }
+    .card-section-body.crm { color: var(--gold-2); font-family: "JetBrains Mono", monospace; font-size: 11px; }
+
+    /* EMPTY / LOADING / ERROR */
     .empty, .loading-card, .err-box {
       grid-column: 1 / -1;
       border: 1px solid var(--border);
-      background: rgba(18,18,28,0.7);
+      background: var(--surface);
+      backdrop-filter: blur(20px);
       border-radius: var(--radius-lg);
-      padding: 26px; color: var(--muted); line-height: 1.65;
+      padding: 22px; color: var(--muted); line-height: 1.55;
     }
     .empty { text-align: center; }
-    .loading-card { position: relative; overflow: hidden; min-height: 120px; }
+    .empty-headline { color: var(--text); font-size: 15px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.01em; }
+    .loading-card { position: relative; overflow: hidden; min-height: 100px; }
     .loading-card::after {
       content: ""; position: absolute; inset: 0;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.055), transparent);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
       animation: shimmer 1.2s infinite;
       transform: translateX(-100%);
     }
     @keyframes shimmer { to { transform: translateX(100%); } }
-    .err-box { color: #ff9aa4; border-color: rgba(255,100,115,0.42); background: rgba(255,100,115,0.08); word-break: break-word; }
+    .err-box { color: #ff9aa4; border-color: rgba(255,100,115,0.35); background: rgba(255,100,115,0.06); word-break: break-word; }
     .err-box strong { color: #ffd7db; }
 
-    /* MODAL — ADD LEAD */
+    /* MODAL — shared by Add Lead AND Log Touch */
     .modal-backdrop {
       position: fixed; inset: 0; z-index: 5000;
-      background: rgba(5, 5, 10, 0.72);
+      background: rgba(5, 5, 10, 0.78);
       backdrop-filter: blur(8px);
       display: none;
       align-items: flex-start;
       justify-content: center;
-      padding: 24px;
+      padding: 20px;
       overflow-y: auto;
     }
     .modal-backdrop.open { display: flex; }
     .modal {
-      width: min(100%, 640px);
-      background: rgba(15, 15, 23, 0.96);
+      width: min(100%, 620px);
+      background: #0d0d14;
       border: 1px solid var(--border);
-      border-radius: 24px;
-      box-shadow: var(--shadow);
-      padding: 28px;
-      margin: 24px 0;
-      position: relative;
+      border-radius: 18px;
+      padding: 24px;
+      margin: 20px 0;
     }
-    .modal-head {
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 12px; margin-bottom: 18px;
-    }
-    .modal-title { font-size: 20px; font-weight: 900; letter-spacing: -0.02em; }
-    .modal-sub { color: var(--muted); font-size: 12px; margin-top: 4px; letter-spacing: 0.04em; }
+    .modal-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+    .modal-title { font-size: 18px; font-weight: 700; letter-spacing: -0.02em; }
+    .modal-sub { color: var(--muted); font-size: 11px; margin-top: 3px; letter-spacing: 0.04em; }
     .modal-close {
-      width: 36px; height: 36px;
+      width: 32px; height: 32px;
       border-radius: 50%;
       border: 1px solid var(--border);
-      background: rgba(255,255,255,0.04);
+      background: var(--surface-2);
       color: var(--muted);
       display: grid; place-items: center;
-      font-size: 18px; line-height: 1;
-      transition: color 150ms, border-color 150ms, background 150ms;
+      font-size: 14px;
+      transition: all 150ms;
     }
-    .modal-close:hover { color: var(--text); border-color: rgba(255,100,115,0.42); background: rgba(255,100,115,0.08); }
+    .modal-close:hover { color: var(--text); border-color: rgba(255,100,115,0.4); }
 
     .mode-toggle {
-      display: inline-flex;
-      gap: 4px;
+      display: inline-flex; gap: 3px;
       border: 1px solid var(--border);
       border-radius: 999px;
-      padding: 4px;
-      margin-bottom: 18px;
-      background: rgba(255,255,255,0.025);
+      padding: 3px;
+      margin-bottom: 14px;
+      background: var(--surface-2);
     }
     .mode-btn {
       border: 0; background: transparent; color: var(--muted);
-      padding: 7px 14px; border-radius: 999px;
-      font-size: 11px; font-weight: 800;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      transition: color 150ms, background 150ms;
+      padding: 6px 12px; border-radius: 999px;
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      transition: all 150ms;
     }
-    .mode-btn.active {
-      color: #090908;
-      background: linear-gradient(135deg, var(--gold-2), var(--gold));
-    }
+    .mode-btn.active { color: #090908; background: var(--gold); }
 
-    .form-grid { display: grid; gap: 14px; }
-    .form-row { display: grid; gap: 14px; }
+    .customer-banner {
+      border: 1px solid var(--border-strong);
+      background: rgba(201, 169, 110, 0.04);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin-bottom: 14px;
+    }
+    .customer-banner-label {
+      color: var(--gold-2); font-size: 9px; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 4px;
+    }
+    .customer-banner-name { font-size: 16px; font-weight: 700; letter-spacing: -0.02em; }
+    .customer-banner-phone { color: var(--muted); font-size: 12px; margin-top: 2px; font-family: "JetBrains Mono", monospace; }
+
+    .form-grid { display: grid; gap: 12px; }
+    .form-row { display: grid; gap: 12px; }
     .form-row.two { grid-template-columns: 1fr 1fr; }
-    .field-group { display: grid; gap: 6px; }
-    .field-label {
-      color: var(--muted);
-      font-size: 10px; font-weight: 800;
-      letter-spacing: 0.14em; text-transform: uppercase;
-    }
+    .field-group { display: grid; gap: 5px; }
+    .field-label { color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
     .field-label .req { color: var(--red); margin-left: 4px; }
-    .form-input, .form-textarea, .form-select { padding: 12px 14px; font-size: 14px; }
-    .form-textarea { min-height: 90px; resize: vertical; font-family: inherit; }
-    .form-select { appearance: none; -webkit-appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 18px) calc(50% - 3px), calc(100% - 13px) calc(50% - 3px); background-size: 5px 5px, 5px 5px; background-repeat: no-repeat; padding-right: 32px; }
+    .form-input, .form-textarea, .form-select { padding: 10px 12px; font-size: 13px; }
+    .form-textarea { min-height: 75px; resize: vertical; font-family: inherit; }
 
-    .chip-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+    /* Dropdown contrast fix — applies dark scheme to native select */
+    .form-select {
+      appearance: none; -webkit-appearance: none;
+      background-color: #0c0c14;
+      color: var(--text);
+      background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+      background-position: calc(100% - 16px) calc(50% - 3px), calc(100% - 12px) calc(50% - 3px);
+      background-size: 5px 5px, 5px 5px;
+      background-repeat: no-repeat;
+      padding-right: 30px;
+    }
+    .form-select option {
+      background-color: #0c0c14;
+      color: var(--text);
+    }
+
+    .chip-grid { display: flex; flex-wrap: wrap; gap: 5px; }
     .chip {
       border: 1px solid var(--border);
-      background: rgba(255,255,255,0.035);
+      background: var(--surface-2);
       color: var(--muted);
       border-radius: 999px;
-      padding: 7px 11px;
-      font-size: 11px; font-weight: 700;
-      letter-spacing: 0.04em;
+      padding: 6px 10px;
+      font-size: 11px; font-weight: 600;
       transition: all 150ms ease;
       user-select: none;
     }
-    .chip:hover { color: var(--text); border-color: rgba(201,169,110,0.42); }
+    .chip:hover { color: var(--text); border-color: var(--border-strong); }
     .chip.selected {
       color: #090908;
-      background: linear-gradient(135deg, var(--gold-2), var(--gold));
+      background: var(--gold);
       border-color: transparent;
     }
-
     .checkbox-row {
-      display: flex; align-items: center; gap: 10px;
-      padding: 12px 14px;
+      display: flex; align-items: center; gap: 9px;
+      padding: 10px 12px;
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
-      background: rgba(255,255,255,0.025);
+      background: var(--surface-2);
       cursor: pointer;
       user-select: none;
     }
-    .checkbox-row input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--gold); cursor: pointer; }
-    .checkbox-row span { font-size: 13px; color: var(--text); font-weight: 600; }
+    .checkbox-row input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--gold); cursor: pointer; }
+    .checkbox-row span { font-size: 12px; color: var(--text); font-weight: 600; }
+    .checkbox-row.archive {
+      border-color: rgba(255,100,115,0.32);
+      background: rgba(255,100,115,0.04);
+    }
+    .checkbox-row.archive span { color: #ff9aa4; }
 
-    .full-fields { display: none; gap: 14px; }
+    .full-fields { display: none; gap: 12px; }
     .full-fields.open { display: grid; }
-
-    .form-footer {
-      margin-top: 22px;
-      display: flex; gap: 10px;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    .form-msg {
-      font-size: 12px;
-      color: var(--muted);
-      min-height: 16px;
-      flex: 1;
-    }
+    .form-footer { margin-top: 16px; display: flex; gap: 8px; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+    .form-msg { font-size: 11px; color: var(--muted); min-height: 14px; flex: 1; }
     .form-msg.ok { color: var(--green); }
     .form-msg.err { color: var(--red); }
-    .form-actions { display: flex; gap: 10px; }
-    .submit-btn { padding: 14px 24px; }
+    .form-actions { display: flex; gap: 6px; }
+    .submit-btn { padding: 11px 20px; }
     .cancel-btn {
       border: 1px solid var(--border);
       background: transparent;
       color: var(--muted);
-      padding: 14px 18px;
+      padding: 11px 14px;
       border-radius: var(--radius-md);
-      font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+      font-weight: 700; letter-spacing: 0.08em;
       font-size: 11px;
-      transition: color 150ms, border-color 150ms, background 150ms;
+      transition: all 150ms;
     }
-    .cancel-btn:hover { color: var(--text); border-color: var(--border-strong); background: rgba(255,255,255,0.04); }
+    .cancel-btn:hover { color: var(--text); border-color: var(--border-strong); }
 
     .footer {
-      margin-top: 36px;
-      padding-top: 18px;
+      margin-top: 28px;
+      padding-top: 14px;
       border-top: 1px solid var(--border);
-      display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap;
-      color: var(--faint); font-size: 10px;
-      letter-spacing: 0.14em; text-transform: uppercase;
+      display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+      color: var(--faint); font-size: 9px;
+      letter-spacing: 0.12em; text-transform: uppercase;
     }
 
     @media (max-width: 880px) {
-      .hero-grid { grid-template-columns: 1fr; }
-      .stat-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
       .results { grid-template-columns: 1fr; }
     }
-
     @media (max-width: 640px) {
-      #app { width: min(100% - 24px, var(--max)); padding-top: 18px; }
-      .topbar { align-items: flex-start; flex-direction: column; }
-      .badge-row { justify-content: flex-start; width: 100%; }
-      .hero { border-radius: 22px; padding: 24px; }
-      .headline { font-size: 44px; }
-      .stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      #app { width: min(100% - 20px, var(--max)); padding-top: 14px; }
+      .topbar { align-items: flex-start; flex-direction: column; gap: 10px; }
+      .topbar-actions { width: 100%; justify-content: flex-start; }
       .search-row { grid-template-columns: 1fr; }
-      .search-btn, .add-btn-search { width: 100%; }
+      .search-btn { width: 100%; }
       .card-meta { grid-template-columns: 1fr; }
-      .gate-box { padding: 26px; border-radius: 24px; }
+      .gate-box { padding: 22px; border-radius: 18px; }
       .footer { display: grid; }
-      .modal { padding: 22px; margin: 12px 0; border-radius: 20px; }
+      .modal { padding: 18px; margin: 10px 0; border-radius: 14px; }
       .form-row.two { grid-template-columns: 1fr; }
+      .tab-btn { min-width: auto; flex: 1 1 calc(50% - 3px); font-size: 10px; padding: 9px 8px; }
     }
-
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: 0.001ms !important;
@@ -550,22 +638,42 @@
 </head>
 
 <body>
-  <!-- PASSWORD GATE -->
+  <!-- GATE -->
   <main id="gate" aria-label="Access gate">
     <section class="gate-shell">
       <div class="gate-box">
-        <div class="micro-label"><span class="micro-dot"></span> Store 00650 · Private Search</div>
+        <div class="gate-eyebrow"><span class="gate-dot"></span> Store 00650 · Workstation</div>
         <h1 class="gate-title">650 <span>LeadForge</span></h1>
-        <p class="gate-copy">Unlock the contact search dashboard. Built for fast lookup, cleaner follow-up, and sharper customer conversion discipline.</p>
+        <p class="gate-copy">Search, log touches, and keep the book moving. Built for floor speed.</p>
 
-        <form class="gate-form" onsubmit="event.preventDefault(); tryGate();">
-          <label class="sr-only" for="gate-input">Access code</label>
+        <div class="gate-step-label"><span class="gate-step-num">1</span> Select your rep</div>
+        <div class="rep-grid" id="rep-grid">
+          <button class="rep-card" type="button" data-rep="DG" onclick="selectRep('DG')">
+            <div class="rep-initials">DG</div>
+            <div class="rep-role">SAM</div>
+          </button>
+          <button class="rep-card" type="button" data-rep="KB" onclick="selectRep('KB')">
+            <div class="rep-initials">KB</div>
+            <div class="rep-role">CAM</div>
+          </button>
+          <button class="rep-card" type="button" data-rep="TH" onclick="selectRep('TH')">
+            <div class="rep-initials">TH</div>
+            <div class="rep-role">CAR</div>
+          </button>
+          <button class="rep-card" type="button" data-rep="KT" onclick="selectRep('KT')">
+            <div class="rep-initials">KT</div>
+            <div class="rep-role">CAR</div>
+          </button>
+        </div>
+
+        <div class="gate-step-label"><span class="gate-step-num">2</span> Enter access code</div>
+        <form class="gate-form locked" id="gate-form" onsubmit="event.preventDefault(); tryGate();">
           <input id="gate-input" class="gate-input mono" type="password" placeholder="ACCESS CODE" autocomplete="off" />
-          <button class="primary-btn" type="submit">Unlock Dashboard</button>
+          <button class="primary-btn" type="submit" id="gate-submit" disabled>Unlock</button>
           <div id="gate-err" class="gate-err mono" role="alert" aria-live="polite"></div>
         </form>
 
-        <p class="security-note mono">Client-side gates are visual barriers only. Real protection lives in the Cloudflare Worker and Notion permissions.</p>
+        <p class="security-note mono">Rep selection presets Owner on new entries and powers My Work.</p>
       </div>
     </section>
   </main>
@@ -576,55 +684,58 @@
       <div class="brand-lockup">
         <div class="mark" aria-hidden="true">650</div>
         <div>
-          <div class="logo">650 LeadForge</div>
-          <div class="logo-sub mono">Contact Log · Live Search & Add</div>
+          <div class="logo">LeadForge</div>
+          <div class="logo-sub mono">Workstation</div>
         </div>
       </div>
-
-      <div class="badge-row">
-        <div id="status-badge" class="badge idle">Ready</div>
+      <div class="topbar-actions">
+        <div id="rep-badge" class="rep-badge">REP · DG</div>
         <button class="add-btn" type="button" onclick="openAddModal()"><span class="plus">+</span> Add Lead</button>
         <button class="ghost-btn mono" type="button" onclick="lockApp()">Lock</button>
       </div>
     </header>
 
-    <section class="hero" aria-label="Dashboard overview">
-      <div class="hero-grid">
-        <div>
-          <div class="eyebrow mono">Williamsport · 437 Hepburn St</div>
-          <h2 class="headline">Find the lead. Make the <span>next move.</span></h2>
-          <p class="hero-copy">Search customer records, log new leads in seconds, and keep follow-up discipline tight. Built for floor speed.</p>
+    <!-- STATUS STRIP (replaces the old hero) -->
+    <section class="status-strip" aria-label="Live status">
+      <div class="status-strip-left">
+        <div id="live-status" class="status-pill idle">
+          <span class="dot"></span> <strong id="status-state">Ready</strong>
         </div>
-
-        <div class="stat-grid" aria-label="Operating metrics">
-          <div class="stat-card">
-            <div class="stat-value" id="stat-results">0</div>
-            <div class="stat-label mono">Results Loaded</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value">25</div>
-            <div class="stat-label mono">Max Per Search</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value">Live</div>
-            <div class="stat-label mono">Notion Source</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value">650</div>
-            <div class="stat-label mono">Store Focus</div>
-          </div>
-        </div>
+        <div class="status-pill"><strong id="status-count">0</strong> in view</div>
+        <div class="status-pill"><strong id="status-tab">Search</strong></div>
       </div>
+      <div class="status-strip-right mono" id="status-updated">Awaiting</div>
     </section>
 
-    <section class="control-panel" aria-label="Search controls">
+    <!-- TABS -->
+    <nav class="tabs-row" id="tabs-row" aria-label="Workstation views">
+      <button class="tab-btn active" type="button" data-tab="search" onclick="setTab('search')">
+        <span class="tab-emoji">🔎</span> Search
+      </button>
+      <button class="tab-btn" type="button" data-tab="due-today" onclick="setTab('due-today')">
+        <span class="tab-emoji">🟢</span> Due Today <span class="tab-count" id="count-due-today">·</span>
+      </button>
+      <button class="tab-btn" type="button" data-tab="hot" onclick="setTab('hot')">
+        <span class="tab-emoji">🔥</span> Hot <span class="tab-count" id="count-hot">·</span>
+      </button>
+      <button class="tab-btn" type="button" data-tab="my-work" onclick="setTab('my-work')">
+        <span class="tab-emoji">👥</span> My Work <span class="tab-count" id="count-my-work">·</span>
+      </button>
+      <button class="tab-btn" type="button" data-tab="all" onclick="setTab('all')">
+        <span class="tab-emoji">📋</span> All
+      </button>
+      <button class="tab-btn" type="button" data-tab="archive" onclick="setTab('archive')">
+        <span class="tab-emoji">📦</span> Archive
+      </button>
+    </nav>
+
+    <!-- SEARCH CONTROLS (only on Search tab) -->
+    <section class="control-panel" id="search-controls" aria-label="Search controls">
       <div class="search-row">
         <label class="sr-only" for="q">Search by name or phone</label>
         <input id="q" class="search-input mono" type="search" placeholder="Search by name or phone — leave blank for recent" autocomplete="off" onkeydown="if(event.key==='Enter')runSearch()" />
         <button class="primary-btn search-btn" type="button" onclick="runSearch()">Search</button>
-        <button class="add-btn add-btn-search" type="button" onclick="openAddModal()"><span class="plus">+</span> New</button>
       </div>
-
       <div class="quick-filters" aria-label="Quick searches">
         <button class="filter-btn mono" type="button" onclick="quickFilter('recent')">Recent</button>
         <button class="filter-btn mono" type="button" onclick="quickFilter('Hot')">Hot</button>
@@ -632,18 +743,15 @@
         <button class="filter-btn mono" type="button" onclick="quickFilter('Pending')">Pending</button>
         <button class="filter-btn mono" type="button" onclick="quickFilter('Verified')">Verified</button>
       </div>
-
-      <div class="panel-meta mono">
-        <div id="status" class="status" aria-live="polite"></div>
-        <div id="last-updated">Awaiting search</div>
-      </div>
     </section>
 
+    <!-- VIEW HEAD -->
     <section class="results-head" aria-label="Results heading">
       <div>
-        <h3 class="section-title">Search Results</h3>
-        <p class="section-kicker">Prioritize contacts with a clear next step, owner, and follow-up window.</p>
+        <h3 class="section-title" id="view-title">Search</h3>
+        <p class="section-kicker" id="view-kicker">Look up customers by name or phone. Click any card to log a new touch.</p>
       </div>
+      <button class="refresh-btn mono" type="button" onclick="refreshCurrentTab()"><span>↻</span> Refresh</button>
     </section>
 
     <section id="results" class="results" aria-live="polite"></section>
@@ -651,27 +759,25 @@
     <footer class="footer mono">
       <span>437 Hepburn St · Williamsport, PA</span>
       <span>(570) 322-4900</span>
+      <span>Notion Live · Store 00650</span>
     </footer>
   </div>
 
   <!-- ADD LEAD MODAL -->
-  <div id="add-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div id="add-modal" class="modal-backdrop" role="dialog" aria-modal="true">
     <div class="modal">
       <div class="modal-head">
         <div>
-          <div id="modal-title" class="modal-title">Add New Lead</div>
-          <div class="modal-sub mono">Quick capture — Notion logs the entry instantly</div>
+          <div class="modal-title">Add New Lead</div>
+          <div class="modal-sub mono">First touch — Notion logs the entry instantly</div>
         </div>
         <button class="modal-close" type="button" onclick="closeAddModal()" aria-label="Close">✕</button>
       </div>
-
-      <div class="mode-toggle" role="tablist">
+      <div class="mode-toggle">
         <button class="mode-btn active" type="button" onclick="setMode('quick')" id="mode-quick">Quick</button>
         <button class="mode-btn" type="button" onclick="setMode('full')" id="mode-full">Full Profile</button>
       </div>
-
       <form id="add-form" class="form-grid" onsubmit="event.preventDefault(); submitLead();">
-        <!-- QUICK FIELDS (always visible) -->
         <div class="form-row two">
           <div class="field-group">
             <label class="field-label" for="f-name">Customer Name <span class="req">*</span></label>
@@ -682,12 +788,10 @@
             <input id="f-phone" class="form-input" type="tel" placeholder="(570) 555-0100" autocomplete="off" />
           </div>
         </div>
-
         <div class="field-group">
           <label class="field-label" for="f-context">Context / Notes</label>
-          <textarea id="f-context" class="form-textarea" placeholder="What did they want? What did you say? Promised callback? Wishlist mention? Capture it now."></textarea>
+          <textarea id="f-context" class="form-textarea" placeholder="What did they want? What did you say? Promised callback? Capture it now."></textarea>
         </div>
-
         <div class="form-row two">
           <div class="field-group">
             <label class="field-label" for="f-owner">Owner</label>
@@ -709,8 +813,6 @@
             </select>
           </div>
         </div>
-
-        <!-- FULL FIELDS (toggle) -->
         <div id="full-fields" class="full-fields">
           <div class="form-row two">
             <div class="field-group">
@@ -746,7 +848,6 @@
               </select>
             </div>
           </div>
-
           <div class="form-row two">
             <div class="field-group">
               <label class="field-label" for="f-nextstep">Next Step</label>
@@ -760,14 +861,13 @@
               </select>
             </div>
             <div class="field-group">
-              <label class="field-label" for="f-when">Follow-Up Date (WHEN)</label>
+              <label class="field-label" for="f-when">Follow-Up Date</label>
               <input id="f-when" class="form-input" type="date" />
             </div>
           </div>
-
           <div class="field-group">
             <label class="field-label">Temp</label>
-            <div class="chip-grid" id="chips-temp" data-name="temp">
+            <div class="chip-grid" id="chips-temp">
               <button class="chip selected" type="button" data-value="New Lead">New Lead</button>
               <button class="chip" type="button" data-value="Hot">Hot</button>
               <button class="chip" type="button" data-value="Warm">Warm</button>
@@ -776,10 +876,9 @@
               <button class="chip" type="button" data-value="⭐ VERIFIED - Returning Customer">⭐ Verified</button>
             </div>
           </div>
-
           <div class="field-group">
             <label class="field-label">Wish List</label>
-            <div class="chip-grid" id="chips-wishlist" data-name="wishlist">
+            <div class="chip-grid" id="chips-wishlist">
               <button class="chip" type="button" data-value="TV / Entertainment">TV / Entertainment</button>
               <button class="chip" type="button" data-value="Living Room Furniture">Living Room</button>
               <button class="chip" type="button" data-value="Bedroom / Mattress">Bedroom / Mattress</button>
@@ -790,11 +889,10 @@
               <button class="chip" type="button" data-value="Bundle / Multi-Item">Bundle</button>
             </div>
           </div>
-
           <div class="form-row two">
-            <label class="checkbox-row">
-              <input id="f-sold" type="checkbox" />
-              <span>SOLD / ON RENT</span>
+            <label class="checkbox-row archive">
+              <input id="f-archived" type="checkbox" />
+              <span>Archive (Sold / Closed)</span>
             </label>
             <label class="checkbox-row">
               <input id="f-logged" type="checkbox" />
@@ -802,12 +900,122 @@
             </label>
           </div>
         </div>
-
         <div class="form-footer">
           <div id="form-msg" class="form-msg mono"></div>
           <div class="form-actions">
             <button class="cancel-btn" type="button" onclick="closeAddModal()">Cancel</button>
             <button class="primary-btn submit-btn" type="submit" id="submit-btn">Save Lead</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- LOG TOUCH MODAL (card click) -->
+  <div id="touch-modal" class="modal-backdrop" role="dialog" aria-modal="true">
+    <div class="modal">
+      <div class="modal-head">
+        <div>
+          <div class="modal-title">Log New Touch</div>
+          <div class="modal-sub mono">Creates a new row — original history preserved</div>
+        </div>
+        <button class="modal-close" type="button" onclick="closeTouchModal()" aria-label="Close">✕</button>
+      </div>
+      <div class="customer-banner">
+        <div class="customer-banner-label">Customer</div>
+        <div class="customer-banner-name" id="touch-customer-name">—</div>
+        <div class="customer-banner-phone" id="touch-customer-phone"></div>
+      </div>
+      <form id="touch-form" class="form-grid" onsubmit="event.preventDefault(); submitTouch();">
+        <div class="form-row two">
+          <div class="field-group">
+            <label class="field-label" for="t-touch">Touch</label>
+            <select id="t-touch" class="form-select">
+              <option value="Phone Call" selected>Phone Call</option>
+              <option value="Walk-In/In Store">Walk-In/In Store</option>
+              <option value="New Lead">New Lead</option>
+              <option value="No Contact - Left VM">No Contact - Left VM</option>
+              <option value="No Contact - No Answer">No Contact - No Answer</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="t-purpose">Purpose</label>
+            <select id="t-purpose" class="form-select">
+              <option value="Follow-Up" selected>Follow-Up</option>
+              <option value="CTC">CTC</option>
+              <option value="New Lead">New Lead</option>
+              <option value="Conversion/Reactivation">Conversion/Reactivation</option>
+              <option value="Service Issue">Service Issue</option>
+              <option value="Amazon">Amazon</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row two">
+          <div class="field-group">
+            <label class="field-label" for="t-result">Result <span class="req">*</span></label>
+            <select id="t-result" class="form-select" required>
+              <option value="">— Select —</option>
+              <option value="Positive Response">Positive Response</option>
+              <option value="Committed">Committed</option>
+              <option value="Agreement Signed">Agreement Signed</option>
+              <option value="Needs Follow-Up">Needs Follow-Up</option>
+              <option value="Left Message">Left Message</option>
+              <option value="OBJ — Price / Weekly">OBJ — Price / Weekly</option>
+              <option value="OBJ — Total Cost">OBJ — Total Cost</option>
+              <option value="OBJ — Timing">OBJ — Timing</option>
+              <option value="OBJ — Needs to Think">OBJ — Needs to Think</option>
+              <option value="OBJ — Needs Partner">OBJ — Needs Partner</option>
+              <option value="No Answer">No Answer</option>
+              <option value="Not Interested">Not Interested</option>
+              <option value="Wrong Number">Wrong Number</option>
+              <option value="Broken Promise">Broken Promise</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="t-nextstep">Next Step</label>
+            <select id="t-nextstep" class="form-select">
+              <option value="">— None —</option>
+              <option value="CB/Follow Up" selected>CB/Follow Up</option>
+              <option value="Come Into Store">Come Into Store</option>
+              <option value="Write Agreement">Write Agreement</option>
+              <option value="SOLD/ON RENT">SOLD/ON RENT</option>
+              <option value="No Further Action">No Further Action</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="t-when">Follow-Up Date</label>
+          <input id="t-when" class="form-input" type="date" />
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="t-context">Context / Notes</label>
+          <textarea id="t-context" class="form-textarea" placeholder="What was discussed? Objections? Commitments? Next move?"></textarea>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Temp Update</label>
+          <div class="chip-grid" id="chips-touch-temp">
+            <button class="chip" type="button" data-value="Hot">Hot</button>
+            <button class="chip" type="button" data-value="Warm">Warm</button>
+            <button class="chip" type="button" data-value="Cold">Cold</button>
+            <button class="chip" type="button" data-value="Pending">Pending</button>
+            <button class="chip" type="button" data-value="⭐ VERIFIED - Returning Customer">⭐ Verified</button>
+          </div>
+        </div>
+        <div class="form-row two">
+          <label class="checkbox-row archive">
+            <input id="t-archived" type="checkbox" />
+            <span>Archive (Sold / Closed)</span>
+          </label>
+          <label class="checkbox-row">
+            <input id="t-logged" type="checkbox" />
+            <span>Logged in Salesforce</span>
+          </label>
+        </div>
+        <div class="form-footer">
+          <div id="touch-msg" class="form-msg mono"></div>
+          <div class="form-actions">
+            <button class="cancel-btn" type="button" onclick="closeTouchModal()">Cancel</button>
+            <button class="primary-btn submit-btn" type="submit" id="touch-submit-btn">Log Touch</button>
           </div>
         </div>
       </form>
@@ -821,43 +1029,43 @@
     const WORKER_URL  = 'https://650-search-proxy.dnljgrnr.workers.dev';
     const DATABASE_ID = '08e4ef11-b30d-462c-a447-9a1d9045be72';
     const ACCESS_CODE = 'GOATS650';
-    const SESSION_KEY = 'lf_unlocked_v3';
+    const SESSION_KEY = 'lf_unlocked_v5';
+    const REP_KEY = 'lf_rep_v5';
     // =================================================================
 
+    // STATE
+    let currentTab = 'search';
+    let currentRep = null;
     let activeFilter = null;
-    let currentMode = 'quick';
+    let pendingRepSelection = null;
+    let activeCustomer = null; // { name, phone } for touch modal
 
     const $ = (id) => document.getElementById(id);
 
-    // ----- GATE / APP TOGGLE -----
-    function showApp() {
-      $('gate').style.display = 'none';
-      $('app').style.display = 'block';
-      $('q').focus();
-      runSearch();
-    }
-
-    function lockApp() {
-      sessionStorage.removeItem(SESSION_KEY);
-      $('app').style.display = 'none';
-      $('gate').style.display = 'grid';
-      $('gate-input').value = '';
+    // ===== GATE / REP SELECTION =====
+    function selectRep(initials) {
+      pendingRepSelection = initials;
+      document.querySelectorAll('.rep-card').forEach(card => {
+        card.classList.toggle('selected', card.dataset.rep === initials);
+      });
+      $('gate-form').classList.remove('locked');
+      $('gate-submit').disabled = false;
       $('gate-input').focus();
-      setBadge('Ready', 'idle');
-      setStatus('', '');
-      $('results').innerHTML = '';
-      $('stat-results').textContent = '0';
-      activeFilter = null;
-      clearActiveFilterButton();
-      closeAddModal();
     }
 
     function tryGate() {
       const input = $('gate-input');
       const err = $('gate-err');
       const value = input.value.trim();
+      if (!pendingRepSelection) {
+        err.textContent = 'SELECT YOUR REP FIRST';
+        setTimeout(() => { err.textContent = ''; }, 1800);
+        return;
+      }
       if (value === ACCESS_CODE) {
         sessionStorage.setItem(SESSION_KEY, '1');
+        sessionStorage.setItem(REP_KEY, pendingRepSelection);
+        currentRep = pendingRepSelection;
         err.textContent = '';
         showApp();
         return;
@@ -868,37 +1076,64 @@
       setTimeout(() => { err.textContent = ''; }, 1800);
     }
 
+    function showApp() {
+      $('gate').style.display = 'none';
+      $('app').style.display = 'block';
+      $('rep-badge').textContent = 'REP · ' + currentRep;
+      $('f-owner').value = currentRep;
+      setTab('due-today');
+    }
+
+    function lockApp() {
+      sessionStorage.removeItem(SESSION_KEY);
+      sessionStorage.removeItem(REP_KEY);
+      currentRep = null;
+      pendingRepSelection = null;
+      $('app').style.display = 'none';
+      $('gate').style.display = 'grid';
+      $('gate-input').value = '';
+      $('gate-form').classList.add('locked');
+      $('gate-submit').disabled = true;
+      document.querySelectorAll('.rep-card').forEach(c => c.classList.remove('selected'));
+      setLiveStatus('Ready', 'idle');
+      $('results').innerHTML = '';
+      $('status-count').textContent = '0';
+      activeFilter = null;
+      clearActiveFilterButton();
+      closeAddModal();
+      closeTouchModal();
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
-      if (sessionStorage.getItem(SESSION_KEY) === '1') showApp();
-      else $('gate-input').focus();
+      const savedRep = sessionStorage.getItem(REP_KEY);
+      if (sessionStorage.getItem(SESSION_KEY) === '1' && savedRep) {
+        currentRep = savedRep;
+        showApp();
+      }
       initChipHandlers();
-      // Escape closes modal
       document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && $('add-modal').classList.contains('open')) closeAddModal();
+        if (e.key === 'Escape') {
+          if ($('add-modal').classList.contains('open')) closeAddModal();
+          if ($('touch-modal').classList.contains('open')) closeTouchModal();
+        }
       });
     });
 
-    // ----- UTILITY -----
-    function setStatus(message, className) {
-      const status = $('status');
-      status.textContent = message;
-      status.className = 'status' + (className ? ' ' + className : '');
-    }
-    function setBadge(text, className) {
-      const badge = $('status-badge');
-      badge.textContent = text;
-      badge.className = 'badge' + (className ? ' ' + className : '');
+    // ===== UTILITIES =====
+    function setLiveStatus(stateText, className) {
+      $('status-state').textContent = stateText;
+      $('live-status').className = 'status-pill' + (className ? ' ' + className : '');
     }
     function setLastUpdated() {
       const now = new Date();
-      $('last-updated').textContent = 'Updated ' + now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+      $('status-updated').textContent = 'Updated ' + now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
     }
     function clearActiveFilterButton() {
-      document.querySelectorAll('.filter-btn').forEach((btn) => btn.classList.remove('active'));
+      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
     }
     function setActiveFilterButton(label) {
       clearActiveFilterButton();
-      document.querySelectorAll('.filter-btn').forEach((btn) => {
+      document.querySelectorAll('.filter-btn').forEach(btn => {
         if (btn.textContent.trim().toLowerCase() === label.toLowerCase()) btn.classList.add('active');
       });
     }
@@ -909,6 +1144,8 @@
     function pillClass(value) {
       if (!value) return '';
       const text = String(value).toLowerCase();
+      if (text.includes('overdue')) return 'overdue';
+      if (text.includes('due today')) return 'due-today';
       if (text.includes('hot')) return 'hot';
       if (text.includes('warm')) return 'warm';
       if (text.includes('cold')) return 'cold';
@@ -918,16 +1155,16 @@
       return '';
     }
 
-    // ----- NOTION PROPERTY EXTRACTION (READ) -----
+    // ===== NOTION PROP EXTRACTION =====
     function getProp(properties, name) {
       if (!properties || !properties[name]) return null;
       const prop = properties[name];
       switch (prop.type) {
-        case 'title': return prop.title.map((i) => i.plain_text).join('');
-        case 'rich_text': return prop.rich_text.map((i) => i.plain_text).join('');
+        case 'title': return prop.title.map(i => i.plain_text).join('');
+        case 'rich_text': return prop.rich_text.map(i => i.plain_text).join('');
         case 'phone_number': return prop.phone_number;
         case 'select': return prop.select ? prop.select.name : null;
-        case 'multi_select': return prop.multi_select.map((i) => i.name);
+        case 'multi_select': return prop.multi_select.map(i => i.name);
         case 'date': return prop.date ? prop.date.start : null;
         case 'checkbox': return prop.checkbox;
         case 'formula':
@@ -943,13 +1180,13 @@
       }
     }
 
-    // ----- CARD RENDERING -----
+    // ===== CARD RENDER =====
     function metaItem(label, value) {
       if (!value && value !== 0) return '';
-      return `<div class="meta-item"><div class="meta-label mono">${escapeHtml(label)}</div><div class="meta-value mono">${escapeHtml(value)}</div></div>`;
+      return `<div class="meta-item"><div class="meta-label">${escapeHtml(label)}</div><div class="meta-value mono">${escapeHtml(value)}</div></div>`;
     }
 
-    function renderCard(page) {
+    function renderCard(page, index) {
       const p = page.properties || {};
       const name = getProp(p, 'Customer Name') || 'Unnamed Contact';
       const phone = getProp(p, 'Phone') || '';
@@ -961,13 +1198,25 @@
       const when = getProp(p, 'WHEN') || '';
       const context = getProp(p, 'Context') || '';
       const status = getProp(p, 'Status') || '';
+      const archived = getProp(p, 'Archived') === true;
+      const crmNote = getProp(p, 'Log in SalesForce') || '';
+
+      let cardClass = 'card';
+      if (archived) cardClass += ' archived';
+      else if (status && status.toLowerCase().includes('overdue')) cardClass += ' overdue';
+      else if (status && status.toLowerCase().includes('due today')) cardClass += ' due-today';
 
       const pills = [];
-      if (status) pills.push(`<span class="pill ${pillClass(status)}">${escapeHtml(status)}</span>`);
-      if (Array.isArray(temps)) temps.forEach((t) => pills.push(`<span class="pill ${pillClass(t)}">${escapeHtml(t)}</span>`));
+      if (archived) pills.push(`<span class="pill archived">📦 Archived</span>`);
+      else if (status) pills.push(`<span class="pill ${pillClass(status)}">${escapeHtml(status)}</span>`);
+      if (Array.isArray(temps)) temps.forEach(t => pills.push(`<span class="pill ${pillClass(t)}">${escapeHtml(t)}</span>`));
+
+      // Escape for data-* attributes (single quotes need extra care for the onclick)
+      const safeName = escapeHtml(name).replace(/'/g, '&#39;');
+      const safePhone = escapeHtml(phone).replace(/'/g, '&#39;');
 
       return `
-        <article class="card">
+        <article class="${cardClass}" data-name="${safeName}" data-phone="${safePhone}" onclick="openTouchModal(this)">
           <div class="card-top">
             <div>
               <h4 class="card-name">${escapeHtml(name)}</h4>
@@ -982,56 +1231,264 @@
             ${metaItem('Next Step', nextStep)}
             ${metaItem('When', when)}
           </div>
-          ${context ? `<div class="card-ctx mono">${escapeHtml(context)}</div>` : ''}
+          ${context ? `
+            <div class="card-section">
+              <div class="card-section-label">Context</div>
+              <div class="card-section-body">${escapeHtml(context)}</div>
+            </div>
+          ` : ''}
+          ${crmNote ? `
+            <div class="card-section">
+              <div class="card-section-label">Last CRM Note</div>
+              <div class="card-section-body crm">${escapeHtml(crmNote)}</div>
+            </div>
+          ` : ''}
         </article>
       `;
     }
 
     function renderLoading() {
-      $('results').innerHTML = `<div class="loading-card mono">Loading contact records from Notion...</div>`;
+      $('results').innerHTML = `<div class="loading-card mono">Loading from Notion…</div>`;
+    }
+
+    function renderEmpty(message, headline) {
+      $('results').innerHTML = `
+        <div class="empty mono">
+          ${headline ? `<div class="empty-headline">${escapeHtml(headline)}</div>` : ''}
+          ${escapeHtml(message)}
+        </div>
+      `;
     }
 
     function renderError(httpStatus, data) {
-      setBadge('Error', 'err');
-      $('stat-results').textContent = '0';
+      setLiveStatus('Error', 'err');
+      $('status-count').textContent = '0';
       const message = (data && (data.error || data.message)) || 'Unknown error';
       const code = (data && data.code) ? data.code : '';
       let hint = '';
-      if (httpStatus === 500 && /NOTION_TOKEN/i.test(message)) hint = '<br><br><strong>Fix:</strong> Cloudflare → Workers → 650-search-proxy → Settings → Variables and Secrets → add secret NOTION_TOKEN.';
-      else if (httpStatus === 401 || code === 'unauthorized') hint = '<br><br><strong>Fix:</strong> Notion token invalid or expired. Get a fresh one at notion.so/my-integrations.';
-      else if (httpStatus === 404 || /object_not_found|could not find/i.test(message)) hint = '<br><br><strong>Fix:</strong> Open Contact Log in Notion → ⋯ menu → Connections → add your integration.';
-      else if (httpStatus === 400 && /validation/i.test(message)) hint = '<br><br><strong>Fix:</strong> Confirm DATABASE_ID and property names match exactly.';
+      if (httpStatus === 500 && /NOTION_TOKEN/i.test(message)) hint = '<br><br><strong>Fix:</strong> Cloudflare → 650-search-proxy → Settings → Variables and Secrets → NOTION_TOKEN.';
+      else if (httpStatus === 401 || code === 'unauthorized') hint = '<br><br><strong>Fix:</strong> Notion token invalid. Refresh at notion.so/my-integrations.';
+      else if (httpStatus === 404 || /object_not_found|could not find/i.test(message)) hint = '<br><br><strong>Fix:</strong> Open Contact Log → ⋯ → Connections → add integration.';
+      else if (httpStatus === 400 && /validation/i.test(message)) hint = '<br><br><strong>Fix:</strong> Check property names match Notion exactly.';
       let raw = '';
       try { raw = JSON.stringify(data).slice(0, 500); } catch (e) { raw = String(data).slice(0, 500); }
       $('results').innerHTML = `<div class="err-box mono"><strong>HTTP ${escapeHtml(httpStatus)}${code ? ' · ' + escapeHtml(code) : ''}</strong><br>${escapeHtml(message)}${hint}<br><br><strong>Raw:</strong> ${escapeHtml(raw)}</div>`;
-      setStatus('Request failed — see diagnostic above.', 'err');
       setLastUpdated();
     }
 
-    // ----- QUERY BUILD -----
-    function buildRequestBody(query) {
+    // ===== TAB CONFIG =====
+    const TAB_CONFIG = {
+      'search': {
+        title: 'Search',
+        kicker: 'Look up customers by name or phone. Click any card to log a new touch.',
+        showSearchControls: true,
+        statName: 'Search'
+      },
+      'due-today': {
+        title: 'Due Today',
+        kicker: 'Today\'s work + overdue. Hit these first.',
+        showSearchControls: false,
+        statName: 'Due Today'
+      },
+      'hot': {
+        title: 'Hot Leads',
+        kicker: 'Customers marked Hot. Active closes — call first, follow up hardest.',
+        showSearchControls: false,
+        statName: 'Hot'
+      },
+      'my-work': {
+        title: 'My Work',
+        kicker: 'Your assigned contacts. Sorted by follow-up date.',
+        showSearchControls: false,
+        statName: 'My Work'
+      },
+      'all': {
+        title: 'All Contacts',
+        kicker: 'Every active contact. Sorted by most recently updated.',
+        showSearchControls: false,
+        statName: 'All'
+      },
+      'archive': {
+        title: 'Archive',
+        kicker: 'Sold or closed contacts. Read-only history.',
+        showSearchControls: false,
+        statName: 'Archive'
+      }
+    };
+
+    function setTab(tab) {
+      currentTab = tab;
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tab);
+      });
+      const cfg = TAB_CONFIG[tab];
+      $('view-title').textContent = cfg.title;
+      $('view-kicker').textContent = cfg.kicker;
+      $('status-tab').textContent = cfg.statName;
+      $('search-controls').style.display = cfg.showSearchControls ? '' : 'none';
+      if (tab !== 'search') {
+        activeFilter = null;
+        clearActiveFilterButton();
+      }
+      loadTab();
+    }
+
+    function refreshCurrentTab() { loadTab(); }
+
+    // ===== QUERY BUILDERS =====
+    // All non-archive tabs filter Archived ≠ TRUE (which in Notion = checkbox equals false)
+    function archivedFalseFilter() {
+      return { property: 'Archived', checkbox: { equals: false } };
+    }
+
+    function buildSearchBody(query) {
       const body = {
         action: 'query',
         databaseId: DATABASE_ID,
-        page_size: 25,
+        page_size: 50,
         sorts: [{ property: 'Last Updated', direction: 'descending' }]
       };
+      const filters = [archivedFalseFilter()];
       if (activeFilter) {
         const tempValue = activeFilter === 'Verified' ? '⭐ VERIFIED - Returning Customer' : activeFilter;
-        body.filter = { property: 'Temp', multi_select: { contains: tempValue } };
-        return body;
-      }
-      if (query) {
-        body.filter = {
+        filters.push({ property: 'Temp', multi_select: { contains: tempValue } });
+      } else if (query) {
+        filters.push({
           or: [
             { property: 'Customer Name', title: { contains: query } },
             { property: 'Phone', phone_number: { contains: query } }
           ]
-        };
+        });
       }
+      body.filter = filters.length === 1 ? filters[0] : { and: filters };
       return body;
     }
 
+    function buildDueTodayBody() {
+      return {
+        action: 'query',
+        databaseId: DATABASE_ID,
+        page_size: 50,
+        sorts: [{ property: 'WHEN', direction: 'ascending' }],
+        filter: {
+          and: [
+            archivedFalseFilter(),
+            { or: [
+              { property: 'Status', formula: { string: { equals: '🔴 Overdue' } } },
+              { property: 'Status', formula: { string: { equals: '🟢 Due Today' } } }
+            ]}
+          ]
+        }
+      };
+    }
+
+    function buildHotBody() {
+      return {
+        action: 'query',
+        databaseId: DATABASE_ID,
+        page_size: 50,
+        sorts: [{ property: 'Last Updated', direction: 'descending' }],
+        filter: {
+          and: [
+            archivedFalseFilter(),
+            { property: 'Temp', multi_select: { contains: 'Hot' } }
+          ]
+        }
+      };
+    }
+
+    function buildMyWorkBody() {
+      return {
+        action: 'query',
+        databaseId: DATABASE_ID,
+        page_size: 50,
+        sorts: [{ property: 'WHEN', direction: 'ascending' }],
+        filter: {
+          and: [
+            archivedFalseFilter(),
+            { property: 'Owner', select: { equals: currentRep } }
+          ]
+        }
+      };
+    }
+
+    function buildAllBody() {
+      return {
+        action: 'query',
+        databaseId: DATABASE_ID,
+        page_size: 50,
+        sorts: [{ property: 'Last Updated', direction: 'descending' }],
+        filter: archivedFalseFilter()
+      };
+    }
+
+    function buildArchiveBody() {
+      return {
+        action: 'query',
+        databaseId: DATABASE_ID,
+        page_size: 50,
+        sorts: [{ property: 'Last Updated', direction: 'descending' }],
+        filter: { property: 'Archived', checkbox: { equals: true } }
+      };
+    }
+
+    // ===== LOADER =====
+    async function loadTab() {
+      if (currentTab === 'search') return runSearch();
+      let body, label;
+      switch (currentTab) {
+        case 'due-today': body = buildDueTodayBody(); label = 'Loading today\'s work…'; break;
+        case 'hot': body = buildHotBody(); label = 'Loading hot pipeline…'; break;
+        case 'my-work': body = buildMyWorkBody(); label = 'Loading your assigned contacts…'; break;
+        case 'all': body = buildAllBody(); label = 'Loading all contacts…'; break;
+        case 'archive': body = buildArchiveBody(); label = 'Loading archived contacts…'; break;
+        default: return;
+      }
+      setLiveStatus('Loading', 'idle');
+      renderLoading();
+      try {
+        const response = await fetch(WORKER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        let data;
+        try { data = await response.json(); } catch (e) { data = { error: 'Non-JSON response from Worker.' }; }
+        if (!response.ok) { renderError(response.status, data); return; }
+        const pages = Array.isArray(data.results) ? data.results : [];
+        $('status-count').textContent = String(pages.length);
+        setLiveStatus('Live', '');
+        updateTabCount(currentTab, pages.length);
+        setLastUpdated();
+        if (!pages.length) { renderTabEmptyState(currentTab); return; }
+        $('results').innerHTML = pages.map(renderCard).join('');
+      } catch (error) {
+        setLiveStatus('Network', 'err');
+        $('status-count').textContent = '0';
+        $('results').innerHTML = `<div class="err-box mono"><strong>Network / CORS Error</strong><br>${escapeHtml(error.message)}<br><br><strong>Fix:</strong> Worker may be down or unreachable.</div>`;
+        setLastUpdated();
+      }
+    }
+
+    function updateTabCount(tab, count) {
+      const el = $('count-' + tab);
+      if (el) el.textContent = count;
+    }
+
+    function renderTabEmptyState(tab) {
+      const messages = {
+        'search': { headline: 'No matches', body: 'Try a shorter name, partial phone, or leave blank for recent.' },
+        'due-today': { headline: 'Clean slate', body: 'No overdue or due-today contacts. Either ahead of the curve or time to add new leads.' },
+        'hot': { headline: 'No Hot tagged', body: 'Add new ones via + Add Lead or tag existing contacts as Hot in a touch entry.' },
+        'my-work': { headline: 'Empty queue', body: `No contacts assigned to ${currentRep}. Either caught up or time to log new leads.` },
+        'all': { headline: 'Nothing active', body: 'No active contacts. + Add Lead to capture the first.' },
+        'archive': { headline: 'Empty archive', body: 'No sold/closed contacts yet. Archive triggers when a touch entry has Archive checked.' }
+      };
+      const m = messages[tab] || { headline: 'No results', body: 'Nothing to show.' };
+      renderEmpty(m.body, m.headline);
+    }
+
+    // ===== SEARCH (for Search tab) =====
     function quickFilter(value) {
       $('q').value = '';
       if (value === 'recent' || !value) {
@@ -1048,108 +1505,85 @@
     async function runSearch() {
       const query = $('q').value.trim();
       if (query) { activeFilter = null; clearActiveFilterButton(); }
-      setBadge('Searching', 'idle');
-      let statusMsg;
-      if (activeFilter) statusMsg = `Filtering by ${activeFilter}...`;
-      else if (query) statusMsg = `Searching "${query}"...`;
-      else statusMsg = 'Loading most recent contacts...';
-      setStatus(statusMsg, '');
+      setLiveStatus('Searching', 'idle');
       renderLoading();
       try {
         const response = await fetch(WORKER_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(buildRequestBody(query))
+          body: JSON.stringify(buildSearchBody(query))
         });
         let data;
         try { data = await response.json(); } catch (e) { data = { error: 'Non-JSON response from Worker.' }; }
         if (!response.ok) { renderError(response.status, data); return; }
         const pages = Array.isArray(data.results) ? data.results : [];
-        $('stat-results').textContent = String(pages.length);
-        setBadge('Live', '');
-        let okMsg;
-        if (activeFilter) okMsg = `${pages.length} ${activeFilter} contact${pages.length === 1 ? '' : 's'}`;
-        else if (query) okMsg = `${pages.length} result${pages.length === 1 ? '' : 's'} for "${query}"`;
-        else okMsg = `${pages.length} most recent · sorted by last updated`;
-        setStatus(okMsg, 'ok');
+        $('status-count').textContent = String(pages.length);
+        setLiveStatus('Live', '');
         setLastUpdated();
-        if (!pages.length) {
-          $('results').innerHTML = '<div class="empty mono">No matches found. Try a shorter name, partial phone, or leave blank for recent contacts.</div>';
-          return;
-        }
+        if (!pages.length) { renderTabEmptyState('search'); return; }
         $('results').innerHTML = pages.map(renderCard).join('');
       } catch (error) {
-        setBadge('Network', 'err');
-        $('stat-results').textContent = '0';
-        $('results').innerHTML = `<div class="err-box mono"><strong>Network / CORS Error</strong><br>${escapeHtml(error.message)}<br><br><strong>Fix:</strong> Worker may be down or unreachable.</div>`;
-        setStatus('Network error.', 'err');
+        setLiveStatus('Network', 'err');
+        $('status-count').textContent = '0';
+        $('results').innerHTML = `<div class="err-box mono"><strong>Network / CORS Error</strong><br>${escapeHtml(error.message)}</div>`;
         setLastUpdated();
       }
     }
 
     // =================================================================
-    // ADD LEAD — MODAL + SUBMIT
+    // ADD LEAD MODAL
     // =================================================================
     function openAddModal() {
       $('add-modal').classList.add('open');
-      // Default WHEN to today + 1 (tomorrow) — sensible follow-up default
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
       $('f-when').value = tomorrow.toISOString().split('T')[0];
+      $('f-owner').value = currentRep || 'DG';
       $('f-name').focus();
       $('form-msg').textContent = '';
       $('form-msg').className = 'form-msg mono';
     }
-
     function closeAddModal() {
       $('add-modal').classList.remove('open');
-      resetForm();
+      resetAddForm();
     }
-
-    function resetForm() {
+    function resetAddForm() {
       $('f-name').value = '';
       $('f-phone').value = '';
       $('f-context').value = '';
-      $('f-owner').value = 'DG';
+      $('f-owner').value = currentRep || 'DG';
       $('f-touch').value = 'New Lead';
       $('f-purpose').value = 'New Lead';
       $('f-result').value = '';
       $('f-nextstep').value = '';
       $('f-when').value = '';
-      $('f-sold').checked = false;
+      $('f-archived').checked = false;
       $('f-logged').checked = false;
-      // Reset chips: Temp keeps "New Lead", Wishlist clears
-      document.querySelectorAll('#chips-temp .chip').forEach((c) => {
+      document.querySelectorAll('#chips-temp .chip').forEach(c => {
         c.classList.toggle('selected', c.dataset.value === 'New Lead');
       });
-      document.querySelectorAll('#chips-wishlist .chip').forEach((c) => c.classList.remove('selected'));
+      document.querySelectorAll('#chips-wishlist .chip').forEach(c => c.classList.remove('selected'));
       $('form-msg').textContent = '';
       $('form-msg').className = 'form-msg mono';
       $('submit-btn').disabled = false;
       $('submit-btn').textContent = 'Save Lead';
       setMode('quick');
     }
-
     function setMode(mode) {
-      currentMode = mode;
       $('mode-quick').classList.toggle('active', mode === 'quick');
       $('mode-full').classList.toggle('active', mode === 'full');
       $('full-fields').classList.toggle('open', mode === 'full');
     }
-
     function initChipHandlers() {
-      document.querySelectorAll('.chip').forEach((chip) => {
+      document.querySelectorAll('.chip').forEach(chip => {
         chip.addEventListener('click', () => chip.classList.toggle('selected'));
       });
     }
-
     function getSelectedChips(groupId) {
-      return Array.from(document.querySelectorAll(`#${groupId} .chip.selected`))
-        .map((c) => c.dataset.value);
+      return Array.from(document.querySelectorAll(`#${groupId} .chip.selected`)).map(c => c.dataset.value);
     }
 
-    // ----- BUILD NOTION CREATE PAYLOAD -----
-    function buildCreatePayload() {
+    function buildAddLeadPayload() {
       const name = $('f-name').value.trim();
       const phone = $('f-phone').value.trim();
       const context = $('f-context').value.trim();
@@ -1159,70 +1593,26 @@
       const result = $('f-result').value;
       const nextStep = $('f-nextstep').value;
       const when = $('f-when').value;
-      const sold = $('f-sold').checked;
+      const archived = $('f-archived').checked;
       const logged = $('f-logged').checked;
       const temps = getSelectedChips('chips-temp');
       const wishlist = getSelectedChips('chips-wishlist');
 
       const properties = {};
-
-      // Customer Name (required) — title type
-      properties['Customer Name'] = {
-        title: [{ text: { content: name } }]
-      };
-
-      // Phone — phone_number (only set if non-empty)
+      properties['Customer Name'] = { title: [{ text: { content: name } }] };
       if (phone) properties['Phone'] = { phone_number: phone };
-
-      // Context — rich_text (only set if non-empty)
-      if (context) {
-        properties['Context'] = {
-          rich_text: [{ text: { content: context } }]
-        };
-      }
-
-      // Date — set to today automatically
-      const today = new Date().toISOString().split('T')[0];
-      properties['Date'] = { date: { start: today } };
-
-      // Owner — select
+      if (context) properties['Context'] = { rich_text: [{ text: { content: context } }] };
+      properties['Date'] = { date: { start: new Date().toISOString().split('T')[0] } };
       if (owner) properties['Owner'] = { select: { name: owner } };
-
-      // Touch — select
       if (touch) properties['Touch'] = { select: { name: touch } };
-
-      // Purpose — select
       if (purpose) properties['Purpose'] = { select: { name: purpose } };
-
-      // Result — select (only if chosen)
       if (result) properties['Result'] = { select: { name: result } };
-
-      // Next Step — select (only if chosen)
       if (nextStep) properties['Next Step'] = { select: { name: nextStep } };
-
-      // WHEN — date (only if set)
       if (when) properties['WHEN'] = { date: { start: when } };
-
-      // Temp — multi_select
-      if (temps.length) {
-        properties['Temp'] = {
-          multi_select: temps.map((name) => ({ name }))
-        };
-      }
-
-      // Wish List — multi_select
-      if (wishlist.length) {
-        properties['Wish List'] = {
-          multi_select: wishlist.map((name) => ({ name }))
-        };
-      }
-
-      // SOLD/ON RENT — checkbox
-      properties['SOLD/ON RENT'] = { checkbox: sold };
-
-      // Logged? — checkbox
+      if (temps.length) properties['Temp'] = { multi_select: temps.map(n => ({ name: n })) };
+      if (wishlist.length) properties['Wish List'] = { multi_select: wishlist.map(n => ({ name: n })) };
+      properties['Archived'] = { checkbox: archived };
       properties['Logged?'] = { checkbox: logged };
-
       return properties;
     }
 
@@ -1230,34 +1620,25 @@
       const msg = $('form-msg');
       const btn = $('submit-btn');
       const name = $('f-name').value.trim();
-
       if (!name) {
         msg.textContent = 'Customer Name is required.';
         msg.className = 'form-msg mono err';
         $('f-name').focus();
         return;
       }
-
       btn.disabled = true;
-      btn.textContent = 'Saving...';
-      msg.textContent = 'Creating contact in Notion...';
+      btn.textContent = 'Saving…';
+      msg.textContent = 'Creating contact in Notion…';
       msg.className = 'form-msg mono';
-
       try {
-        const properties = buildCreatePayload();
+        const properties = buildAddLeadPayload();
         const response = await fetch(WORKER_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            action: 'create',
-            databaseId: DATABASE_ID,
-            properties: properties
-          })
+          body: JSON.stringify({ action: 'create', databaseId: DATABASE_ID, properties })
         });
-
         let data;
         try { data = await response.json(); } catch (e) { data = { error: 'Non-JSON response' }; }
-
         if (!response.ok) {
           msg.textContent = `Failed (HTTP ${response.status}): ${data.error || data.message || 'Unknown error'}`;
           msg.className = 'form-msg mono err';
@@ -1265,25 +1646,122 @@
           btn.textContent = 'Save Lead';
           return;
         }
-
-        // Success
-        msg.textContent = `✓ ${name} saved. Refreshing search...`;
+        msg.textContent = `✓ ${name} saved. Refreshing…`;
         msg.className = 'form-msg mono ok';
-
-        // Close modal and refresh after a short delay so user sees confirmation
-        setTimeout(() => {
-          closeAddModal();
-          // Reset to "recent" view so new entry appears at top
-          activeFilter = null;
-          clearActiveFilterButton();
-          $('q').value = '';
-          runSearch();
-        }, 900);
+        setTimeout(() => { closeAddModal(); loadTab(); }, 900);
       } catch (error) {
         msg.textContent = `Network error: ${error.message}`;
         msg.className = 'form-msg mono err';
         btn.disabled = false;
         btn.textContent = 'Save Lead';
+      }
+    }
+
+    // =================================================================
+    // TOUCH MODAL (card click)
+    // =================================================================
+    function openTouchModal(cardEl) {
+      const name = cardEl.dataset.name || '';
+      const phone = cardEl.dataset.phone || '';
+      // Decode HTML entities from data attributes
+      const decode = (s) => {
+        const txt = document.createElement('textarea');
+        txt.innerHTML = s;
+        return txt.value;
+      };
+      activeCustomer = { name: decode(name), phone: decode(phone) };
+      $('touch-customer-name').textContent = activeCustomer.name;
+      $('touch-customer-phone').textContent = activeCustomer.phone;
+      $('touch-modal').classList.add('open');
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      $('t-when').value = tomorrow.toISOString().split('T')[0];
+      $('t-touch').value = 'Phone Call';
+      $('t-purpose').value = 'Follow-Up';
+      $('t-result').value = '';
+      $('t-nextstep').value = 'CB/Follow Up';
+      $('t-context').value = '';
+      $('t-archived').checked = false;
+      $('t-logged').checked = false;
+      document.querySelectorAll('#chips-touch-temp .chip').forEach(c => c.classList.remove('selected'));
+      $('touch-msg').textContent = '';
+      $('touch-msg').className = 'form-msg mono';
+      $('touch-submit-btn').disabled = false;
+      $('touch-submit-btn').textContent = 'Log Touch';
+      $('t-result').focus();
+    }
+
+    function closeTouchModal() {
+      $('touch-modal').classList.remove('open');
+      activeCustomer = null;
+    }
+
+    function buildTouchPayload() {
+      const touch = $('t-touch').value;
+      const purpose = $('t-purpose').value;
+      const result = $('t-result').value;
+      const nextStep = $('t-nextstep').value;
+      const when = $('t-when').value;
+      const context = $('t-context').value.trim();
+      const archived = $('t-archived').checked;
+      const logged = $('t-logged').checked;
+      const temps = getSelectedChips('chips-touch-temp');
+
+      const properties = {};
+      properties['Customer Name'] = { title: [{ text: { content: activeCustomer.name } }] };
+      if (activeCustomer.phone) properties['Phone'] = { phone_number: activeCustomer.phone };
+      properties['Date'] = { date: { start: new Date().toISOString().split('T')[0] } };
+      properties['Owner'] = { select: { name: currentRep } };
+      if (touch) properties['Touch'] = { select: { name: touch } };
+      if (purpose) properties['Purpose'] = { select: { name: purpose } };
+      if (result) properties['Result'] = { select: { name: result } };
+      if (nextStep) properties['Next Step'] = { select: { name: nextStep } };
+      if (when) properties['WHEN'] = { date: { start: when } };
+      if (context) properties['Context'] = { rich_text: [{ text: { content: context } }] };
+      if (temps.length) properties['Temp'] = { multi_select: temps.map(n => ({ name: n })) };
+      properties['Archived'] = { checkbox: archived };
+      properties['Logged?'] = { checkbox: logged };
+      return properties;
+    }
+
+    async function submitTouch() {
+      const msg = $('touch-msg');
+      const btn = $('touch-submit-btn');
+      const result = $('t-result').value;
+      if (!result) {
+        msg.textContent = 'Result is required.';
+        msg.className = 'form-msg mono err';
+        $('t-result').focus();
+        return;
+      }
+      btn.disabled = true;
+      btn.textContent = 'Logging…';
+      msg.textContent = 'Logging touch in Notion…';
+      msg.className = 'form-msg mono';
+      try {
+        const properties = buildTouchPayload();
+        const response = await fetch(WORKER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'create', databaseId: DATABASE_ID, properties })
+        });
+        let data;
+        try { data = await response.json(); } catch (e) { data = { error: 'Non-JSON response' }; }
+        if (!response.ok) {
+          msg.textContent = `Failed (HTTP ${response.status}): ${data.error || data.message || 'Unknown error'}`;
+          msg.className = 'form-msg mono err';
+          btn.disabled = false;
+          btn.textContent = 'Log Touch';
+          return;
+        }
+        msg.textContent = `✓ Touch logged for ${activeCustomer.name}. Refreshing…`;
+        msg.className = 'form-msg mono ok';
+        setTimeout(() => { closeTouchModal(); loadTab(); }, 900);
+      } catch (error) {
+        msg.textContent = `Network error: ${error.message}`;
+        msg.className = 'form-msg mono err';
+        btn.disabled = false;
+        btn.textContent = 'Log Touch';
       }
     }
   </script>
