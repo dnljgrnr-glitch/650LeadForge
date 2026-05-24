@@ -1,4 +1,4 @@
-<!-- v5.0 · 650 LeadForge · apple-clean · tabs · rep selection · touch logging · archive system -->
+<!-- v5.1 · 650 LeadForge · single-column tight list · WHEN-based Due Today -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,7 +15,6 @@
   <style>
     :root {
       --bg: #08080d;
-      --bg-2: #0d0d13;
       --surface: rgba(20, 20, 28, 0.7);
       --surface-2: rgba(255, 255, 255, 0.025);
       --border: rgba(255, 255, 255, 0.07);
@@ -30,10 +29,10 @@
       --text: #f3f3f7;
       --muted: #9b9baa;
       --faint: #686878;
-      --radius-lg: 18px;
-      --radius-md: 12px;
-      --radius-sm: 10px;
-      --max: 1180px;
+      --radius-lg: 16px;
+      --radius-md: 11px;
+      --radius-sm: 8px;
+      --max: 880px;
       color-scheme: dark;
     }
 
@@ -46,7 +45,6 @@
       color: var(--text);
       font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       -webkit-font-smoothing: antialiased;
-      text-rendering: optimizeLegibility;
       overflow-x: hidden;
     }
 
@@ -59,100 +57,61 @@
     #gate {
       position: fixed; inset: 0; z-index: 9999;
       display: grid; place-items: center; padding: 24px;
-      background:
-        radial-gradient(circle at 50% 20%, rgba(201, 169, 110, 0.08), transparent 30rem),
-        var(--bg);
+      background: radial-gradient(circle at 50% 20%, rgba(201, 169, 110, 0.08), transparent 30rem), var(--bg);
       overflow-y: auto;
     }
-    .gate-shell { width: min(100%, 480px); padding: 24px 0; }
+    .gate-shell { width: min(100%, 460px); padding: 24px 0; }
     .gate-box {
       background: rgba(15, 15, 22, 0.96);
       border: 1px solid var(--border);
       border-radius: 22px;
-      padding: 30px;
+      padding: 28px;
     }
     .gate-eyebrow {
       display: inline-flex; align-items: center; gap: 7px;
       color: var(--muted);
       font-size: 10px; font-weight: 600;
       letter-spacing: 0.18em; text-transform: uppercase;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
-    .gate-dot {
-      width: 6px; height: 6px; border-radius: 999px;
-      background: var(--green);
-      box-shadow: 0 0 10px var(--green);
-    }
-    .gate-title {
-      font-size: 38px; line-height: 1; font-weight: 800;
-      letter-spacing: -0.045em;
-      color: var(--text); margin-bottom: 8px;
-    }
+    .gate-dot { width: 6px; height: 6px; border-radius: 999px; background: var(--green); box-shadow: 0 0 10px var(--green); }
+    .gate-title { font-size: 34px; line-height: 1; font-weight: 800; letter-spacing: -0.045em; color: var(--text); margin-bottom: 6px; }
     .gate-title span { color: var(--gold); }
-    .gate-copy { color: var(--muted); font-size: 13px; line-height: 1.55; margin-bottom: 24px; }
+    .gate-copy { color: var(--muted); font-size: 12px; line-height: 1.55; margin-bottom: 22px; }
 
     .gate-step-label {
       color: var(--muted);
       font-size: 10px; font-weight: 700;
       letter-spacing: 0.16em; text-transform: uppercase;
-      margin-bottom: 10px;
+      margin-bottom: 9px;
       display: flex; align-items: center; gap: 8px;
     }
     .gate-step-num {
-      width: 20px; height: 20px;
-      border-radius: 999px;
+      width: 20px; height: 20px; border-radius: 999px;
       border: 1px solid var(--border-strong);
       color: var(--gold-2);
       display: grid; place-items: center;
       font-size: 10px; font-weight: 700;
     }
-
-    .rep-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      margin-bottom: 22px;
-    }
+    .rep-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; margin-bottom: 20px; }
     .rep-card {
       border: 1px solid var(--border);
       background: var(--surface-2);
       border-radius: var(--radius-md);
-      padding: 14px 8px;
+      padding: 12px 6px;
       text-align: center;
       transition: all 150ms ease;
       position: relative;
     }
     .rep-card:hover { border-color: var(--border-strong); background: rgba(201, 169, 110, 0.04); }
-    .rep-card.selected {
-      border-color: var(--gold);
-      background: rgba(201, 169, 110, 0.08);
-    }
-    .rep-card.selected::after {
-      content: "✓";
-      position: absolute;
-      top: 5px; right: 7px;
-      color: var(--gold);
-      font-weight: 800;
-      font-size: 10px;
-    }
-    .rep-initials {
-      font-size: 20px; font-weight: 800;
-      letter-spacing: -0.04em;
-      color: var(--text);
-      margin-bottom: 3px;
-    }
+    .rep-card.selected { border-color: var(--gold); background: rgba(201, 169, 110, 0.08); }
+    .rep-card.selected::after { content: "✓"; position: absolute; top: 4px; right: 6px; color: var(--gold); font-weight: 800; font-size: 10px; }
+    .rep-initials { font-size: 18px; font-weight: 800; letter-spacing: -0.04em; color: var(--text); margin-bottom: 2px; }
     .rep-card.selected .rep-initials { color: var(--gold-2); }
-    .rep-role {
-      font-size: 9px;
-      font-family: "JetBrains Mono", monospace;
-      color: var(--muted);
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
+    .rep-role { font-size: 8px; font-family: "JetBrains Mono", monospace; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
 
-    .gate-form { display: grid; gap: 10px; }
-    .gate-form.locked .gate-input,
-    .gate-form.locked .primary-btn { opacity: 0.35; pointer-events: none; }
+    .gate-form { display: grid; gap: 9px; }
+    .gate-form.locked .gate-input, .gate-form.locked .primary-btn { opacity: 0.35; pointer-events: none; }
     .gate-input, .search-input, .form-input, .form-textarea, .form-select {
       width: 100%;
       color: var(--text);
@@ -162,7 +121,7 @@
       outline: none;
       transition: border-color 150ms ease, box-shadow 150ms ease;
     }
-    .gate-input { padding: 14px 16px; text-align: center; letter-spacing: 0.24em; font-size: 13px; }
+    .gate-input { padding: 13px 14px; text-align: center; letter-spacing: 0.22em; font-size: 12px; }
     .gate-input::placeholder, .search-input::placeholder, .form-input::placeholder, .form-textarea::placeholder { color: var(--faint); }
     .gate-input:focus, .search-input:focus, .form-input:focus, .form-textarea:focus, .form-select:focus {
       border-color: var(--gold);
@@ -170,144 +129,127 @@
     }
     .primary-btn {
       border: 0; border-radius: var(--radius-md);
-      padding: 14px 16px; color: #090908;
+      padding: 13px 14px; color: #090908;
       background: var(--gold);
       font-weight: 700; letter-spacing: 0.08em;
-      font-size: 13px;
+      font-size: 12px;
       transition: filter 150ms ease, transform 150ms ease;
     }
     .primary-btn:hover { filter: brightness(1.08); }
     .primary-btn:active { transform: translateY(1px); }
     .primary-btn:disabled { opacity: 0.35; cursor: not-allowed; }
-    .gate-err { min-height: 16px; color: var(--red); font-size: 11px; letter-spacing: 0.06em; text-align: center; margin-top: 4px; }
-    .security-note { margin-top: 14px; color: var(--faint); font-size: 10px; line-height: 1.5; text-align: center; }
+    .gate-err { min-height: 14px; color: var(--red); font-size: 10px; letter-spacing: 0.06em; text-align: center; margin-top: 4px; }
+    .security-note { margin-top: 12px; color: var(--faint); font-size: 9px; line-height: 1.5; text-align: center; }
 
     /* ===== APP ===== */
-    #app { display: none; width: min(100% - 28px, var(--max)); margin: 0 auto; padding: 20px 0 60px; }
+    #app { display: none; width: min(100% - 24px, var(--max)); margin: 0 auto; padding: 18px 0 50px; }
 
     /* TOPBAR */
     .topbar {
       display: flex; align-items: center; justify-content: space-between;
-      gap: 14px; margin-bottom: 16px; flex-wrap: wrap;
+      gap: 12px; margin-bottom: 12px; flex-wrap: wrap;
     }
-    .brand-lockup { display: flex; align-items: center; gap: 12px; }
+    .brand-lockup { display: flex; align-items: center; gap: 10px; }
     .mark {
-      width: 38px; height: 38px; border-radius: 12px;
+      width: 34px; height: 34px; border-radius: 10px;
       display: grid; place-items: center;
-      color: #080808;
-      background: var(--gold);
-      font-weight: 800; letter-spacing: -0.06em;
-      font-size: 13px;
+      color: #080808; background: var(--gold);
+      font-weight: 800; letter-spacing: -0.06em; font-size: 12px;
     }
-    .logo { font-size: 14px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
-    .logo-sub { margin-top: 2px; color: var(--muted); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; }
-
-    .topbar-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .logo { font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+    .logo-sub { margin-top: 1px; color: var(--muted); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; }
+    .topbar-actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
     .rep-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 7px 10px; border-radius: 999px;
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 6px 9px; border-radius: 999px;
       border: 1px solid var(--border-strong);
       color: var(--gold-2);
       background: rgba(201, 169, 110, 0.05);
       font-size: 10px; font-weight: 700;
-      letter-spacing: 0.12em; text-transform: uppercase;
+      letter-spacing: 0.1em; text-transform: uppercase;
     }
     .ghost-btn {
       border: 1px solid var(--border); color: var(--muted);
       background: var(--surface-2);
-      padding: 7px 10px; border-radius: 999px;
+      padding: 6px 9px; border-radius: 999px;
       font-size: 10px; font-weight: 700;
-      letter-spacing: 0.12em; text-transform: uppercase;
+      letter-spacing: 0.1em; text-transform: uppercase;
       transition: all 150ms ease;
     }
     .ghost-btn:hover { color: var(--text); border-color: var(--border-strong); }
     .add-btn {
       border: 0; border-radius: 999px;
-      padding: 8px 14px;
-      color: #090908;
-      background: var(--gold);
-      font-weight: 700; letter-spacing: 0.08em;
-      font-size: 11px;
+      padding: 7px 13px;
+      color: #090908; background: var(--gold);
+      font-weight: 700; letter-spacing: 0.06em;
+      font-size: 10px;
       transition: filter 150ms ease;
-      display: inline-flex; align-items: center; gap: 5px;
+      display: inline-flex; align-items: center; gap: 4px;
     }
     .add-btn:hover { filter: brightness(1.08); }
-    .add-btn .plus { font-size: 15px; line-height: 1; font-weight: 800; }
+    .add-btn .plus { font-size: 14px; line-height: 1; font-weight: 800; }
 
-    /* STATUS STRIP — replaces the old hero */
+    /* STATUS STRIP */
     .status-strip {
       display: flex; align-items: center; justify-content: space-between;
-      gap: 14px;
+      gap: 12px;
       border: 1px solid var(--border);
       background: var(--surface);
       backdrop-filter: blur(20px);
       border-radius: var(--radius-lg);
-      padding: 12px 16px;
-      margin-bottom: 12px;
+      padding: 10px 14px;
+      margin-bottom: 10px;
       flex-wrap: wrap;
     }
-    .status-strip-left { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .status-strip-left { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
     .status-pill {
-      display: inline-flex; align-items: center; gap: 7px;
-      font-size: 11px; font-weight: 600;
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 10px; font-weight: 600;
       color: var(--muted);
-      letter-spacing: 0.04em;
     }
-    .status-pill strong {
-      color: var(--text);
-      font-weight: 700;
-      font-size: 13px;
-      letter-spacing: -0.01em;
-    }
-    .status-pill .dot {
-      width: 6px; height: 6px; border-radius: 999px;
-      background: var(--green);
-      box-shadow: 0 0 8px var(--green);
-    }
+    .status-pill strong { color: var(--text); font-weight: 700; font-size: 12px; }
+    .status-pill .dot { width: 6px; height: 6px; border-radius: 999px; background: var(--green); box-shadow: 0 0 8px var(--green); }
     .status-pill.idle .dot { background: var(--muted); box-shadow: none; }
     .status-pill.err .dot { background: var(--red); box-shadow: 0 0 8px var(--red); }
     .status-pill.err strong { color: var(--red); }
-    .status-strip-right { color: var(--faint); font-size: 11px; letter-spacing: 0.04em; }
+    .status-strip-right { color: var(--faint); font-size: 10px; }
 
     /* TABS */
     .tabs-row {
-      display: flex; gap: 4px; flex-wrap: wrap;
+      display: flex; gap: 3px; flex-wrap: wrap;
       border: 1px solid var(--border);
       background: var(--surface);
       backdrop-filter: blur(20px);
       border-radius: var(--radius-lg);
-      padding: 6px;
-      margin-bottom: 12px;
+      padding: 5px;
+      margin-bottom: 10px;
     }
     .tab-btn {
       flex: 1;
-      min-width: 100px;
+      min-width: 90px;
       border: 0;
       background: transparent;
       color: var(--muted);
-      padding: 10px 12px;
-      border-radius: 11px;
-      font-size: 11px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      font-size: 10px;
       font-weight: 700;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
       transition: all 150ms ease;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 5px;
     }
     .tab-btn:hover { color: var(--text); background: rgba(255,255,255,0.025); }
-    .tab-btn.active {
-      color: #090908;
-      background: var(--gold);
-    }
-    .tab-btn .tab-emoji { font-size: 13px; }
+    .tab-btn.active { color: #090908; background: var(--gold); }
+    .tab-btn .tab-emoji { font-size: 12px; }
     .tab-btn .tab-count {
       font-family: "JetBrains Mono", monospace;
-      font-size: 10px;
+      font-size: 9px;
       opacity: 0.85;
-      padding: 1px 5px;
+      padding: 1px 4px;
       border-radius: 999px;
       background: rgba(0,0,0,0.18);
     }
@@ -315,26 +257,26 @@
 
     /* SEARCH CONTROLS */
     .control-panel {
-      display: grid; gap: 10px;
+      display: grid; gap: 8px;
       border: 1px solid var(--border);
       background: var(--surface);
       backdrop-filter: blur(20px);
       border-radius: var(--radius-lg);
-      padding: 12px;
-      margin-bottom: 12px;
+      padding: 10px;
+      margin-bottom: 10px;
     }
-    .search-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
-    .search-input { padding: 12px 14px; font-size: 14px; }
-    .search-btn { min-width: 100px; padding: 12px 18px; }
-    .quick-filters { display: flex; gap: 6px; flex-wrap: wrap; }
+    .search-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px; }
+    .search-input { padding: 11px 13px; font-size: 13px; }
+    .search-btn { min-width: 90px; padding: 11px 16px; font-size: 11px; }
+    .quick-filters { display: flex; gap: 5px; flex-wrap: wrap; }
     .filter-btn {
       border: 1px solid var(--border);
       background: var(--surface-2);
       color: var(--muted);
       border-radius: 999px;
-      padding: 6px 10px;
-      font-size: 10px; font-weight: 700;
-      letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 5px 9px;
+      font-size: 9px; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase;
       transition: all 150ms ease;
     }
     .filter-btn:hover, .filter-btn.active {
@@ -346,61 +288,78 @@
     /* RESULTS HEAD */
     .results-head {
       display: flex; align-items: end; justify-content: space-between;
-      gap: 12px; margin: 14px 2px 10px;
+      gap: 10px; margin: 12px 2px 8px;
     }
-    .section-title { font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text); }
-    .section-kicker { margin-top: 3px; color: var(--muted); font-size: 12px; }
+    .section-title { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text); }
+    .section-kicker { margin-top: 2px; color: var(--muted); font-size: 11px; }
     .refresh-btn {
       border: 1px solid var(--border);
       background: var(--surface-2);
       color: var(--muted);
       border-radius: 999px;
-      padding: 6px 11px;
-      font-size: 10px; font-weight: 700;
-      letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 5px 10px;
+      font-size: 9px; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase;
       transition: all 150ms ease;
-      display: inline-flex; align-items: center; gap: 5px;
+      display: inline-flex; align-items: center; gap: 4px;
     }
     .refresh-btn:hover { color: var(--text); border-color: var(--border-strong); }
 
-    /* RESULTS GRID */
-    .results { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    /* ===== RESULTS — SINGLE COLUMN TIGHT LIST ===== */
+    .results { display: flex; flex-direction: column; gap: 6px; }
+
     .card {
-      position: relative; overflow: hidden;
+      position: relative;
       border: 1px solid var(--border);
       background: var(--surface);
       backdrop-filter: blur(20px);
-      border-radius: var(--radius-lg);
-      padding: 16px; min-height: 200px;
-      cursor: pointer;
-      transition: all 160ms ease;
+      border-radius: var(--radius-md);
+      padding: 11px 14px;
+      transition: border-color 140ms ease, background 140ms ease;
     }
     .card::before {
       content: ""; position: absolute;
       inset: 0 auto 0 0; width: 2px;
       background: var(--gold);
       opacity: 0.5;
+      border-radius: 2px 0 0 2px;
     }
-    .card:hover {
-      border-color: var(--border-strong);
-      background: rgba(20, 20, 28, 0.85);
-    }
+    .card:hover { border-color: var(--border-strong); background: rgba(20, 20, 28, 0.85); }
     .card:hover::before { opacity: 0.9; }
     .card.overdue::before { background: var(--red); opacity: 0.75; }
     .card.due-today::before { background: var(--green); opacity: 0.75; }
-    .card.archived { opacity: 0.65; }
+    .card.archived { opacity: 0.5; }
     .card.archived::before { background: var(--faint); }
-    .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
-    .card-name { color: var(--text); font-size: 16px; line-height: 1.2; font-weight: 700; letter-spacing: -0.02em; }
-    .card-phone { color: var(--muted); margin-top: 4px; font-size: 12px; }
-    .pills { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 10px; }
+
+    /* Compact row — shown by default */
+    .card-row {
+      display: flex; align-items: center; gap: 10px;
+      cursor: pointer;
+    }
+    .card-main { flex: 1; min-width: 0; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+    .card-name {
+      color: var(--text); font-size: 14px;
+      font-weight: 700; letter-spacing: -0.015em;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      max-width: 100%;
+    }
+    .card-phone { color: var(--muted); font-size: 11px; font-family: "JetBrains Mono", monospace; }
+    .card-quick-meta {
+      display: flex; gap: 8px; align-items: center;
+      color: var(--muted); font-size: 10px;
+      font-family: "JetBrains Mono", monospace;
+      flex-wrap: wrap;
+    }
+    .card-quick-meta strong { color: var(--text); font-weight: 600; }
+    .card-right { display: flex; gap: 5px; align-items: center; flex-shrink: 0; }
+
     .pill {
-      display: inline-flex; align-items: center; gap: 5px;
+      display: inline-flex; align-items: center;
       color: var(--muted);
       border: 1px solid var(--border);
       background: var(--surface-2);
-      border-radius: 999px; padding: 4px 8px;
-      font-size: 9px; line-height: 1;
+      border-radius: 999px; padding: 3px 7px;
+      font-size: 8px; line-height: 1;
       font-weight: 700; letter-spacing: 0.1em;
       text-transform: uppercase; white-space: nowrap;
     }
@@ -415,48 +374,112 @@
     .pill.due-today { color: var(--green); border-color: rgba(66,217,160,0.4); background: rgba(66,217,160,0.07); }
     .pill.archived { color: var(--faint); border-color: var(--border); }
 
-    .card-meta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
-    .meta-item { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 9px; background: var(--surface-2); min-width: 0; }
-    .meta-label { color: var(--faint); font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 3px; }
-    .meta-value { color: var(--text); font-size: 12px; line-height: 1.3; overflow-wrap: anywhere; }
+    .expand-chevron {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      display: grid; place-items: center;
+      color: var(--muted);
+      font-size: 11px;
+      transition: transform 200ms ease, color 150ms ease;
+    }
+    .card.expanded .expand-chevron { transform: rotate(180deg); color: var(--gold-2); }
 
-    .card-section {
-      margin-top: 12px; padding-top: 12px;
+    /* Expanded section — hidden by default */
+    .card-detail {
+      display: none;
+      margin-top: 12px;
+      padding-top: 12px;
       border-top: 1px solid var(--border);
     }
-    .card-section-label {
+    .card.expanded .card-detail { display: block; }
+
+    .detail-meta {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px 14px;
+      margin-bottom: 10px;
+      font-size: 11px;
+      font-family: "JetBrains Mono", monospace;
+      color: var(--muted);
+    }
+    .detail-meta div { display: flex; gap: 5px; align-items: baseline; }
+    .detail-meta label { font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); }
+    .detail-meta strong { color: var(--text); font-weight: 600; }
+
+    .detail-section { margin-top: 10px; }
+    .detail-section-label {
       color: var(--faint); font-size: 9px; font-weight: 700;
       letter-spacing: 0.14em; text-transform: uppercase;
-      margin-bottom: 5px;
+      margin-bottom: 4px;
     }
-    .card-section-body {
-      color: #dcdce6; font-size: 12px; line-height: 1.55;
+    .detail-section-body { color: #dcdce6; font-size: 12px; line-height: 1.5; }
+    .detail-section-body.crm { color: var(--gold-2); font-family: "JetBrains Mono", monospace; font-size: 11px; }
+
+    .detail-extra-pills { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
+
+    .detail-actions {
+      display: flex; gap: 6px;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
     }
-    .card-section-body.crm { color: var(--gold-2); font-family: "JetBrains Mono", monospace; font-size: 11px; }
+    .log-touch-btn {
+      border: 0; border-radius: var(--radius-md);
+      padding: 9px 16px;
+      color: #090908; background: var(--gold);
+      font-weight: 700; letter-spacing: 0.06em;
+      font-size: 11px;
+      transition: filter 150ms ease;
+      display: inline-flex; align-items: center; gap: 5px;
+    }
+    .log-touch-btn:hover { filter: brightness(1.08); }
+    .archive-btn {
+      border: 1px solid rgba(255,100,115,0.32);
+      background: rgba(255,100,115,0.04);
+      color: #ff9aa4;
+      border-radius: var(--radius-md);
+      padding: 9px 14px;
+      font-weight: 700; letter-spacing: 0.06em;
+      font-size: 11px;
+      transition: all 150ms;
+    }
+    .archive-btn:hover { background: rgba(255,100,115,0.08); }
+    .open-notion-btn {
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      border-radius: var(--radius-md);
+      padding: 9px 12px;
+      font-weight: 700; letter-spacing: 0.06em;
+      font-size: 11px;
+      transition: all 150ms;
+      text-decoration: none;
+      display: inline-flex; align-items: center; gap: 5px;
+    }
+    .open-notion-btn:hover { color: var(--text); border-color: var(--border-strong); }
 
     /* EMPTY / LOADING / ERROR */
     .empty, .loading-card, .err-box {
-      grid-column: 1 / -1;
       border: 1px solid var(--border);
       background: var(--surface);
       backdrop-filter: blur(20px);
       border-radius: var(--radius-lg);
-      padding: 22px; color: var(--muted); line-height: 1.55;
+      padding: 20px; color: var(--muted); line-height: 1.55;
     }
     .empty { text-align: center; }
-    .empty-headline { color: var(--text); font-size: 15px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.01em; }
-    .loading-card { position: relative; overflow: hidden; min-height: 100px; }
+    .empty-headline { color: var(--text); font-size: 13px; font-weight: 700; margin-bottom: 4px; letter-spacing: -0.01em; }
+    .loading-card { position: relative; overflow: hidden; min-height: 80px; }
     .loading-card::after {
       content: ""; position: absolute; inset: 0;
       background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
-      animation: shimmer 1.2s infinite;
-      transform: translateX(-100%);
+      animation: shimmer 1.2s infinite; transform: translateX(-100%);
     }
     @keyframes shimmer { to { transform: translateX(100%); } }
-    .err-box { color: #ff9aa4; border-color: rgba(255,100,115,0.35); background: rgba(255,100,115,0.06); word-break: break-word; }
+    .err-box { color: #ff9aa4; border-color: rgba(255,100,115,0.35); background: rgba(255,100,115,0.06); word-break: break-word; font-size: 12px; }
     .err-box strong { color: #ffd7db; }
 
-    /* MODAL — shared by Add Lead AND Log Touch */
+    /* MODALS */
     .modal-backdrop {
       position: fixed; inset: 0; z-index: 5000;
       background: rgba(5, 5, 10, 0.78);
@@ -464,29 +487,29 @@
       display: none;
       align-items: flex-start;
       justify-content: center;
-      padding: 20px;
+      padding: 18px;
       overflow-y: auto;
     }
     .modal-backdrop.open { display: flex; }
     .modal {
-      width: min(100%, 620px);
+      width: min(100%, 600px);
       background: #0d0d14;
       border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 24px;
-      margin: 20px 0;
+      border-radius: 16px;
+      padding: 22px;
+      margin: 18px 0;
     }
-    .modal-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
-    .modal-title { font-size: 18px; font-weight: 700; letter-spacing: -0.02em; }
-    .modal-sub { color: var(--muted); font-size: 11px; margin-top: 3px; letter-spacing: 0.04em; }
+    .modal-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+    .modal-title { font-size: 16px; font-weight: 700; letter-spacing: -0.02em; }
+    .modal-sub { color: var(--muted); font-size: 10px; margin-top: 2px; letter-spacing: 0.04em; }
     .modal-close {
-      width: 32px; height: 32px;
+      width: 28px; height: 28px;
       border-radius: 50%;
       border: 1px solid var(--border);
       background: var(--surface-2);
       color: var(--muted);
       display: grid; place-items: center;
-      font-size: 14px;
+      font-size: 12px;
       transition: all 150ms;
     }
     .modal-close:hover { color: var(--text); border-color: rgba(255,100,115,0.4); }
@@ -496,13 +519,13 @@
       border: 1px solid var(--border);
       border-radius: 999px;
       padding: 3px;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       background: var(--surface-2);
     }
     .mode-btn {
       border: 0; background: transparent; color: var(--muted);
-      padding: 6px 12px; border-radius: 999px;
-      font-size: 10px; font-weight: 700;
+      padding: 5px 11px; border-radius: 999px;
+      font-size: 9px; font-weight: 700;
       letter-spacing: 0.08em; text-transform: uppercase;
       transition: all 150ms;
     }
@@ -512,119 +535,101 @@
       border: 1px solid var(--border-strong);
       background: rgba(201, 169, 110, 0.04);
       border-radius: var(--radius-md);
-      padding: 12px 14px;
-      margin-bottom: 14px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
     }
-    .customer-banner-label {
-      color: var(--gold-2); font-size: 9px; font-weight: 700;
-      letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 4px;
-    }
-    .customer-banner-name { font-size: 16px; font-weight: 700; letter-spacing: -0.02em; }
-    .customer-banner-phone { color: var(--muted); font-size: 12px; margin-top: 2px; font-family: "JetBrains Mono", monospace; }
+    .customer-banner-label { color: var(--gold-2); font-size: 8px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 3px; }
+    .customer-banner-name { font-size: 14px; font-weight: 700; letter-spacing: -0.02em; }
+    .customer-banner-phone { color: var(--muted); font-size: 11px; margin-top: 1px; font-family: "JetBrains Mono", monospace; }
 
-    .form-grid { display: grid; gap: 12px; }
-    .form-row { display: grid; gap: 12px; }
+    .form-grid { display: grid; gap: 10px; }
+    .form-row { display: grid; gap: 10px; }
     .form-row.two { grid-template-columns: 1fr 1fr; }
-    .field-group { display: grid; gap: 5px; }
-    .field-label { color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
-    .field-label .req { color: var(--red); margin-left: 4px; }
-    .form-input, .form-textarea, .form-select { padding: 10px 12px; font-size: 13px; }
-    .form-textarea { min-height: 75px; resize: vertical; font-family: inherit; }
-
-    /* Dropdown contrast fix — applies dark scheme to native select */
+    .field-group { display: grid; gap: 4px; }
+    .field-label { color: var(--muted); font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+    .field-label .req { color: var(--red); margin-left: 3px; }
+    .form-input, .form-textarea, .form-select { padding: 9px 11px; font-size: 12px; }
+    .form-textarea { min-height: 65px; resize: vertical; font-family: inherit; }
     .form-select {
       appearance: none; -webkit-appearance: none;
       background-color: #0c0c14;
       color: var(--text);
       background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%);
-      background-position: calc(100% - 16px) calc(50% - 3px), calc(100% - 12px) calc(50% - 3px);
+      background-position: calc(100% - 14px) calc(50% - 3px), calc(100% - 10px) calc(50% - 3px);
       background-size: 5px 5px, 5px 5px;
       background-repeat: no-repeat;
-      padding-right: 30px;
+      padding-right: 28px;
     }
-    .form-select option {
-      background-color: #0c0c14;
-      color: var(--text);
-    }
-
-    .chip-grid { display: flex; flex-wrap: wrap; gap: 5px; }
+    .form-select option { background-color: #0c0c14; color: var(--text); }
+    .chip-grid { display: flex; flex-wrap: wrap; gap: 4px; }
     .chip {
       border: 1px solid var(--border);
       background: var(--surface-2);
       color: var(--muted);
       border-radius: 999px;
-      padding: 6px 10px;
-      font-size: 11px; font-weight: 600;
+      padding: 5px 9px;
+      font-size: 10px; font-weight: 600;
       transition: all 150ms ease;
       user-select: none;
     }
     .chip:hover { color: var(--text); border-color: var(--border-strong); }
-    .chip.selected {
-      color: #090908;
-      background: var(--gold);
-      border-color: transparent;
-    }
+    .chip.selected { color: #090908; background: var(--gold); border-color: transparent; }
     .checkbox-row {
-      display: flex; align-items: center; gap: 9px;
-      padding: 10px 12px;
+      display: flex; align-items: center; gap: 8px;
+      padding: 9px 11px;
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
       background: var(--surface-2);
       cursor: pointer;
       user-select: none;
     }
-    .checkbox-row input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--gold); cursor: pointer; }
-    .checkbox-row span { font-size: 12px; color: var(--text); font-weight: 600; }
-    .checkbox-row.archive {
-      border-color: rgba(255,100,115,0.32);
-      background: rgba(255,100,115,0.04);
-    }
+    .checkbox-row input[type="checkbox"] { width: 14px; height: 14px; accent-color: var(--gold); cursor: pointer; }
+    .checkbox-row span { font-size: 11px; color: var(--text); font-weight: 600; }
+    .checkbox-row.archive { border-color: rgba(255,100,115,0.32); background: rgba(255,100,115,0.04); }
     .checkbox-row.archive span { color: #ff9aa4; }
-
-    .full-fields { display: none; gap: 12px; }
+    .full-fields { display: none; gap: 10px; }
     .full-fields.open { display: grid; }
-    .form-footer { margin-top: 16px; display: flex; gap: 8px; justify-content: space-between; align-items: center; flex-wrap: wrap; }
-    .form-msg { font-size: 11px; color: var(--muted); min-height: 14px; flex: 1; }
+    .form-footer { margin-top: 14px; display: flex; gap: 6px; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+    .form-msg { font-size: 10px; color: var(--muted); min-height: 12px; flex: 1; }
     .form-msg.ok { color: var(--green); }
     .form-msg.err { color: var(--red); }
-    .form-actions { display: flex; gap: 6px; }
-    .submit-btn { padding: 11px 20px; }
+    .form-actions { display: flex; gap: 5px; }
+    .submit-btn { padding: 9px 16px; }
     .cancel-btn {
       border: 1px solid var(--border);
       background: transparent;
       color: var(--muted);
-      padding: 11px 14px;
+      padding: 9px 12px;
       border-radius: var(--radius-md);
-      font-weight: 700; letter-spacing: 0.08em;
-      font-size: 11px;
+      font-weight: 700; letter-spacing: 0.06em;
+      font-size: 10px;
       transition: all 150ms;
     }
     .cancel-btn:hover { color: var(--text); border-color: var(--border-strong); }
 
     .footer {
-      margin-top: 28px;
-      padding-top: 14px;
+      margin-top: 24px;
+      padding-top: 12px;
       border-top: 1px solid var(--border);
-      display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+      display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap;
       color: var(--faint); font-size: 9px;
-      letter-spacing: 0.12em; text-transform: uppercase;
+      letter-spacing: 0.1em; text-transform: uppercase;
     }
 
-    @media (max-width: 880px) {
-      .results { grid-template-columns: 1fr; }
-    }
     @media (max-width: 640px) {
-      #app { width: min(100% - 20px, var(--max)); padding-top: 14px; }
-      .topbar { align-items: flex-start; flex-direction: column; gap: 10px; }
+      #app { width: min(100% - 18px, var(--max)); padding-top: 12px; }
+      .topbar { align-items: flex-start; flex-direction: column; gap: 8px; }
       .topbar-actions { width: 100%; justify-content: flex-start; }
       .search-row { grid-template-columns: 1fr; }
       .search-btn { width: 100%; }
-      .card-meta { grid-template-columns: 1fr; }
-      .gate-box { padding: 22px; border-radius: 18px; }
+      .gate-box { padding: 20px; border-radius: 16px; }
       .footer { display: grid; }
-      .modal { padding: 18px; margin: 10px 0; border-radius: 14px; }
+      .modal { padding: 16px; margin: 8px 0; border-radius: 12px; }
       .form-row.two { grid-template-columns: 1fr; }
-      .tab-btn { min-width: auto; flex: 1 1 calc(50% - 3px); font-size: 10px; padding: 9px 8px; }
+      .tab-btn { min-width: auto; flex: 1 1 calc(50% - 3px); font-size: 9px; padding: 8px 6px; }
+      .card-row { flex-wrap: wrap; }
+      .card-right { width: 100%; justify-content: flex-end; }
+      .detail-meta { grid-template-columns: 1fr; }
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
@@ -644,25 +649,21 @@
       <div class="gate-box">
         <div class="gate-eyebrow"><span class="gate-dot"></span> Store 00650 · Workstation</div>
         <h1 class="gate-title">650 <span>LeadForge</span></h1>
-        <p class="gate-copy">Search, log touches, and keep the book moving. Built for floor speed.</p>
+        <p class="gate-copy">Search, log touches, keep the book moving.</p>
 
         <div class="gate-step-label"><span class="gate-step-num">1</span> Select your rep</div>
-        <div class="rep-grid" id="rep-grid">
+        <div class="rep-grid">
           <button class="rep-card" type="button" data-rep="DG" onclick="selectRep('DG')">
-            <div class="rep-initials">DG</div>
-            <div class="rep-role">SAM</div>
+            <div class="rep-initials">DG</div><div class="rep-role">SAM</div>
           </button>
           <button class="rep-card" type="button" data-rep="KB" onclick="selectRep('KB')">
-            <div class="rep-initials">KB</div>
-            <div class="rep-role">CAM</div>
+            <div class="rep-initials">KB</div><div class="rep-role">CAM</div>
           </button>
           <button class="rep-card" type="button" data-rep="TH" onclick="selectRep('TH')">
-            <div class="rep-initials">TH</div>
-            <div class="rep-role">CAR</div>
+            <div class="rep-initials">TH</div><div class="rep-role">CAR</div>
           </button>
           <button class="rep-card" type="button" data-rep="KT" onclick="selectRep('KT')">
-            <div class="rep-initials">KT</div>
-            <div class="rep-role">CAR</div>
+            <div class="rep-initials">KT</div><div class="rep-role">CAR</div>
           </button>
         </div>
 
@@ -672,7 +673,6 @@
           <button class="primary-btn" type="submit" id="gate-submit" disabled>Unlock</button>
           <div id="gate-err" class="gate-err mono" role="alert" aria-live="polite"></div>
         </form>
-
         <p class="security-note mono">Rep selection presets Owner on new entries and powers My Work.</p>
       </div>
     </section>
@@ -695,7 +695,6 @@
       </div>
     </header>
 
-    <!-- STATUS STRIP (replaces the old hero) -->
     <section class="status-strip" aria-label="Live status">
       <div class="status-strip-left">
         <div id="live-status" class="status-pill idle">
@@ -707,8 +706,7 @@
       <div class="status-strip-right mono" id="status-updated">Awaiting</div>
     </section>
 
-    <!-- TABS -->
-    <nav class="tabs-row" id="tabs-row" aria-label="Workstation views">
+    <nav class="tabs-row" aria-label="Workstation views">
       <button class="tab-btn active" type="button" data-tab="search" onclick="setTab('search')">
         <span class="tab-emoji">🔎</span> Search
       </button>
@@ -729,11 +727,10 @@
       </button>
     </nav>
 
-    <!-- SEARCH CONTROLS (only on Search tab) -->
     <section class="control-panel" id="search-controls" aria-label="Search controls">
       <div class="search-row">
         <label class="sr-only" for="q">Search by name or phone</label>
-        <input id="q" class="search-input mono" type="search" placeholder="Search by name or phone — leave blank for recent" autocomplete="off" onkeydown="if(event.key==='Enter')runSearch()" />
+        <input id="q" class="search-input mono" type="search" placeholder="Search by name or phone" autocomplete="off" onkeydown="if(event.key==='Enter')runSearch()" />
         <button class="primary-btn search-btn" type="button" onclick="runSearch()">Search</button>
       </div>
       <div class="quick-filters" aria-label="Quick searches">
@@ -745,11 +742,10 @@
       </div>
     </section>
 
-    <!-- VIEW HEAD -->
     <section class="results-head" aria-label="Results heading">
       <div>
         <h3 class="section-title" id="view-title">Search</h3>
-        <p class="section-kicker" id="view-kicker">Look up customers by name or phone. Click any card to log a new touch.</p>
+        <p class="section-kicker" id="view-kicker">Tap a card to expand. Tap again to collapse.</p>
       </div>
       <button class="refresh-btn mono" type="button" onclick="refreshCurrentTab()"><span>↻</span> Refresh</button>
     </section>
@@ -790,16 +786,14 @@
         </div>
         <div class="field-group">
           <label class="field-label" for="f-context">Context / Notes</label>
-          <textarea id="f-context" class="form-textarea" placeholder="What did they want? What did you say? Promised callback? Capture it now."></textarea>
+          <textarea id="f-context" class="form-textarea" placeholder="What did they want? Promised callback? Capture it."></textarea>
         </div>
         <div class="form-row two">
           <div class="field-group">
             <label class="field-label" for="f-owner">Owner</label>
             <select id="f-owner" class="form-select">
-              <option value="DG">DG</option>
-              <option value="KB">KB</option>
-              <option value="TH">TH</option>
-              <option value="KT">KT</option>
+              <option value="DG">DG</option><option value="KB">KB</option>
+              <option value="TH">TH</option><option value="KT">KT</option>
             </select>
           </div>
           <div class="field-group">
@@ -879,10 +873,10 @@
           <div class="field-group">
             <label class="field-label">Wish List</label>
             <div class="chip-grid" id="chips-wishlist">
-              <button class="chip" type="button" data-value="TV / Entertainment">TV / Entertainment</button>
+              <button class="chip" type="button" data-value="TV / Entertainment">TV</button>
               <button class="chip" type="button" data-value="Living Room Furniture">Living Room</button>
-              <button class="chip" type="button" data-value="Bedroom / Mattress">Bedroom / Mattress</button>
-              <button class="chip" type="button" data-value="Washer / Dryer">Washer / Dryer</button>
+              <button class="chip" type="button" data-value="Bedroom / Mattress">Bedroom</button>
+              <button class="chip" type="button" data-value="Washer / Dryer">Washer/Dryer</button>
               <button class="chip" type="button" data-value="Refrigerator / Appliances">Appliances</button>
               <button class="chip" type="button" data-value="Laptop / Computer">Laptop</button>
               <button class="chip" type="button" data-value="Gaming Console">Gaming</button>
@@ -911,13 +905,13 @@
     </div>
   </div>
 
-  <!-- LOG TOUCH MODAL (card click) -->
+  <!-- TOUCH MODAL -->
   <div id="touch-modal" class="modal-backdrop" role="dialog" aria-modal="true">
     <div class="modal">
       <div class="modal-head">
         <div>
           <div class="modal-title">Log New Touch</div>
-          <div class="modal-sub mono">Creates a new row — original history preserved</div>
+          <div class="modal-sub mono">Creates a new row — history preserved</div>
         </div>
         <button class="modal-close" type="button" onclick="closeTouchModal()" aria-label="Close">✕</button>
       </div>
@@ -1033,16 +1027,14 @@
     const REP_KEY = 'lf_rep_v5';
     // =================================================================
 
-    // STATE
     let currentTab = 'search';
     let currentRep = null;
     let activeFilter = null;
     let pendingRepSelection = null;
-    let activeCustomer = null; // { name, phone } for touch modal
+    let activeCustomer = null;
 
     const $ = (id) => document.getElementById(id);
 
-    // ===== GATE / REP SELECTION =====
     function selectRep(initials) {
       pendingRepSelection = initials;
       document.querySelectorAll('.rep-card').forEach(card => {
@@ -1119,7 +1111,6 @@
       });
     });
 
-    // ===== UTILITIES =====
     function setLiveStatus(stateText, className) {
       $('status-state').textContent = stateText;
       $('live-status').className = 'status-pill' + (className ? ' ' + className : '');
@@ -1154,8 +1145,10 @@
       if (text.includes('pending')) return 'pending';
       return '';
     }
+    function todayISO() {
+      return new Date().toISOString().split('T')[0];
+    }
 
-    // ===== NOTION PROP EXTRACTION =====
     function getProp(properties, name) {
       if (!properties || !properties[name]) return null;
       const prop = properties[name];
@@ -1180,15 +1173,10 @@
       }
     }
 
-    // ===== CARD RENDER =====
-    function metaItem(label, value) {
-      if (!value && value !== 0) return '';
-      return `<div class="meta-item"><div class="meta-label">${escapeHtml(label)}</div><div class="meta-value mono">${escapeHtml(value)}</div></div>`;
-    }
-
+    // ===== TIGHT LIST CARD RENDER =====
     function renderCard(page, index) {
       const p = page.properties || {};
-      const name = getProp(p, 'Customer Name') || 'Unnamed Contact';
+      const name = getProp(p, 'Customer Name') || 'Unnamed';
       const phone = getProp(p, 'Phone') || '';
       const temps = getProp(p, 'Temp') || [];
       const purpose = getProp(p, 'Purpose') || '';
@@ -1200,51 +1188,85 @@
       const status = getProp(p, 'Status') || '';
       const archived = getProp(p, 'Archived') === true;
       const crmNote = getProp(p, 'Log in SalesForce') || '';
+      const pageId = page.id || '';
+      const pageUrl = page.url || '';
 
       let cardClass = 'card';
       if (archived) cardClass += ' archived';
       else if (status && status.toLowerCase().includes('overdue')) cardClass += ' overdue';
       else if (status && status.toLowerCase().includes('due today')) cardClass += ' due-today';
 
-      const pills = [];
-      if (archived) pills.push(`<span class="pill archived">📦 Archived</span>`);
-      else if (status) pills.push(`<span class="pill ${pillClass(status)}">${escapeHtml(status)}</span>`);
-      if (Array.isArray(temps)) temps.forEach(t => pills.push(`<span class="pill ${pillClass(t)}">${escapeHtml(t)}</span>`));
+      // Primary pill — most important state indicator
+      let primaryPill = '';
+      if (archived) primaryPill = `<span class="pill archived">📦 Archived</span>`;
+      else if (status) primaryPill = `<span class="pill ${pillClass(status)}">${escapeHtml(status)}</span>`;
+      else if (Array.isArray(temps) && temps.length) primaryPill = `<span class="pill ${pillClass(temps[0])}">${escapeHtml(temps[0])}</span>`;
 
-      // Escape for data-* attributes (single quotes need extra care for the onclick)
-      const safeName = escapeHtml(name).replace(/'/g, '&#39;');
-      const safePhone = escapeHtml(phone).replace(/'/g, '&#39;');
+      // Other temp pills for expanded view
+      const otherTempPills = (Array.isArray(temps) ? temps : [])
+        .filter(t => !primaryPill.includes(t))
+        .map(t => `<span class="pill ${pillClass(t)}">${escapeHtml(t)}</span>`)
+        .join('');
+
+      // Quick meta in collapsed view — only show what fits
+      const quickMeta = [];
+      if (nextStep) quickMeta.push(`<strong>${escapeHtml(nextStep)}</strong>`);
+      if (when) quickMeta.push(`${escapeHtml(when)}`);
+
+      const safeName = escapeHtml(name).replace(/"/g, '&quot;');
+      const safePhone = escapeHtml(phone).replace(/"/g, '&quot;');
+
+      // Build detail meta items
+      const detailMetaItems = [];
+      if (purpose) detailMetaItems.push(`<div><label>Purpose</label><strong>${escapeHtml(purpose)}</strong></div>`);
+      if (result) detailMetaItems.push(`<div><label>Result</label><strong>${escapeHtml(result)}</strong></div>`);
+      if (nextStep) detailMetaItems.push(`<div><label>Next</label><strong>${escapeHtml(nextStep)}</strong></div>`);
+      if (when) detailMetaItems.push(`<div><label>When</label><strong>${escapeHtml(when)}</strong></div>`);
 
       return `
-        <article class="${cardClass}" data-name="${safeName}" data-phone="${safePhone}" onclick="openTouchModal(this)">
-          <div class="card-top">
-            <div>
-              <h4 class="card-name">${escapeHtml(name)}</h4>
-              ${phone ? `<div class="card-phone mono">${escapeHtml(phone)}</div>` : ''}
+        <article class="${cardClass}" data-name="${safeName}" data-phone="${safePhone}" data-page-id="${escapeHtml(pageId)}">
+          <div class="card-row" onclick="toggleCard(this.parentElement)">
+            <div class="card-main">
+              <span class="card-name">${escapeHtml(name)}</span>
+              ${phone ? `<span class="card-phone">${escapeHtml(phone)}</span>` : ''}
+              ${quickMeta.length ? `<span class="card-quick-meta">${quickMeta.join(' · ')}</span>` : ''}
             </div>
-            ${owner ? `<span class="pill owner">${escapeHtml(owner)}</span>` : ''}
+            <div class="card-right">
+              ${owner ? `<span class="pill owner">${escapeHtml(owner)}</span>` : ''}
+              ${primaryPill}
+              <span class="expand-chevron">▾</span>
+            </div>
           </div>
-          ${pills.length ? `<div class="pills">${pills.join('')}</div>` : ''}
-          <div class="card-meta">
-            ${metaItem('Purpose', purpose)}
-            ${metaItem('Result', result)}
-            ${metaItem('Next Step', nextStep)}
-            ${metaItem('When', when)}
+          <div class="card-detail">
+            ${detailMetaItems.length ? `<div class="detail-meta">${detailMetaItems.join('')}</div>` : ''}
+            ${otherTempPills ? `<div class="detail-extra-pills">${otherTempPills}</div>` : ''}
+            ${context ? `
+              <div class="detail-section">
+                <div class="detail-section-label">Context</div>
+                <div class="detail-section-body">${escapeHtml(context)}</div>
+              </div>
+            ` : ''}
+            ${crmNote ? `
+              <div class="detail-section">
+                <div class="detail-section-label">Last CRM Note</div>
+                <div class="detail-section-body crm">${escapeHtml(crmNote)}</div>
+              </div>
+            ` : ''}
+            <div class="detail-actions">
+              <button class="log-touch-btn" type="button" onclick="event.stopPropagation(); openTouchModalFromCard(this.closest('.card'))">+ Log Touch</button>
+              ${pageUrl ? `<a class="open-notion-btn" href="${escapeHtml(pageUrl)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Open in Notion ↗</a>` : ''}
+            </div>
           </div>
-          ${context ? `
-            <div class="card-section">
-              <div class="card-section-label">Context</div>
-              <div class="card-section-body">${escapeHtml(context)}</div>
-            </div>
-          ` : ''}
-          ${crmNote ? `
-            <div class="card-section">
-              <div class="card-section-label">Last CRM Note</div>
-              <div class="card-section-body crm">${escapeHtml(crmNote)}</div>
-            </div>
-          ` : ''}
         </article>
       `;
+    }
+
+    function toggleCard(card) {
+      // Close other expanded cards (only one open at a time = focus)
+      document.querySelectorAll('.card.expanded').forEach(c => {
+        if (c !== card) c.classList.remove('expanded');
+      });
+      card.classList.toggle('expanded');
     }
 
     function renderLoading() {
@@ -1276,44 +1298,13 @@
       setLastUpdated();
     }
 
-    // ===== TAB CONFIG =====
     const TAB_CONFIG = {
-      'search': {
-        title: 'Search',
-        kicker: 'Look up customers by name or phone. Click any card to log a new touch.',
-        showSearchControls: true,
-        statName: 'Search'
-      },
-      'due-today': {
-        title: 'Due Today',
-        kicker: 'Today\'s work + overdue. Hit these first.',
-        showSearchControls: false,
-        statName: 'Due Today'
-      },
-      'hot': {
-        title: 'Hot Leads',
-        kicker: 'Customers marked Hot. Active closes — call first, follow up hardest.',
-        showSearchControls: false,
-        statName: 'Hot'
-      },
-      'my-work': {
-        title: 'My Work',
-        kicker: 'Your assigned contacts. Sorted by follow-up date.',
-        showSearchControls: false,
-        statName: 'My Work'
-      },
-      'all': {
-        title: 'All Contacts',
-        kicker: 'Every active contact. Sorted by most recently updated.',
-        showSearchControls: false,
-        statName: 'All'
-      },
-      'archive': {
-        title: 'Archive',
-        kicker: 'Sold or closed contacts. Read-only history.',
-        showSearchControls: false,
-        statName: 'Archive'
-      }
+      'search': { title: 'Search', kicker: 'Tap a card to expand. Tap again to collapse.', showSearchControls: true, statName: 'Search' },
+      'due-today': { title: 'Due Today', kicker: 'Today + overdue. Hit these first.', showSearchControls: false, statName: 'Due Today' },
+      'hot': { title: 'Hot Leads', kicker: 'Active closes. Call first, follow up hardest.', showSearchControls: false, statName: 'Hot' },
+      'my-work': { title: 'My Work', kicker: 'Your assigned contacts, sorted by follow-up date.', showSearchControls: false, statName: 'My Work' },
+      'all': { title: 'All Contacts', kicker: 'Every active contact. Sorted by most recently updated.', showSearchControls: false, statName: 'All' },
+      'archive': { title: 'Archive', kicker: 'Sold or closed contacts. Read-only history.', showSearchControls: false, statName: 'Archive' }
     };
 
     function setTab(tab) {
@@ -1326,17 +1317,12 @@
       $('view-kicker').textContent = cfg.kicker;
       $('status-tab').textContent = cfg.statName;
       $('search-controls').style.display = cfg.showSearchControls ? '' : 'none';
-      if (tab !== 'search') {
-        activeFilter = null;
-        clearActiveFilterButton();
-      }
+      if (tab !== 'search') { activeFilter = null; clearActiveFilterButton(); }
       loadTab();
     }
 
     function refreshCurrentTab() { loadTab(); }
 
-    // ===== QUERY BUILDERS =====
-    // All non-archive tabs filter Archived ≠ TRUE (which in Notion = checkbox equals false)
     function archivedFalseFilter() {
       return { property: 'Archived', checkbox: { equals: false } };
     }
@@ -1364,7 +1350,10 @@
       return body;
     }
 
+    // FIX: Due Today filters by WHEN date instead of Status formula
+    // Overdue = WHEN < today, Due Today = WHEN = today
     function buildDueTodayBody() {
+      const today = todayISO();
       return {
         action: 'query',
         databaseId: DATABASE_ID,
@@ -1373,10 +1362,7 @@
         filter: {
           and: [
             archivedFalseFilter(),
-            { or: [
-              { property: 'Status', formula: { string: { equals: '🔴 Overdue' } } },
-              { property: 'Status', formula: { string: { equals: '🟢 Due Today' } } }
-            ]}
+            { property: 'WHEN', date: { on_or_before: today } }
           ]
         }
       };
@@ -1432,16 +1418,15 @@
       };
     }
 
-    // ===== LOADER =====
     async function loadTab() {
       if (currentTab === 'search') return runSearch();
-      let body, label;
+      let body;
       switch (currentTab) {
-        case 'due-today': body = buildDueTodayBody(); label = 'Loading today\'s work…'; break;
-        case 'hot': body = buildHotBody(); label = 'Loading hot pipeline…'; break;
-        case 'my-work': body = buildMyWorkBody(); label = 'Loading your assigned contacts…'; break;
-        case 'all': body = buildAllBody(); label = 'Loading all contacts…'; break;
-        case 'archive': body = buildArchiveBody(); label = 'Loading archived contacts…'; break;
+        case 'due-today': body = buildDueTodayBody(); break;
+        case 'hot': body = buildHotBody(); break;
+        case 'my-work': body = buildMyWorkBody(); break;
+        case 'all': body = buildAllBody(); break;
+        case 'archive': body = buildArchiveBody(); break;
         default: return;
       }
       setLiveStatus('Loading', 'idle');
@@ -1465,7 +1450,7 @@
       } catch (error) {
         setLiveStatus('Network', 'err');
         $('status-count').textContent = '0';
-        $('results').innerHTML = `<div class="err-box mono"><strong>Network / CORS Error</strong><br>${escapeHtml(error.message)}<br><br><strong>Fix:</strong> Worker may be down or unreachable.</div>`;
+        $('results').innerHTML = `<div class="err-box mono"><strong>Network / CORS Error</strong><br>${escapeHtml(error.message)}</div>`;
         setLastUpdated();
       }
     }
@@ -1477,18 +1462,17 @@
 
     function renderTabEmptyState(tab) {
       const messages = {
-        'search': { headline: 'No matches', body: 'Try a shorter name, partial phone, or leave blank for recent.' },
-        'due-today': { headline: 'Clean slate', body: 'No overdue or due-today contacts. Either ahead of the curve or time to add new leads.' },
-        'hot': { headline: 'No Hot tagged', body: 'Add new ones via + Add Lead or tag existing contacts as Hot in a touch entry.' },
-        'my-work': { headline: 'Empty queue', body: `No contacts assigned to ${currentRep}. Either caught up or time to log new leads.` },
-        'all': { headline: 'Nothing active', body: 'No active contacts. + Add Lead to capture the first.' },
-        'archive': { headline: 'Empty archive', body: 'No sold/closed contacts yet. Archive triggers when a touch entry has Archive checked.' }
+        'search': { headline: 'No matches', body: 'Try a shorter name or partial phone.' },
+        'due-today': { headline: 'Clean slate', body: 'Nothing overdue or due today. Either ahead of the curve or time to add new leads.' },
+        'hot': { headline: 'No Hot tagged', body: 'Tag existing contacts Hot via a touch entry.' },
+        'my-work': { headline: 'Empty queue', body: `No contacts assigned to ${currentRep}.` },
+        'all': { headline: 'Nothing active', body: 'No active contacts. + Add Lead to start.' },
+        'archive': { headline: 'Empty archive', body: 'No sold/closed contacts yet.' }
       };
       const m = messages[tab] || { headline: 'No results', body: 'Nothing to show.' };
       renderEmpty(m.body, m.headline);
     }
 
-    // ===== SEARCH (for Search tab) =====
     function quickFilter(value) {
       $('q').value = '';
       if (value === 'recent' || !value) {
@@ -1530,9 +1514,7 @@
       }
     }
 
-    // =================================================================
-    // ADD LEAD MODAL
-    // =================================================================
+    // ===== ADD LEAD =====
     function openAddModal() {
       $('add-modal').classList.add('open');
       const tomorrow = new Date();
@@ -1548,17 +1530,13 @@
       resetAddForm();
     }
     function resetAddForm() {
-      $('f-name').value = '';
-      $('f-phone').value = '';
-      $('f-context').value = '';
+      $('f-name').value = ''; $('f-phone').value = ''; $('f-context').value = '';
       $('f-owner').value = currentRep || 'DG';
       $('f-touch').value = 'New Lead';
       $('f-purpose').value = 'New Lead';
-      $('f-result').value = '';
-      $('f-nextstep').value = '';
+      $('f-result').value = ''; $('f-nextstep').value = '';
       $('f-when').value = '';
-      $('f-archived').checked = false;
-      $('f-logged').checked = false;
+      $('f-archived').checked = false; $('f-logged').checked = false;
       document.querySelectorAll('#chips-temp .chip').forEach(c => {
         c.classList.toggle('selected', c.dataset.value === 'New Lead');
       });
@@ -1602,7 +1580,7 @@
       properties['Customer Name'] = { title: [{ text: { content: name } }] };
       if (phone) properties['Phone'] = { phone_number: phone };
       if (context) properties['Context'] = { rich_text: [{ text: { content: context } }] };
-      properties['Date'] = { date: { start: new Date().toISOString().split('T')[0] } };
+      properties['Date'] = { date: { start: todayISO() } };
       if (owner) properties['Owner'] = { select: { name: owner } };
       if (touch) properties['Touch'] = { select: { name: touch } };
       if (purpose) properties['Purpose'] = { select: { name: purpose } };
@@ -1657,19 +1635,17 @@
       }
     }
 
-    // =================================================================
-    // TOUCH MODAL (card click)
-    // =================================================================
-    function openTouchModal(cardEl) {
-      const name = cardEl.dataset.name || '';
-      const phone = cardEl.dataset.phone || '';
-      // Decode HTML entities from data attributes
+    // ===== TOUCH MODAL =====
+    function openTouchModalFromCard(cardEl) {
       const decode = (s) => {
         const txt = document.createElement('textarea');
         txt.innerHTML = s;
         return txt.value;
       };
-      activeCustomer = { name: decode(name), phone: decode(phone) };
+      activeCustomer = {
+        name: decode(cardEl.dataset.name || ''),
+        phone: decode(cardEl.dataset.phone || '')
+      };
       $('touch-customer-name').textContent = activeCustomer.name;
       $('touch-customer-phone').textContent = activeCustomer.phone;
       $('touch-modal').classList.add('open');
@@ -1710,7 +1686,7 @@
       const properties = {};
       properties['Customer Name'] = { title: [{ text: { content: activeCustomer.name } }] };
       if (activeCustomer.phone) properties['Phone'] = { phone_number: activeCustomer.phone };
-      properties['Date'] = { date: { start: new Date().toISOString().split('T')[0] } };
+      properties['Date'] = { date: { start: todayISO() } };
       properties['Owner'] = { select: { name: currentRep } };
       if (touch) properties['Touch'] = { select: { name: touch } };
       if (purpose) properties['Purpose'] = { select: { name: purpose } };
