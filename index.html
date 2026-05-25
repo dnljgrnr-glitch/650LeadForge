@@ -684,6 +684,110 @@
     .form-grid { display: grid; gap: 10px; }
     .form-row { display: grid; gap: 10px; }
     .form-row.two { grid-template-columns: 1fr 1fr; }
+
+    /* ===== POLICY SUGGESTION PANEL (Block C) ===== */
+    .policy-panel {
+      display: none;
+      margin-top: 10px;
+      border: 1px solid var(--border-strong);
+      background: rgba(201, 169, 110, 0.04);
+      border-radius: var(--radius-md);
+      padding: 14px;
+    }
+    .policy-panel.open { display: block; }
+    .policy-panel-head {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .policy-panel-label {
+      color: var(--gold-2); font-size: 9px; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .policy-panel-label::before {
+      content: ""; width: 6px; height: 6px; border-radius: 999px;
+      background: var(--gold);
+    }
+    .policy-loading {
+      color: var(--muted); font-size: 11px;
+      font-family: "JetBrains Mono", monospace;
+      padding: 6px 0;
+    }
+    .policy-entry {
+      padding: 10px 0;
+      border-top: 1px solid var(--border);
+    }
+    .policy-entry:first-of-type { border-top: 0; padding-top: 0; }
+    .policy-entry-name {
+      font-size: 12px; font-weight: 700; letter-spacing: -0.01em;
+      color: var(--text); margin-bottom: 5px;
+    }
+    .policy-entry-quote {
+      font-size: 11px; line-height: 1.55;
+      color: #dcdce6;
+      padding: 8px 10px;
+      background: rgba(255,255,255,0.025);
+      border-left: 2px solid var(--gold);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      margin-bottom: 6px;
+    }
+    .policy-entry-framing {
+      font-size: 10px; line-height: 1.55;
+      color: var(--muted);
+      font-style: italic;
+      margin-bottom: 8px;
+    }
+    .policy-copy-btn {
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--gold-2);
+      border-radius: 999px;
+      padding: 5px 11px;
+      font-size: 9px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      transition: all 150ms ease;
+    }
+    .policy-copy-btn:hover { border-color: var(--gold); color: var(--text); }
+    .policy-copy-btn.copied { background: var(--green); border-color: var(--green); color: #090908; }
+
+    /* ===== CRM NOTE GENERATOR (Block A) ===== */
+    .crm-note-row {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+    }
+    .crm-note-toggle {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 8px;
+      width: 100%;
+      background: transparent; border: 0;
+      padding: 4px 0;
+      color: var(--muted);
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+    }
+    .crm-note-toggle:hover { color: var(--gold-2); }
+    .crm-note-toggle .chev { font-size: 11px; transition: transform 200ms ease; }
+    .crm-note-toggle.open .chev { transform: rotate(180deg); }
+    .crm-note-body {
+      display: none;
+      margin-top: 8px;
+    }
+    .crm-note-body.open { display: block; }
+    .crm-note-preview {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px; line-height: 1.6;
+      color: var(--gold-2);
+      background: rgba(201, 169, 110, 0.05);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin-bottom: 8px;
+    }
+    .crm-note-actions { display: flex; gap: 6px; flex-wrap: wrap; }
     .field-group { display: grid; gap: 4px; }
     .field-label { color: var(--muted); font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
     .field-label .req { color: var(--red); margin-left: 3px; }
@@ -1117,6 +1221,21 @@
             </label>
           </div>
         </div>
+
+        <!-- CRM NOTE GENERATOR (Block A) -->
+        <div class="crm-note-row">
+          <button type="button" class="crm-note-toggle" onclick="toggleCrmNote('f')" id="f-crm-toggle">
+            <span>Generate CRM Note</span><span class="chev">▾</span>
+          </button>
+          <div class="crm-note-body" id="f-crm-body">
+            <div class="crm-note-preview" id="f-crm-preview">—</div>
+            <div class="crm-note-actions">
+              <button type="button" class="policy-copy-btn" onclick="copyCrmNote('f')" id="f-crm-copy">Copy to Salesforce</button>
+              <button type="button" class="policy-copy-btn" onclick="regenerateCrmNote('f')">Regenerate</button>
+            </div>
+          </div>
+        </div>
+
         <div class="form-footer">
           <div id="form-msg" class="form-msg mono"></div>
           <div class="form-actions">
@@ -1170,7 +1289,7 @@
         <div class="form-row two">
           <div class="field-group">
             <label class="field-label" for="t-result">Result <span class="req">*</span></label>
-            <select id="t-result" class="form-select" required>
+            <select id="t-result" class="form-select" required onchange="onTouchResultChange()">
               <option value="">— Select —</option>
               <option value="Positive Response">Positive Response</option>
               <option value="Committed">Committed</option>
@@ -1228,6 +1347,28 @@
             <span>Logged in Salesforce</span>
           </label>
         </div>
+        <!-- POLICY SUGGESTION PANEL (Block C) - shown when Result starts with "OBJ —" -->
+        <div id="t-policy-panel" class="policy-panel">
+          <div class="policy-panel-head">
+            <div class="policy-panel-label">Worry-Free Anchor</div>
+          </div>
+          <div id="t-policy-body"></div>
+        </div>
+
+        <!-- CRM NOTE GENERATOR (Block A) -->
+        <div class="crm-note-row">
+          <button type="button" class="crm-note-toggle" onclick="toggleCrmNote('t')" id="t-crm-toggle">
+            <span>Generate CRM Note</span><span class="chev">▾</span>
+          </button>
+          <div class="crm-note-body" id="t-crm-body">
+            <div class="crm-note-preview" id="t-crm-preview">—</div>
+            <div class="crm-note-actions">
+              <button type="button" class="policy-copy-btn" onclick="copyCrmNote('t')" id="t-crm-copy">Copy to Salesforce</button>
+              <button type="button" class="policy-copy-btn" onclick="regenerateCrmNote('t')">Regenerate</button>
+            </div>
+          </div>
+        </div>
+
         <div class="form-footer">
           <div id="touch-msg" class="form-msg mono"></div>
           <div class="form-actions">
@@ -1245,6 +1386,7 @@
     // =================================================================
     const WORKER_URL  = 'https://650-search-proxy.dnljgrnr.workers.dev';
     const DATABASE_ID = '08e4ef11-b30d-462c-a447-9a1d9045be72';
+    const POLICY_DB_ID = '3ece5c7e-25a7-4772-976a-8d46f0df1dbd';
     const ACCESS_CODE = 'GOATS650';
     const SESSION_KEY = 'lf_unlocked_v6';
     const REP_KEY = 'lf_rep_v6';
@@ -1888,6 +2030,11 @@
       $('touch-msg').className = 'form-msg mono';
       $('touch-submit-btn').disabled = false;
       $('touch-submit-btn').textContent = 'Log Touch';
+      // Reset Block A/C panels
+      $('t-policy-panel').classList.remove('open');
+      $('t-policy-body').innerHTML = '';
+      $('t-crm-body').classList.remove('open');
+      $('t-crm-toggle').classList.remove('open');
       $('t-result').focus();
     }
 
@@ -1924,6 +2071,9 @@
       $('form-msg').className = 'form-msg mono';
       $('submit-btn').disabled = false;
       $('submit-btn').textContent = 'Save Lead';
+      // Reset CRM note panel
+      $('f-crm-body').classList.remove('open');
+      $('f-crm-toggle').classList.remove('open');
       setMode('quick');
     }
     function setMode(mode) {
@@ -2017,6 +2167,172 @@
         btn.disabled = false;
         btn.textContent = 'Save Lead';
       }
+    }
+
+    // =================================================================
+    // BLOCK C — POLICY SUGGESTION PANEL
+    // =================================================================
+    // Cache to avoid re-fetching same OBJ repeatedly
+    const POLICY_CACHE = {};
+
+    async function fetchPolicies(useCase) {
+      if (POLICY_CACHE[useCase]) return POLICY_CACHE[useCase];
+      const res = await notionQuery({
+        action: 'query',
+        databaseId: POLICY_DB_ID,
+        page_size: 10,
+        filter: { and: [
+          { property: 'Active', checkbox: { equals: true } },
+          { property: 'Use Cases', multi_select: { contains: useCase } }
+        ]}
+      });
+      if (!res.ok) return null;
+      const pages = Array.isArray(res.data.results) ? res.data.results : [];
+      POLICY_CACHE[useCase] = pages;
+      return pages;
+    }
+
+    function renderPolicyEntry(page, idx) {
+      const p = page.properties || {};
+      const name = getProp(p, 'Policy Name') || 'Policy';
+      const quote = getProp(p, 'Verbatim Text') || '';
+      const framing = getProp(p, 'Sales Framing') || '';
+      const safeQuote = quote.replace(/`/g, '\\`');
+      const safeFraming = framing.replace(/`/g, '\\`');
+      return `
+        <div class="policy-entry">
+          <div class="policy-entry-name">${escapeHtml(name)}</div>
+          <div class="policy-entry-quote">"${escapeHtml(quote)}"</div>
+          ${framing ? `<div class="policy-entry-framing">${escapeHtml(framing)}</div>` : ''}
+          <button type="button" class="policy-copy-btn" onclick='copyPolicyResponse(this, ${JSON.stringify(quote)}, ${JSON.stringify(framing)})'>Copy Response</button>
+        </div>
+      `;
+    }
+
+    async function showPolicyForResult(resultValue) {
+      const panel = $('t-policy-panel');
+      const body = $('t-policy-body');
+      if (!resultValue || !resultValue.startsWith('OBJ')) {
+        panel.classList.remove('open');
+        return;
+      }
+      panel.classList.add('open');
+      body.innerHTML = '<div class="policy-loading">Pulling Worry-Free anchor…</div>';
+      const policies = await fetchPolicies(resultValue);
+      if (!policies) {
+        body.innerHTML = '<div class="policy-loading">Could not load policies. Ensure Policy Reference DB is connected to integration.</div>';
+        return;
+      }
+      if (!policies.length) {
+        body.innerHTML = '<div class="policy-loading">No policy anchor matched this objection yet.</div>';
+        return;
+      }
+      body.innerHTML = policies.map(renderPolicyEntry).join('');
+    }
+
+    function copyPolicyResponse(btn, quote, framing) {
+      const text = framing ? `${framing}\n\n"${quote}"` : `"${quote}"`;
+      navigator.clipboard.writeText(text).then(() => {
+        const original = btn.textContent;
+        btn.textContent = 'Copied ✓';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 1400);
+      });
+    }
+
+    // =================================================================
+    // BLOCK A — CRM NOTE GENERATOR (9-component format)
+    // Format: DATE+TOUCH+STATUS+NEED+VALUE+OBJECTION+COMMITMENT+FOLLOWUP+REPINIT
+    // =================================================================
+    function buildCrmNote(opts) {
+      // opts: { date, touch, result, purpose, nextStep, when, wishlist, context, repInit, customerName }
+      const today = opts.date || todayISO();
+      const TOUCH = opts.touch || '—';
+      const STATUS = opts.result || '—';
+      // NEED: wishlist items joined, fallback to purpose, fallback to context excerpt
+      let NEED = '—';
+      if (opts.wishlist && opts.wishlist.length) NEED = opts.wishlist.join(', ');
+      else if (opts.purpose) NEED = opts.purpose;
+      // VALUE: first wishlist item (no price guessing)
+      const VALUE = (opts.wishlist && opts.wishlist.length) ? opts.wishlist[0] : '—';
+      // OBJECTION: only if Result starts with OBJ
+      const OBJECTION = (opts.result && opts.result.startsWith('OBJ')) ? opts.result.replace(/^OBJ\s*—\s*/, '') : '—';
+      const COMMITMENT = opts.nextStep || '—';
+      const FOLLOWUP = opts.when || '—';
+      const REPINIT = opts.repInit || '—';
+
+      const customer = opts.customerName ? ` ${opts.customerName} —` : '';
+      return `[${today}]${customer} TOUCH:${TOUCH} | STATUS:${STATUS} | NEED:${NEED} | VALUE:${VALUE} | OBJECTION:${OBJECTION} | COMMITMENT:${COMMITMENT} | FOLLOWUP:${FOLLOWUP} | REP:${REPINIT}`;
+    }
+
+    function buildTouchCrmNote() {
+      const wishlistChips = getSelectedChips('chips-touch-temp'); // touch modal has no wishlist; we use Temp as a proxy signal only
+      // Actually: the Touch modal doesn't have a wish list field. Use the current touch's fields.
+      // For wishlist signal, we leave empty (—) unless an active customer carried it forward.
+      return buildCrmNote({
+        date: todayISO(),
+        touch: $('t-touch').value,
+        result: $('t-result').value,
+        purpose: $('t-purpose').value,
+        nextStep: $('t-nextstep').value,
+        when: $('t-when').value,
+        wishlist: [], // touch modal doesn't capture wishlist — kept empty intentionally
+        context: $('t-context').value.trim(),
+        repInit: currentRep,
+        customerName: activeCustomer ? activeCustomer.name : ''
+      });
+    }
+
+    function buildAddLeadCrmNote() {
+      const wishlist = getSelectedChips('chips-wishlist');
+      return buildCrmNote({
+        date: todayISO(),
+        touch: $('f-touch').value,
+        result: $('f-result').value,
+        purpose: $('f-purpose').value,
+        nextStep: $('f-nextstep').value,
+        when: $('f-when').value,
+        wishlist,
+        context: $('f-context').value.trim(),
+        repInit: currentRep,
+        customerName: $('f-name').value.trim()
+      });
+    }
+
+    function toggleCrmNote(prefix) {
+      const toggle = $(prefix + '-crm-toggle');
+      const body = $(prefix + '-crm-body');
+      const isOpen = body.classList.toggle('open');
+      toggle.classList.toggle('open', isOpen);
+      if (isOpen) regenerateCrmNote(prefix);
+    }
+
+    function regenerateCrmNote(prefix) {
+      const preview = $(prefix + '-crm-preview');
+      let note;
+      if (prefix === 't') note = buildTouchCrmNote();
+      else if (prefix === 'f') note = buildAddLeadCrmNote();
+      else note = '—';
+      preview.textContent = note;
+    }
+
+    function copyCrmNote(prefix) {
+      const note = $(prefix + '-crm-preview').textContent;
+      navigator.clipboard.writeText(note).then(() => {
+        const btn = $(prefix + '-crm-copy');
+        const original = btn.textContent;
+        btn.textContent = 'Copied ✓';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 1400);
+      });
+    }
+
+    // Triggered when Touch modal Result dropdown changes
+    function onTouchResultChange() {
+      const value = $('t-result').value;
+      showPolicyForResult(value);
+      // Refresh CRM note preview if it's open
+      if ($('t-crm-body').classList.contains('open')) regenerateCrmNote('t');
     }
 
     function closeTouchModal() {
