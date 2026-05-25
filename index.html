@@ -1,4 +1,4 @@
-<!-- v8 · 650 LeadForge · Agent Assist priority engine + full card/profile visibility -->
+<!-- v8 · 650 LeadForge · Compact Agent Assist answers + reasoning -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -626,6 +626,47 @@
     }
     .copy-btn:hover { background: rgba(201, 169, 110, 0.1); }
     .copy-btn.copied { color: #090908; background: var(--gold); border-color: transparent; }
+
+    .feedback-block {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.055);
+    }
+    .feedback-title {
+      color: var(--faint);
+      font-size: 8px;
+      font-weight: 800;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .feedback-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .feedback-btn {
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.025);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 6px 9px;
+      font-size: 8px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: all 150ms ease;
+    }
+    .feedback-btn:hover {
+      color: var(--gold-2);
+      border-color: var(--border-strong);
+      background: rgba(201, 169, 110, 0.055);
+    }
+    .feedback-btn.copied {
+      color: #090908;
+      background: var(--gold);
+      border-color: transparent;
+    }
     .panel-section { margin-bottom: 16px; }
     .panel-section-title {
       color: var(--gold-2);
@@ -2505,54 +2546,73 @@
     function renderAgentAssist(agent) {
       const priorityClass = String(agent.priority || 'Low').toLowerCase();
       return `
-        <div class="agent-assist">
+        <div class="agent-assist"
+          data-agent-priority="${escapeHtml(agent.priority || '')}"
+          data-agent-score="${escapeHtml(agent.score || '')}"
+          data-agent-lane="${escapeHtml(agent.trainerLabel || '')}"
+          data-agent-response="${escapeHtml(agent.suggestedText || '')}"
+          data-agent-policy="${escapeHtml(agent.policyAnchor || '')}"
+          data-agent-why="${escapeHtml(agent.whyThisWorks || '')}"
+          data-agent-donot="${escapeHtml(agent.doNotSay || '')}"
+          data-agent-close="${escapeHtml(agent.close || '')}">
           <div class="agent-head">
-            <div class="agent-title mono">Agent Assist · Response Trainer</div>
+            <div>
+              <div class="agent-title mono">Agent Assist</div>
+              <div class="agent-body" style="margin-top:3px; color: var(--muted);">${escapeHtml(agent.trainerLabel || 'Response guidance')}</div>
+            </div>
             <div class="agent-priority ${escapeHtml(priorityClass)}">${escapeHtml(agent.priority)} · ${escapeHtml(agent.score)}</div>
           </div>
+
           <div class="agent-grid">
             <div class="agent-item">
-              <div class="agent-label">Training Lane</div>
-              <div class="agent-body">${escapeHtml(agent.trainerLabel)}</div>
-            </div>
-            <div class="agent-item">
-              <div class="agent-label">Recommended Response</div>
+              <div class="agent-label">Suggested Response</div>
               <div class="agent-script" data-copy-text="${escapeHtml(agent.suggestedText)}">${escapeHtml(agent.suggestedText)}</div>
             </div>
+
             <div class="agent-item">
-              <div class="agent-label">Why This Works</div>
-              <div class="agent-body">${escapeHtml(agent.whyThisWorks)}</div>
+              <div class="agent-label">Why This Response</div>
+              <div class="agent-body">${escapeHtml(agent.responseWhy || agent.whyThisWorks)}</div>
             </div>
-            <div class="agent-item">
-              <div class="agent-label">Policy Anchor</div>
-              <div class="agent-body">${escapeHtml(agent.policyAnchor)}</div>
-            </div>
-            <div class="agent-item">
-              <div class="agent-label">Do Not Say</div>
-              <div class="agent-body">${escapeHtml(agent.doNotSay)}</div>
-            </div>
-            <div class="agent-item">
-              <div class="agent-label">Reason</div>
-              <div class="agent-body">${escapeHtml(agent.reason)}</div>
-            </div>
-            <div class="agent-item">
-              <div class="agent-label">Next Best Action</div>
-              <div class="agent-body">${escapeHtml(agent.nextBestAction)}</div>
-            </div>
+
             <div class="agent-item">
               <div class="agent-label">Suggested Call Opener</div>
               <div class="agent-script" data-copy-call="${escapeHtml(agent.callOpener)}">${escapeHtml(agent.callOpener)}</div>
             </div>
+
+            <div class="agent-item">
+              <div class="agent-label">Why This Opener</div>
+              <div class="agent-body">${escapeHtml(agent.callWhy || agent.nextBestAction)}</div>
+            </div>
+
             <div class="agent-item">
               <div class="agent-label">Close</div>
               <div class="agent-body">${escapeHtml(agent.close)}</div>
             </div>
+
+            <div class="agent-item">
+              <div class="agent-label">Policy Anchor</div>
+              <div class="agent-body">${escapeHtml(agent.policyAnchor)}</div>
+            </div>
+
             <div class="agent-script" style="display:none;" data-copy-trainer="${escapeHtml(agent.trainerCopy)}">${escapeHtml(agent.trainerCopy)}</div>
           </div>
+
           <div class="agent-actions">
             <button class="copy-btn mono" type="button" onclick="event.stopPropagation(); copyFromAgentButton(this, 'text')">Copy Response</button>
             <button class="copy-btn mono" type="button" onclick="event.stopPropagation(); copyFromAgentButton(this, 'call')">Copy Call Opener</button>
             <button class="copy-btn mono" type="button" onclick="event.stopPropagation(); copyFromAgentButton(this, 'trainer')">Copy Trainer Notes</button>
+          </div>
+
+          <div class="feedback-block">
+            <div class="feedback-title mono">Response Audit</div>
+            <div class="feedback-actions">
+              <button class="feedback-btn mono" type="button" onclick="event.stopPropagation(); copyAgentFeedbackButton(this, 'Good Response')">Good</button>
+              <button class="feedback-btn mono" type="button" onclick="event.stopPropagation(); copyAgentFeedbackButton(this, 'Too Generic')">Generic</button>
+              <button class="feedback-btn mono" type="button" onclick="event.stopPropagation(); copyAgentFeedbackButton(this, 'Too Pushy')">Pushy</button>
+              <button class="feedback-btn mono" type="button" onclick="event.stopPropagation(); copyAgentFeedbackButton(this, 'Needs More Policy')">Policy</button>
+              <button class="feedback-btn mono" type="button" onclick="event.stopPropagation(); copyAgentFeedbackButton(this, 'Needs Better Close')">Close</button>
+              <button class="feedback-btn mono" type="button" onclick="event.stopPropagation(); copyAgentFeedbackButton(this, 'Needs Better Tone')">Tone</button>
+            </div>
           </div>
         </div>
       `;
@@ -2602,6 +2662,63 @@
         button.textContent = original;
         button.classList.remove('copied');
       }, 1200);
+    }
+
+    function getAgentFeedbackCustomerName(button) {
+      const card = button.closest('.card');
+      if (card && card.dataset && card.dataset.name) return decodeHtml(card.dataset.name);
+      const panelName = $('panel-customer-name');
+      if (panelName && panelName.textContent.trim()) return panelName.textContent.trim();
+      return 'Unknown Customer';
+    }
+
+    function buildAgentFeedbackNote(button, feedbackLabel) {
+      const box = button.closest('.agent-assist');
+      const customer = getAgentFeedbackCustomerName(button);
+      const priority = box ? (box.getAttribute('data-agent-priority') || '') : '';
+      const score = box ? (box.getAttribute('data-agent-score') || '') : '';
+      const lane = box ? (box.getAttribute('data-agent-lane') || '') : '';
+      const response = box ? (box.getAttribute('data-agent-response') || '') : '';
+      const policy = box ? (box.getAttribute('data-agent-policy') || '') : '';
+      const why = box ? (box.getAttribute('data-agent-why') || '') : '';
+      const doNot = box ? (box.getAttribute('data-agent-donot') || '') : '';
+      const close = box ? (box.getAttribute('data-agent-close') || '') : '';
+
+      return `AGENT RESPONSE AUDIT
+DATE: ${todayISO()}
+REP: ${currentRep || '—'}
+CUSTOMER: ${customer}
+FEEDBACK: ${feedbackLabel}
+PRIORITY: ${priority}${score ? ` (${score})` : ''}
+TRAINING LANE: ${lane || '—'}
+POLICY ANCHOR: ${policy || '—'}
+
+RECOMMENDED RESPONSE:
+${response || '—'}
+
+WHY THIS WORKS:
+${why || '—'}
+
+DO NOT SAY:
+${doNot || '—'}
+
+CLOSE:
+${close || '—'}
+
+DANIEL REVISION NOTES:
+[Add what sounded right, what sounded wrong, and what the better wording should be.]`;
+    }
+
+    async function copyAgentFeedbackButton(button, feedbackLabel) {
+      const original = button.textContent;
+      const note = buildAgentFeedbackNote(button, feedbackLabel);
+      const ok = await copyAgentText(note);
+      button.textContent = ok ? 'Copied' : 'Copy Failed';
+      button.classList.toggle('copied', ok);
+      setTimeout(() => {
+        button.textContent = original;
+        button.classList.remove('copied');
+      }, 1400);
     }
 
     function toggleResultCard(card) {
@@ -3545,6 +3662,64 @@
       if (temp === 'Cold') return 'Use the soft follow-up. If no response, leave it inactive unless new interest appears.';
       if (temp === 'Verified Returning Customer') return 'Use the returning-customer tone and make the next step easy to say yes to.';
       return agentNextAction(data);
+    }
+
+    function agentResponseWhy(data) {
+      const temp = agentPrimaryTemp(data);
+      const category = detectAgentCategory(data);
+      const obj = agentObjectionType(data);
+      const timing = agentTimingLabel(data);
+      const policy = agentSpecificPolicyAnchor(data);
+
+      if (obj) {
+        return `Built around ${obj.toLowerCase()} for ${category}. The tone is ${agentTone(data).toLowerCase()} because the lead is ${temp.toLowerCase()} and timing is ${timing}. Policy anchor: ${policy}.`;
+      }
+
+      if (temp === 'Verified Returning Customer') {
+        return `Uses a returning-customer angle so the response feels familiar, simple, and low-friction. It references ${category} without overpromising availability or approval.`;
+      }
+
+      if (temp === 'Hot') {
+        return `Uses a direct close because this is a hot lead. The response keeps focus on ${category}, next action, and a clear yes/no decision.`;
+      }
+
+      if (temp === 'Pending') {
+        return `Uses a status-check angle because the lead is pending. The response is designed to identify the blocker without sounding pushy.`;
+      }
+
+      if (temp === 'Cold') {
+        return `Uses a soft permission-based follow-up because the lead is cold or inactive. It keeps the door open without chasing too hard.`;
+      }
+
+      return `Uses a supportive follow-up because the current signal is ${temp.toLowerCase()} with ${timing} timing. It keeps the conversation focused on fit, timing, and next step.`;
+    }
+
+    function agentCallWhy(data) {
+      const obj = agentObjectionType(data);
+      const temp = agentPrimaryTemp(data);
+      const category = detectAgentCategory(data);
+
+      if (obj) {
+        return `The opener asks one clarifying question tied to the objection before pitching. This gives the rep control of the call and avoids guessing.`;
+      }
+
+      if (temp === 'Hot') {
+        return `The opener is direct because a hot lead needs fast movement, not extra explanation. It gets straight to ${category} and the next step.`;
+      }
+
+      if (temp === 'Warm') {
+        return `The opener is helpful and low-pressure so the customer can re-engage without feeling cornered.`;
+      }
+
+      if (temp === 'Pending') {
+        return `The opener is built to uncover the current status: still interested, delayed, comparing options, or no longer looking.`;
+      }
+
+      if (temp === 'Verified Returning Customer') {
+        return `The opener uses prior relationship leverage without sounding entitled. It makes getting set back up feel easy.`;
+      }
+
+      return `The opener is simple and neutral so the rep can confirm interest before moving into value or closing language.`;
     }
 
     function buildAgentAssist(data) {
