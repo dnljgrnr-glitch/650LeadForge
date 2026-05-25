@@ -1,4 +1,4 @@
-<!-- v6.0 · 650 LeadForge · Home dashboard + lead timeline side panel + Pipeline removed -->
+<!-- v8 · 650 LeadForge · Agent Assist priority engine + full card/profile visibility -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -447,6 +447,231 @@
     .pill.archived { color: var(--faint); border-color: var(--border); }
     .pill.sold { color: var(--green); border-color: rgba(66,217,160,0.4); background: rgba(66,217,160,0.07); }
 
+
+
+    /* ===== EXPANDED CARD + AGENT ASSIST ===== */
+    .card-detail {
+      display: none;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+    .card.expanded .card-detail { display: block; }
+    .detail-meta {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px 14px;
+      margin-bottom: 10px;
+      font-size: 11px;
+      font-family: "JetBrains Mono", monospace;
+      color: var(--muted);
+    }
+    .detail-meta div { display: flex; gap: 5px; align-items: baseline; }
+    .detail-meta label {
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--faint);
+    }
+    .detail-meta strong { color: var(--text); font-weight: 600; }
+    .detail-section { margin-top: 10px; }
+    .detail-section-label {
+      color: var(--faint);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .detail-section-body { color: #dcdce6; font-size: 12px; line-height: 1.5; }
+    .detail-section-body.crm {
+      color: var(--gold-2);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+    }
+    .detail-extra-pills { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
+    .detail-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .log-touch-btn {
+      border: 0;
+      border-radius: var(--radius-md);
+      padding: 9px 16px;
+      color: #090908;
+      background: var(--gold);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      font-size: 11px;
+      transition: filter 150ms ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .log-touch-btn:hover { filter: brightness(1.08); }
+    .archive-btn {
+      border: 1px solid rgba(255, 100, 115, 0.32);
+      background: rgba(255, 100, 115, 0.04);
+      color: #ff9aa4;
+      border-radius: var(--radius-md);
+      padding: 9px 14px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      font-size: 11px;
+      transition: all 150ms;
+    }
+    .archive-btn:hover { background: rgba(255, 100, 115, 0.08); }
+    .open-notion-btn {
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      border-radius: var(--radius-md);
+      padding: 9px 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      font-size: 11px;
+      transition: all 150ms;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .open-notion-btn:hover { color: var(--text); border-color: var(--border-strong); }
+    .expand-chevron {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-size: 11px;
+      transition: transform 200ms ease, color 150ms ease;
+    }
+    .card.expanded .expand-chevron { transform: rotate(180deg); color: var(--gold-2); }
+    .agent-assist {
+      margin-top: 12px;
+      padding: 12px;
+      border: 1px solid rgba(201, 169, 110, 0.18);
+      background: rgba(201, 169, 110, 0.035);
+      border-radius: var(--radius-md);
+    }
+    .agent-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 9px;
+      flex-wrap: wrap;
+    }
+    .agent-title {
+      color: var(--gold-2);
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+    .agent-priority {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 8px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.025);
+    }
+    .agent-priority.high { color: var(--red); border-color: rgba(255, 100, 115, 0.38); background: rgba(255, 100, 115, 0.06); }
+    .agent-priority.medium { color: var(--orange); border-color: rgba(245, 168, 75, 0.38); background: rgba(245, 168, 75, 0.06); }
+    .agent-priority.low { color: var(--blue); border-color: rgba(111, 156, 255, 0.34); background: rgba(111, 156, 255, 0.05); }
+    .agent-grid { display: grid; gap: 8px; }
+    .agent-item { border-top: 1px solid rgba(255, 255, 255, 0.055); padding-top: 8px; }
+    .agent-item:first-child { border-top: 0; padding-top: 0; }
+    .agent-label {
+      color: var(--faint);
+      font-size: 8px;
+      font-weight: 800;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      margin-bottom: 3px;
+    }
+    .agent-body { color: #dedee8; font-size: 11px; line-height: 1.5; }
+    .agent-script {
+      color: var(--text);
+      background: rgba(0, 0, 0, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.055);
+      border-radius: var(--radius-sm);
+      padding: 8px;
+      font-size: 11px;
+      line-height: 1.48;
+    }
+    .agent-actions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 9px; }
+    .copy-btn {
+      border: 1px solid var(--border-strong);
+      background: rgba(201, 169, 110, 0.055);
+      color: var(--gold-2);
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: all 150ms ease;
+    }
+    .copy-btn:hover { background: rgba(201, 169, 110, 0.1); }
+    .copy-btn.copied { color: #090908; background: var(--gold); border-color: transparent; }
+    .panel-section { margin-bottom: 16px; }
+    .panel-section-title {
+      color: var(--gold-2);
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .panel-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+    .panel-detail-item {
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      border-radius: var(--radius-sm);
+      padding: 8px 9px;
+    }
+    .panel-detail-item label {
+      display: block;
+      color: var(--faint);
+      font-size: 8px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 3px;
+    }
+    .panel-detail-item strong { color: var(--text); font-size: 11px; font-weight: 700; }
+    .panel-context-box {
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      border-radius: var(--radius-sm);
+      padding: 10px 11px;
+      color: #dcdce6;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+    .panel-crm-box {
+      border: 1px solid var(--border-strong);
+      background: rgba(201, 169, 110, 0.04);
+      border-radius: var(--radius-sm);
+      padding: 10px 11px;
+      color: var(--gold-2);
+      font-size: 11px;
+      line-height: 1.55;
+      font-family: "JetBrains Mono", monospace;
+    }
+
     /* RESULTS HEAD */
     .results-head {
       display: flex; align-items: end; justify-content: space-between;
@@ -875,6 +1100,7 @@
       .card-right { width: 100%; justify-content: flex-end; }
       .stat-grid { grid-template-columns: 1fr; }
       .lead-panel { width: 100vw; }
+      .detail-meta, .panel-detail-grid { grid-template-columns: 1fr; }
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
@@ -1081,6 +1307,21 @@
       </div>
     </div>
     <div class="lead-panel-body">
+      <div class="panel-section">
+        <div class="panel-section-title mono">Agent Assist</div>
+        <div id="panel-agent-assist"></div>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-section-title mono">Latest Touch</div>
+        <div id="panel-latest-detail"></div>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-section-title mono">Context</div>
+        <div id="panel-context"></div>
+      </div>
+
       <div class="timeline-label">Timeline</div>
       <div class="timeline" id="panel-timeline"></div>
     </div>
@@ -1493,6 +1734,12 @@
       const now = new Date();
       $('status-updated').textContent = 'Updated ' + now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
     }
+    function decodeHtml(value) {
+      const txt = document.createElement('textarea');
+      txt.innerHTML = value || '';
+      return txt.value;
+    }
+
     function escapeHtml(value) {
       if (value === null || value === undefined) return '';
       return String(value).replace(/[&<>"']/g, (m) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -1841,58 +2088,406 @@
       setLastUpdated();
     }
 
+
+    // =================================================================
+    // RULE-BASED AGENT ASSIST
+    // =================================================================
+    function pageToData(page) {
+      const p = page.properties || {};
+      return {
+        pageId: page.id || '',
+        pageUrl: page.url || '',
+        name: getProp(p, 'Customer Name') || 'Unnamed',
+        phone: getProp(p, 'Phone') || '',
+        date: getProp(p, 'Date') || '',
+        when: getProp(p, 'WHEN') || '',
+        owner: getProp(p, 'Owner') || '',
+        touch: getProp(p, 'Touch') || '',
+        purpose: getProp(p, 'Purpose') || '',
+        result: getProp(p, 'Result') || '',
+        nextStep: getProp(p, 'Next Step') || '',
+        temps: getProp(p, 'Temp') || [],
+        wishList: getProp(p, 'Wish List') || [],
+        context: getProp(p, 'Context') || '',
+        archived: getProp(p, 'Archived') === true,
+        logged: getProp(p, 'Logged?') === true,
+        status: getProp(p, 'Status') || '',
+        crmNote: getProp(p, 'Log in SalesForce') || '',
+        lastUpdated: page.last_edited_time || ''
+      };
+    }
+
+    function agentHas(value, needle) {
+      if (Array.isArray(value)) return value.join(' ').toLowerCase().includes(String(needle).toLowerCase());
+      return String(value || '').toLowerCase().includes(String(needle).toLowerCase());
+    }
+
+    function detectAgentCategory(data) {
+      const wishList = Array.isArray(data.wishList) ? data.wishList.join(' ') : '';
+      const combined = `${wishList} ${data.context || ''} ${data.purpose || ''}`.toLowerCase();
+      if (/washer|dryer/.test(combined)) return 'washer and dryer options';
+      if (/refrigerator|appliance/.test(combined)) return 'appliance options';
+      if (/bedroom|mattress/.test(combined)) return 'bedroom options';
+      if (/living|furniture|sofa|couch/.test(combined)) return 'furniture options';
+      if (/tv|entertainment/.test(combined)) return 'TV and entertainment options';
+      if (/laptop|computer/.test(combined)) return 'laptop options';
+      if (/gaming|console|ps5|xbox/.test(combined)) return 'gaming options';
+      if (/bundle|multi/.test(combined)) return 'bundle options';
+      if (/\bac\b|air conditioner|portable|window unit|btu/.test(combined)) return 'AC options';
+      return 'what you were looking at';
+    }
+
+    function agentScore(data) {
+      if (data.archived) return -100;
+      let score = 0;
+      if (data.when && data.when < todayISO()) score += 40;
+      if (data.when && data.when === todayISO()) score += 25;
+      if (agentHas(data.temps, 'Hot')) score += 30;
+      if (agentHas(data.temps, '⭐ VERIFIED - Returning Customer')) score += 25;
+      if (String(data.result || '').startsWith('OBJ')) score += 25;
+      if (agentHas(data.nextStep, 'CB/Follow Up')) score += 15;
+      if (agentHas(data.purpose, 'Conversion/Reactivation')) score += 15;
+      if (data.result === 'Needs Follow-Up') score += 12;
+      if (agentHas(data.temps, 'Warm')) score += 10;
+      if (agentHas(data.temps, 'Pending')) score += 10;
+      if (agentHas(data.temps, 'Cold')) score -= 15;
+      if (agentHas(data.nextStep, 'No Further Action')) score -= 50;
+      return score;
+    }
+
+    function computeAgentPriority(data) {
+      const score = agentScore(data);
+      if (score >= 45) return 'High';
+      if (score >= 20) return 'Medium';
+      return 'Low';
+    }
+
+    function agentReason(data) {
+      if (data.archived) return 'This record is archived. Use for history only unless it needs to be reopened.';
+      if (data.when && data.when < todayISO()) return `Follow-up is overdue${data.nextStep ? ` and the next step is ${data.nextStep}` : ''}.`;
+      if (String(data.result || '').startsWith('OBJ')) return `Customer has an unresolved objection: ${data.result}.`;
+      if (agentHas(data.temps, 'Hot')) return 'Customer is marked Hot, so the next touch should be direct and conversion-focused.';
+      if (agentHas(data.temps, '⭐ VERIFIED - Returning Customer')) return 'Verified returning customer. Use a comeback tone and make the next step simple.';
+      if (data.when && data.when === todayISO()) return `Follow-up is due today${data.nextStep ? ` and the next step is ${data.nextStep}` : ''}.`;
+      if (agentHas(data.purpose, 'Conversion/Reactivation')) return 'Conversion or reactivation opportunity. Focus on getting the customer set back up.';
+      if (agentHas(data.temps, 'Warm')) return 'Warm lead. Keep the follow-up useful, specific, and low-friction.';
+      if (agentHas(data.temps, 'Pending')) return 'Pending lead. Use a status-check angle and move the decision forward.';
+      return 'No urgent trigger found. Clarify interest and create a clean next step.';
+    }
+
+    function objectionAnchorLine(data) {
+      if (agentHas(data.result, 'OBJ — Price / Weekly')) return 'Anchor on flexible payment options and fit the agreement to the customer’s cash-flow cycle.';
+      if (agentHas(data.result, 'OBJ — Total Cost')) return 'Anchor on flexibility, ownership path, and solving the immediate home need without pressure.';
+      if (agentHas(data.result, 'OBJ — Timing')) return 'Anchor on payment timing, delivery timing, and a realistic follow-up window.';
+      if (agentHas(data.result, 'OBJ — Needs to Think')) return 'Anchor on simplifying the decision and identifying the exact part they are unsure about.';
+      if (agentHas(data.result, 'OBJ — Needs Partner')) return 'Anchor on making the option easy to explain and review with the decision partner.';
+      return '';
+    }
+
+    function agentNextAction(data) {
+      if (data.archived) return 'Review only. Do not contact unless the record should be reopened.';
+      const anchor = objectionAnchorLine(data);
+      if (anchor) return anchor;
+      if (agentHas(data.result, 'No Answer') || agentHas(data.result, 'Left Message')) return 'Send a short text, then call again later if the lead is Hot or due today.';
+      if (agentHas(data.nextStep, 'Write Agreement')) return 'Call directly and move toward writing the agreement.';
+      if (agentHas(data.nextStep, 'Come Into Store')) return 'Confirm visit timing and remove friction around what they need to bring.';
+      if (agentHas(data.purpose, 'Conversion/Reactivation')) return 'Use a returning-customer message and offer to check current options.';
+      if (agentHas(data.temps, 'Hot')) return 'Call first. If no answer, send the suggested text immediately after.';
+      if (agentHas(data.temps, 'Warm') || agentHas(data.temps, 'Pending')) return 'Send the suggested text and ask one clear question.';
+      return 'Send a light follow-up to confirm whether they are still looking.';
+    }
+
+    function agentChoiceQuestion(data) {
+      if (agentHas(data.result, 'OBJ — Price / Weekly')) return 'Would you want me to check which option fits your pay schedule best?';
+      if (agentHas(data.result, 'OBJ — Total Cost')) return 'Would it help if I showed you the most flexible option first?';
+      if (agentHas(data.result, 'OBJ — Timing')) return 'Would today or your next payday be better to look at options?';
+      if (agentHas(data.result, 'OBJ — Needs to Think')) return 'What part are you still weighing out?';
+      if (agentHas(data.result, 'OBJ — Needs Partner')) return 'Would it help if I gave you the simple version to review together?';
+      if (agentHas(data.result, 'No Answer') || agentHas(data.result, 'Left Message')) return 'Would a quick call or text be easier?';
+      if (agentHas(data.nextStep, 'Come Into Store')) return 'Would today or tomorrow be better for you to stop in?';
+      if (agentHas(data.nextStep, 'Write Agreement')) return 'Would you like me to get the agreement started?';
+      if (agentHas(data.temps, 'Hot')) return 'Do you want me to check the best option for you today?';
+      return 'Are you still looking, or should I check back another time?';
+    }
+
+    function agentCallQuestion(data) {
+      if (agentHas(data.result, 'OBJ — Price / Weekly')) return 'Was the weekly payment the main thing, or was there another concern too?';
+      if (agentHas(data.result, 'OBJ — Total Cost')) return 'Was total cost the main concern, or are you mainly trying to solve the immediate need?';
+      if (agentHas(data.result, 'OBJ — Timing')) return 'Are we still working around the same payday window, or did anything change?';
+      if (agentHas(data.result, 'OBJ — Needs to Think')) return 'What part of the decision are you still unsure about?';
+      if (agentHas(data.result, 'OBJ — Needs Partner')) return 'What would your partner need to feel comfortable with the option?';
+      if (agentHas(data.result, 'No Answer') || agentHas(data.result, 'Left Message')) return 'I wanted to see if you were still looking or if timing changed.';
+      if (agentHas(data.nextStep, 'Come Into Store')) return 'Are you still able to stop in, or should we adjust the timing?';
+      if (agentHas(data.nextStep, 'Write Agreement')) return 'Are you ready for me to get the agreement started?';
+      return 'Are you still looking at this, or has anything changed on your end?';
+    }
+
+    function agentConcern(data) {
+      if (agentHas(data.result, 'OBJ — Price / Weekly')) return 'match the payment option to your pay schedule';
+      if (agentHas(data.result, 'OBJ — Total Cost')) return 'keep the setup flexible and focused on solving the immediate home need';
+      if (agentHas(data.result, 'OBJ — Timing')) return 'work around your timing or payday window';
+      if (agentHas(data.result, 'OBJ — Needs to Think')) return 'clear up the part you are unsure about';
+      if (agentHas(data.result, 'OBJ — Needs Partner')) return 'make this easy to explain and review together';
+      if (agentHas(data.purpose, 'Conversion/Reactivation')) return 'help get you set back up without making it complicated';
+      if (agentHas(data.temps, 'Hot')) return 'keep this simple and move quickly';
+      if (agentHas(data.temps, 'Warm')) return 'send over a realistic option';
+      if (agentHas(data.temps, 'Pending')) return 'confirm where things stand';
+      return 'help you compare the best available option';
+    }
+
+    function buildAgentAssist(data) {
+      const rep = data.owner || currentRep || 'DG';
+      const name = data.name || 'there';
+      const category = detectAgentCategory(data);
+      const reason = agentReason(data);
+      const nextBestAction = agentNextAction(data);
+      const choice = agentChoiceQuestion(data);
+      const callAsk = agentCallQuestion(data);
+      const concern = agentConcern(data);
+      const priority = computeAgentPriority(data);
+      const score = agentScore(data);
+
+      const suggestedText = `Hey ${name}, this is ${rep} with Rent-A-Center on Hepburn. I wanted to follow up about ${category}. ${reason.replace(/\.$/, '')}. ${choice}`;
+      const callOpener = `Hey ${name}, this is ${rep} with Rent-A-Center on Hepburn. I’m following up from when we talked about ${category}. ${callAsk}`;
+      const close = `If I can ${concern}, would it make sense to ${
+        agentHas(data.nextStep, 'Come Into Store')
+          ? 'stop in and look at the best option'
+          : agentHas(data.nextStep, 'Write Agreement')
+            ? 'get the next step started'
+            : 'look at the best option today'
+      }?`;
+
+      return { priority, score, reason, nextBestAction, suggestedText, callOpener, close };
+    }
+
+    function renderAgentAssist(agent) {
+      const priorityClass = String(agent.priority || 'Low').toLowerCase();
+      return `
+        <div class="agent-assist">
+          <div class="agent-head">
+            <div class="agent-title mono">Agent Assist</div>
+            <div class="agent-priority ${escapeHtml(priorityClass)}">${escapeHtml(agent.priority)} · ${escapeHtml(agent.score)}</div>
+          </div>
+          <div class="agent-grid">
+            <div class="agent-item">
+              <div class="agent-label">Reason</div>
+              <div class="agent-body">${escapeHtml(agent.reason)}</div>
+            </div>
+            <div class="agent-item">
+              <div class="agent-label">Next Best Action</div>
+              <div class="agent-body">${escapeHtml(agent.nextBestAction)}</div>
+            </div>
+            <div class="agent-item">
+              <div class="agent-label">Suggested Text</div>
+              <div class="agent-script" data-copy-text="${escapeHtml(agent.suggestedText)}">${escapeHtml(agent.suggestedText)}</div>
+            </div>
+            <div class="agent-item">
+              <div class="agent-label">Suggested Call Opener</div>
+              <div class="agent-script" data-copy-call="${escapeHtml(agent.callOpener)}">${escapeHtml(agent.callOpener)}</div>
+            </div>
+            <div class="agent-item">
+              <div class="agent-label">Suggested Close</div>
+              <div class="agent-body">${escapeHtml(agent.close)}</div>
+            </div>
+          </div>
+          <div class="agent-actions">
+            <button class="copy-btn mono" type="button" onclick="event.stopPropagation(); copyFromAgentButton(this, 'text')">Copy Text</button>
+            <button class="copy-btn mono" type="button" onclick="event.stopPropagation(); copyFromAgentButton(this, 'call')">Copy Call Opener</button>
+          </div>
+        </div>
+      `;
+    }
+
+    async function copyAgentText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch (err) {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        let ok = false;
+        try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+        document.body.removeChild(ta);
+        return ok;
+      }
+    }
+
+    async function copyFromAgentButton(button, type) {
+      const box = button.closest('.agent-assist');
+      const target = type === 'call' ? box.querySelector('[data-copy-call]') : box.querySelector('[data-copy-text]');
+      const attr = type === 'call' ? 'data-copy-call' : 'data-copy-text';
+      const text = target ? (target.getAttribute(attr) || target.textContent || '') : '';
+      const original = button.textContent;
+      const ok = await copyAgentText(text);
+      button.textContent = ok ? 'Copied' : 'Copy Failed';
+      button.classList.toggle('copied', ok);
+      setTimeout(() => {
+        button.textContent = original;
+        button.classList.remove('copied');
+      }, 1200);
+    }
+
+    function toggleResultCard(card) {
+      document.querySelectorAll('.card.expanded').forEach(c => {
+        if (c !== card) c.classList.remove('expanded');
+      });
+      card.classList.toggle('expanded');
+    }
+
     // ===== RESULT CARD (shared by Entry/Today/Archive) =====
     function renderResultCard(page) {
-      const p = page.properties || {};
-      const name = getProp(p, 'Customer Name') || 'Unnamed';
-      const phone = getProp(p, 'Phone') || '';
-      const temps = getProp(p, 'Temp') || [];
-      const nextStep = getProp(p, 'Next Step') || '';
-      const owner = getProp(p, 'Owner') || '';
-      const when = getProp(p, 'WHEN') || '';
-      const status = getProp(p, 'Status') || '';
-      const archived = getProp(p, 'Archived') === true;
+      const d = pageToData(page);
+      const agent = buildAgentAssist(d);
 
       let cardClass = 'card';
-      if (archived) cardClass += ' archived';
-      else if (status && status.toLowerCase().includes('overdue')) cardClass += ' overdue';
-      else if (status && status.toLowerCase().includes('due today')) cardClass += ' due-today';
+      if (d.archived) cardClass += ' archived';
+      else if (d.status && d.status.toLowerCase().includes('overdue')) cardClass += ' overdue';
+      else if (d.status && d.status.toLowerCase().includes('due today')) cardClass += ' due-today';
+      else if (d.when && d.when < todayISO()) cardClass += ' overdue';
+      else if (d.when && d.when === todayISO()) cardClass += ' due-today';
 
       let primaryPill = '';
-      if (archived) primaryPill = `<span class="pill archived">Archived</span>`;
-      else if (status) primaryPill = `<span class="pill ${pillClass(status)}">${escapeHtml(status)}</span>`;
-      else if (Array.isArray(temps) && temps.length) primaryPill = `<span class="pill ${pillClass(temps[0])}">${escapeHtml(temps[0])}</span>`;
+      if (d.archived) primaryPill = `<span class="pill archived">Archived</span>`;
+      else if (d.status) primaryPill = `<span class="pill ${pillClass(d.status)}">${escapeHtml(d.status)}</span>`;
+      else if (Array.isArray(d.temps) && d.temps.length) primaryPill = `<span class="pill ${pillClass(d.temps[0])}">${escapeHtml(d.temps[0])}</span>`;
 
       const quickMeta = [];
-      if (nextStep) quickMeta.push(`<strong>${escapeHtml(nextStep)}</strong>`);
-      if (when) quickMeta.push(escapeHtml(when));
+      if (d.nextStep) quickMeta.push(`<strong>${escapeHtml(d.nextStep)}</strong>`);
+      if (d.when) quickMeta.push(escapeHtml(d.when));
 
-      const safeName = escapeHtml(name).replace(/"/g, '&quot;');
-      const safePhone = escapeHtml(phone).replace(/"/g, '&quot;');
-      const safeUrl = escapeHtml(page.url || '');
+      const detailMetaItems = [];
+      if (d.purpose) detailMetaItems.push(`<div><label>Purpose</label><strong>${escapeHtml(d.purpose)}</strong></div>`);
+      if (d.touch) detailMetaItems.push(`<div><label>Touch</label><strong>${escapeHtml(d.touch)}</strong></div>`);
+      if (d.result) detailMetaItems.push(`<div><label>Result</label><strong>${escapeHtml(d.result)}</strong></div>`);
+      if (d.nextStep) detailMetaItems.push(`<div><label>Next</label><strong>${escapeHtml(d.nextStep)}</strong></div>`);
+      if (d.when) detailMetaItems.push(`<div><label>When</label><strong>${escapeHtml(d.when)}</strong></div>`);
+      if (d.lastUpdated) detailMetaItems.push(`<div><label>Updated</label><strong>${escapeHtml(String(d.lastUpdated).slice(0, 10))}</strong></div>`);
+
+      const tempPills = (Array.isArray(d.temps) ? d.temps : [])
+        .map(t => `<span class="pill ${pillClass(t)}">${escapeHtml(t)}</span>`)
+        .join('');
+
+      const wishlistPills = (Array.isArray(d.wishList) ? d.wishList : [])
+        .map(w => `<span class="pill">${escapeHtml(w)}</span>`)
+        .join('');
+
+      const safeName = escapeHtml(d.name).replace(/"/g, '&quot;');
+      const safePhone = escapeHtml(d.phone).replace(/"/g, '&quot;');
+      const safeUrl = escapeHtml(d.pageUrl || '').replace(/"/g, '&quot;');
 
       return `
-        <article class="${cardClass}" onclick='openLeadPanel("${safeName}", "${safePhone}", "${safeUrl}")'>
-          <div class="card-row">
+        <article class="${cardClass}" data-name="${safeName}" data-phone="${safePhone}" data-url="${safeUrl}" data-page-id="${escapeHtml(d.pageId)}">
+          <div class="card-row" onclick="toggleResultCard(this.closest('.card'))">
             <div class="card-main">
-              <span class="card-name">${escapeHtml(name)}</span>
-              ${phone ? `<span class="card-phone">${escapeHtml(phone)}</span>` : ''}
+              <span class="card-name">${escapeHtml(d.name)}</span>
+              ${d.phone ? `<span class="card-phone">${escapeHtml(d.phone)}</span>` : ''}
               ${quickMeta.length ? `<span class="card-quick-meta">${quickMeta.join(' · ')}</span>` : ''}
             </div>
             <div class="card-right">
-              ${owner ? `<span class="pill owner">${escapeHtml(owner)}</span>` : ''}
+              ${d.owner ? `<span class="pill owner">${escapeHtml(d.owner)}</span>` : ''}
               ${primaryPill}
+              <span class="expand-chevron">▾</span>
+            </div>
+          </div>
+
+          <div class="card-detail">
+            ${renderAgentAssist(agent)}
+
+            ${detailMetaItems.length ? `<div class="detail-meta" style="margin-top:12px;">${detailMetaItems.join('')}</div>` : ''}
+            ${tempPills ? `<div class="detail-extra-pills">${tempPills}</div>` : ''}
+            ${wishlistPills ? `<div class="detail-extra-pills">${wishlistPills}</div>` : ''}
+
+            ${d.context ? `
+              <div class="detail-section">
+                <div class="detail-section-label">Context</div>
+                <div class="detail-section-body">${escapeHtml(d.context)}</div>
+              </div>
+            ` : ''}
+
+            ${d.crmNote ? `
+              <div class="detail-section">
+                <div class="detail-section-label">Last CRM Note</div>
+                <div class="detail-section-body crm">${escapeHtml(d.crmNote)}</div>
+              </div>
+            ` : ''}
+
+            <div class="detail-actions">
+              <button class="log-touch-btn" type="button" onclick="event.stopPropagation(); openTouchModalFromResultCard(this.closest('.card'))">Log New Touch</button>
+              <button class="open-notion-btn" type="button" onclick="event.stopPropagation(); openLeadPanelFromCard(this.closest('.card'))">View Profile</button>
+              ${d.pageUrl ? `<a class="open-notion-btn" href="${escapeHtml(d.pageUrl)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Open in Notion</a>` : ''}
+              ${(!d.archived && d.pageId) ? `<button class="archive-btn" type="button" onclick="event.stopPropagation(); archivePageFromCard(this.closest('.card'))">Archive</button>` : ''}
             </div>
           </div>
         </article>
       `;
     }
 
+    function openLeadPanelFromCard(card) {
+      const name = card.dataset.name || '';
+      const phone = card.dataset.phone || '';
+      const url = card.dataset.url || '';
+      openLeadPanel(name, phone, url);
+    }
+
+    function openTouchModalFromResultCard(card) {
+      const name = decodeHtml(card.dataset.name || '');
+      const phone = decodeHtml(card.dataset.phone || '');
+      activeCustomer = { name, phone };
+      $('touch-customer-name').textContent = name;
+      $('touch-customer-phone').textContent = phone;
+      $('touch-modal').classList.add('open');
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      $('t-when').value = tomorrow.toISOString().split('T')[0];
+      $('t-touch').value = 'Phone Call';
+      $('t-purpose').value = 'Follow-Up';
+      $('t-result').value = '';
+      $('t-nextstep').value = 'CB/Follow Up';
+      $('t-context').value = '';
+      $('t-archived').checked = false;
+      $('t-logged').checked = false;
+      document.querySelectorAll('#chips-touch-temp .chip').forEach(c => c.classList.remove('selected'));
+      $('touch-msg').textContent = '';
+      $('touch-msg').className = 'form-msg mono';
+      $('touch-submit-btn').disabled = false;
+      $('touch-submit-btn').textContent = 'Log Touch';
+      if ($('t-policy-panel')) $('t-policy-panel').classList.remove('open');
+      if ($('t-policy-body')) $('t-policy-body').innerHTML = '';
+      if ($('t-crm-body')) $('t-crm-body').classList.remove('open');
+      if ($('t-crm-toggle')) $('t-crm-toggle').classList.remove('open');
+      $('t-result').focus();
+    }
+
+    async function archivePageFromCard(card) {
+      const pageId = card.dataset.pageId;
+      if (!pageId) return;
+      if (!confirm('Archive this contact from active views?')) return;
+      setLiveStatus('Archiving', 'idle');
+      const res = await notionQuery({
+        action: 'update',
+        pageId,
+        properties: { 'Archived': { checkbox: true } }
+      });
+      if (!res.ok) {
+        alert('Archive failed. Check Worker update action.');
+        setLiveStatus('Error', 'err');
+        return;
+      }
+      if (currentTab === 'entry') runEntrySearch();
+      else if (currentTab === 'today') loadToday();
+      else if (currentTab === 'archive') loadArchive();
+      else loadHome();
+    }
+
     // =================================================================
     // LEAD PROFILE SIDE PANEL
     // =================================================================
     function openLeadPanel(name, phone, url) {
-      // Decode HTML entities (because name comes via dataset/onclick attribute)
       const decode = (s) => {
         const txt = document.createElement('textarea');
         txt.innerHTML = s;
@@ -1906,7 +2501,11 @@
       $('panel-customer-name').textContent = name;
       $('panel-customer-phone').textContent = phone;
       $('panel-pills').innerHTML = '';
+      $('panel-agent-assist').innerHTML = `<div class="home-list-empty">Loading agent notes…</div>`;
+      $('panel-latest-detail').innerHTML = `<div class="home-list-empty">Loading latest touch…</div>`;
+      $('panel-context').innerHTML = `<div class="home-list-empty">Loading context…</div>`;
       $('panel-timeline').innerHTML = `<div class="home-list-empty">Loading timeline…</div>`;
+
       if (url) {
         $('panel-notion-link').href = url;
         $('panel-notion-link').style.display = '';
@@ -1918,7 +2517,7 @@
       $('lead-panel').classList.add('open');
       document.body.classList.add('panel-open');
 
-      loadLeadTimeline(name);
+      loadLeadProfile(name);
     }
 
     function closeLeadPanel() {
@@ -1928,7 +2527,7 @@
       activePanelCustomer = null;
     }
 
-    async function loadLeadTimeline(name) {
+    async function loadLeadProfile(name) {
       const res = await notionQuery({
         action: 'query',
         databaseId: DATABASE_ID,
@@ -1936,32 +2535,53 @@
         sorts: [{ property: 'Date', direction: 'descending' }],
         filter: { property: 'Customer Name', title: { equals: name } }
       });
+
       if (!res.ok) {
+        $('panel-agent-assist').innerHTML = '';
+        $('panel-latest-detail').innerHTML = '';
+        $('panel-context').innerHTML = '';
         $('panel-timeline').innerHTML = `<div class="err-box mono"><strong>Failed to load timeline.</strong><br>${escapeHtml((res.data && res.data.error) || 'Unknown error')}</div>`;
         return;
       }
+
       const pages = Array.isArray(res.data.results) ? res.data.results : [];
       if (!pages.length) {
+        $('panel-agent-assist').innerHTML = '';
+        $('panel-latest-detail').innerHTML = '';
+        $('panel-context').innerHTML = '';
         $('panel-timeline').innerHTML = `<div class="home-list-empty">No timeline entries found for this exact name. Try opening from Notion or check spelling.</div>`;
         return;
       }
 
-      // Build aggregate pills from most recent entry
-      const first = pages[0];
-      const fp = first.properties || {};
-      const firstOwner = getProp(fp, 'Owner') || '';
-      const firstStatus = getProp(fp, 'Status') || '';
-      const firstTemps = getProp(fp, 'Temp') || [];
-      const firstArchived = getProp(fp, 'Archived') === true;
+      const latest = pageToData(pages[0]);
+      const agent = buildAgentAssist(latest);
 
       const pillsHtml = [];
-      if (firstOwner) pillsHtml.push(`<span class="pill owner">${escapeHtml(firstOwner)}</span>`);
-      if (firstArchived) pillsHtml.push(`<span class="pill archived">Archived</span>`);
-      else if (firstStatus) pillsHtml.push(`<span class="pill ${pillClass(firstStatus)}">${escapeHtml(firstStatus)}</span>`);
-      (Array.isArray(firstTemps) ? firstTemps : []).forEach(t => {
+      if (latest.owner) pillsHtml.push(`<span class="pill owner">${escapeHtml(latest.owner)}</span>`);
+      if (latest.archived) pillsHtml.push(`<span class="pill archived">Archived</span>`);
+      else if (latest.status) pillsHtml.push(`<span class="pill ${pillClass(latest.status)}">${escapeHtml(latest.status)}</span>`);
+      (Array.isArray(latest.temps) ? latest.temps : []).forEach(t => {
         pillsHtml.push(`<span class="pill ${pillClass(t)}">${escapeHtml(t)}</span>`);
       });
       $('panel-pills').innerHTML = pillsHtml.join('');
+
+      $('panel-agent-assist').innerHTML = renderAgentAssist(agent);
+
+      $('panel-latest-detail').innerHTML = `
+        <div class="panel-detail-grid">
+          <div class="panel-detail-item"><label>Purpose</label><strong>${escapeHtml(latest.purpose || '—')}</strong></div>
+          <div class="panel-detail-item"><label>Touch</label><strong>${escapeHtml(latest.touch || '—')}</strong></div>
+          <div class="panel-detail-item"><label>Result</label><strong>${escapeHtml(latest.result || '—')}</strong></div>
+          <div class="panel-detail-item"><label>Next Step</label><strong>${escapeHtml(latest.nextStep || '—')}</strong></div>
+          <div class="panel-detail-item"><label>When</label><strong>${escapeHtml(latest.when || '—')}</strong></div>
+          <div class="panel-detail-item"><label>Updated</label><strong>${escapeHtml(String(latest.lastUpdated || '').slice(0, 10) || '—')}</strong></div>
+        </div>
+      `;
+
+      $('panel-context').innerHTML = `
+        ${latest.context ? `<div class="panel-context-box">${escapeHtml(latest.context)}</div>` : `<div class="home-list-empty">No context entered.</div>`}
+        ${latest.crmNote ? `<div class="panel-crm-box" style="margin-top:8px;">${escapeHtml(latest.crmNote)}</div>` : ''}
+      `;
 
       $('panel-timeline').innerHTML = pages.map(renderTimelineEntry).join('');
     }
