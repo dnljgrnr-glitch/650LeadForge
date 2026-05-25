@@ -1904,7 +1904,8 @@
         renderHomeList('home-recent-closes', closes, 'empty-closes', true);
 
         setLiveStatus('Live', '');
-        $('status-count').textContent = String(dueCount);
+        // Visible count must reflect the currently rendered Entry Hub rows, not the Today filter count.
+        $('status-count').textContent = String(top3.length + closes.length);
         setLastUpdated();
       } catch (e) {
         renderHomeError({ status: 500, data: { error: e.message } });
@@ -1964,6 +1965,7 @@
 
     function renderHomeError(res) {
       setLiveStatus('Error', 'err');
+      $('status-count').textContent = '0';
       const msg = (res.data && (res.data.error || res.data.message)) || 'Unknown error';
       $('home-top3').innerHTML = `<div class="home-list-empty">Error loading: ${escapeHtml(msg)}</div>`;
       $('home-recent-closes').innerHTML = '';
@@ -2029,6 +2031,7 @@
 
     function renderEntryError(httpStatus, data) {
       setLiveStatus('Error', 'err');
+      $('status-count').textContent = '0';
       const message = (data && (data.error || data.message)) || 'Unknown error';
       $('entry-results').innerHTML = `<div class="err-box mono"><strong>HTTP ${escapeHtml(httpStatus)}</strong><br>${escapeHtml(message)}</div>`;
       setLastUpdated();
@@ -2107,7 +2110,8 @@
             { or: [
               { property: 'Temp', multi_select: { contains: 'Cold' } },
               { property: 'Next Step', select: { equals: 'No Further Action' } },
-              { property: 'WHEN', date: { is_empty: true } }
+              { property: 'WHEN', date: { is_empty: true } },
+              { property: 'WHEN', date: { on_or_before: todayISO() } }
             ]}
           ]},
           empty: 'No inactive contacts found.'
@@ -2167,6 +2171,7 @@
 
     function renderListError(targetId, res) {
       setLiveStatus('Error', 'err');
+      $('status-count').textContent = '0';
       const message = (res.data && (res.data.error || res.data.message)) || 'Unknown error';
       $(targetId).innerHTML = `<div class="err-box mono"><strong>HTTP ${escapeHtml(res.status)}</strong><br>${escapeHtml(message)}</div>`;
       setLastUpdated();
@@ -3342,6 +3347,236 @@
         btn.textContent = 'Log Touch';
       }
     }
+
+
+    // =================================================================
+    // COMBINATION-BASED AGENT ASSIST UPGRADE
+    // This override keeps the same Agent Assist layout but upgrades the reasoning.
+    // It combines Temp + Result + Wish List + WHEN + Purpose + Context.
+    // =================================================================
+    function agentPrimaryTemp(data) {
+      const temps = Array.isArray(data.temps) ? data.temps : [];
+      if (agentHas(temps, 'Hot')) return 'Hot';
+      if (agentHas(temps, 'Warm')) return 'Warm';
+      if (agentHas(temps, 'Pending')) return 'Pending';
+      if (agentHas(temps, 'Cold')) return 'Cold';
+      if (agentHas(temps, '⭐ VERIFIED - Returning Customer')) return 'Verified Returning Customer';
+      if (agentHas(temps, 'New Lead')) return 'New Lead';
+      return 'General';
+    }
+
+    function agentObjectionType(data) {
+      const result = data.result || '';
+      if (agentHas(result, 'OBJ — Price / Weekly')) return 'priceWeekly';
+      if (agentHas(result, 'OBJ — Total Cost')) return 'totalCost';
+      if (agentHas(result, 'OBJ — Timing')) return 'timing';
+      if (agentHas(result, 'OBJ — Needs to Think')) return 'needsThink';
+      if (agentHas(result, 'OBJ — Needs Partner')) return 'needsPartner';
+      if (String(result).startsWith('OBJ')) return 'generalObjection';
+      return '';
+    }
+
+    function agentTimingLabel(data) {
+      if (!data.when) return 'no follow-up date';
+      if (data.when < todayISO()) return 'overdue';
+      if (data.when === todayISO()) return 'due today';
+      return 'future follow-up';
+    }
+
+    function agentTone(data) {
+      if (agentHas(data.temps, 'Hot')) return 'Direct';
+      if (agentHas(data.temps, 'Warm')) return 'Supportive';
+      if (agentHas(data.temps, 'Pending')) return 'Status-check';
+      if (agentHas(data.temps, 'Cold')) return 'Soft follow-up';
+      if (agentHas(data.temps, '⭐ VERIFIED - Returning Customer') || agentHas(data.purpose, 'Conversion/Reactivation')) return 'Reactivation';
+      if (/return|pick up|pickup|cancel|service|repair|broken|not working/i.test(data.context || '')) return 'Retention / Save';
+      return 'Helpful follow-up';
+    }
+
+    function agentNeedLine(data, category) {
+      if (category && category !== 'what you were looking at') return `the ${category}`;
+      if (data.purpose) return data.purpose.toLowerCase();
+      return 'what you were looking at';
+    }
+
+    function agentSpecificPolicyAnchor(data) {
+      const obj = agentObjectionType(data);
+      const combined = `${data.result || ''} ${data.context || ''} ${(data.wishList || []).join(' ')}`.toLowerCase();
+      if (obj === 'priceWeekly') return 'Worry-Free Guarantee · Three Flexible Payment Options';
+      if (obj === 'totalCost') return 'Worry-Free Guarantee · Easy Returns / Upgrade Anytime / Free Service & Repairs';
+      if (obj === 'timing') return 'Worry-Free Guarantee · Three Flexible Payment Options / Easy Returns';
+      if (obj === 'needsThink') return 'Worry-Free Guarantee · No Credit Needed / Easy Returns / Free Service & Repairs';
+      if (obj === 'needsPartner') return 'Worry-Free Guarantee · Free Delivery & Setup / Free Service & Repairs / Three Flexible Payment Options';
+      if (/delivery|setup|drop off|bring it/.test(combined)) return 'Worry-Free Guarantee · Free Delivery & Setup';
+      if (/service|repair|loaner|broken|not working|fix/.test(combined)) return 'Worry-Free Guarantee · Free Service & Repairs / Loaner Items';
+      if (/return|pickup|pick up|bring back|cancel/.test(combined)) return 'Worry-Free Guarantee · Easy Returns';
+      if (/reactivation|returning|previous/.test(combined) || agentHas(data.temps, '⭐ VERIFIED - Returning Customer')) return 'Worry-Free Guarantee · Customer flexibility and support';
+      return 'Worry-Free Guarantee · Customer flexibility and support';
+    }
+
+    function agentSpecificValueLine(data, category) {
+      const obj = agentObjectionType(data);
+      const temp = agentPrimaryTemp(data);
+      if (obj === 'priceWeekly') return 'If the weekly payment is the main concern, the strongest move is to compare options around their pay rhythm instead of forcing one number.';
+      if (obj === 'totalCost') return 'If total cost is the concern, frame the value around flexibility, service support, and solving the home need without pretending the cost does not matter.';
+      if (obj === 'timing') return 'If timing is the concern, keep the conversation around payday, follow-up timing, and a clear next step without promising holds or approvals.';
+      if (obj === 'needsThink') return 'If they need to think, reduce decision pressure by asking what part is unclear and restating the practical support around the agreement.';
+      if (obj === 'needsPartner') return 'If a partner is involved, help the customer explain the practical value clearly instead of pushing for a decision without them.';
+      if (temp === 'Hot') return 'This lead is marked Hot, so the response should be confident, direct, and focused on the next action.';
+      if (temp === 'Warm') return 'This is a Warm lead, so the response should stay helpful and specific without sounding pushy.';
+      if (temp === 'Pending') return 'This lead is Pending, so the response should clarify status and move the decision forward with one simple question.';
+      if (temp === 'Cold') return 'This lead is Cold, so the response should be light, permission-based, and easy to ignore or re-engage.';
+      if (temp === 'Verified Returning Customer') return 'This customer has returning-customer value, so the response should feel familiar and reduce friction.';
+      return 'This response should keep the conversation simple, helpful, and pointed toward one clear next step.';
+    }
+
+    function agentSpecificDoNotSay(data) {
+      const guardrails = [
+        'Do not promise approval.',
+        'Do not promise exact availability.',
+        'Do not promise discounts, waived fees, or payment changes until verified.',
+        'Do not quote payoff amounts or payoff dates without verified agreement data.'
+      ];
+      const obj = agentObjectionType(data);
+      if (obj === 'timing') guardrails.push('Do not promise that an item can be held unless the store has confirmed the proper process.');
+      if (obj === 'totalCost') guardrails.push('Do not dismiss total cost concerns or imply rent-to-own is the cheapest option.');
+      if (obj === 'needsPartner') guardrails.push('Do not pressure them to bypass the partner decision.');
+      if (/service|repair|loaner|broken|not working/i.test(data.context || '')) guardrails.push('Do not promise service eligibility, on-site repair, or a loaner before verification.');
+      if (/delivery|setup/i.test(data.context || '')) guardrails.push('Do not promise a delivery window before checking store availability.');
+      return guardrails.join(' ');
+    }
+
+    function agentSpecificClose(data) {
+      const obj = agentObjectionType(data);
+      const category = detectAgentCategory(data);
+      if (obj === 'priceWeekly') return `If I can check a ${category} option that fits the weekly payment better, would it make sense to look at that today?`;
+      if (obj === 'totalCost') return `If I can walk you through the most flexible ${category} option without pressure, would that help you decide if it makes sense?`;
+      if (obj === 'timing') return 'Would today or your next payday be the better time for me to check the best option with you?';
+      if (obj === 'needsThink') return 'What part do you want me to make clearer before you decide?';
+      if (obj === 'needsPartner') return 'Would it help if I gave you the simple version so you can review it together?';
+      if (agentHas(data.nextStep, 'Write Agreement')) return 'If everything still looks good, would you like me to get the agreement started?';
+      if (agentHas(data.nextStep, 'Come Into Store')) return 'Would today or tomorrow be better for you to stop in?';
+      if (agentHas(data.temps, 'Hot')) return 'Do you want me to check the best available option for you today?';
+      return 'Are you still looking, or should I check back another time?';
+    }
+
+    function agentSpecificCallOpener(data) {
+      const rep = data.owner || currentRep || 'DG';
+      const name = data.name || 'there';
+      const category = detectAgentCategory(data);
+      const obj = agentObjectionType(data);
+      if (obj === 'priceWeekly') return `Hey ${name}, this is ${rep} with Rent-A-Center on Hepburn. I’m following up on the ${category}. Was the weekly payment the main thing holding you back, or were you comparing a few options?`;
+      if (obj === 'totalCost') return `Hey ${name}, this is ${rep} with Rent-A-Center on Hepburn. I wanted to follow up on the ${category}. Was the total cost the main concern, or are you mainly trying to solve the immediate home need?`;
+      if (obj === 'timing') return `Hey ${name}, this is ${rep} with Rent-A-Center on Hepburn. I’m following up on the ${category}. Are we still working around the same timing, or did anything change?`;
+      if (obj === 'needsThink') return `Hey ${name}, this is ${rep} with Rent-A-Center on Hepburn. I wanted to check back on the ${category}. What part are you still weighing out?`;
+      if (obj === 'needsPartner') return `Hey ${name}, this is ${rep} with Rent-A-Center on Hepburn. I’m checking back on the ${category}. What would your partner need to feel comfortable with the option?`;
+      return `Hey ${name}, this is ${rep} with Rent-A-Center on Hepburn. I’m following up from when we talked about ${category}. ${agentCallQuestion(data)}`;
+    }
+
+    function agentRecommendedResponse(data) {
+      const rep = data.owner || currentRep || 'DG';
+      const name = data.name || 'there';
+      const category = detectAgentCategory(data);
+      const need = agentNeedLine(data, category);
+      const temp = agentPrimaryTemp(data);
+      const obj = agentObjectionType(data);
+      const timing = agentTimingLabel(data);
+      const close = agentSpecificClose(data);
+
+      let middle = '';
+      if (obj === 'priceWeekly') {
+        middle = `If the weekly payment was the main concern, I can look at options around your pay schedule and keep it realistic.`;
+      } else if (obj === 'totalCost') {
+        middle = `If the total cost was the concern, I can walk through the flexible options and the support that comes with the agreement so you can decide without pressure.`;
+      } else if (obj === 'timing') {
+        middle = `If timing was the main thing, we can work the conversation around your payday window and the next realistic step.`;
+      } else if (obj === 'needsThink') {
+        middle = `If you are still thinking it over, I can help narrow down the part that is unclear so the decision is easier.`;
+      } else if (obj === 'needsPartner') {
+        middle = `If you need to review it with your partner, I can make the option simple to explain: payment fit, delivery/setup support, and service support while it is on rent.`;
+      } else if (temp === 'Hot') {
+        middle = `I saw this was still a strong opportunity, so I wanted to keep the next step simple and check what option makes the most sense today.`;
+      } else if (temp === 'Warm') {
+        middle = `I wanted to keep this easy and see if you are still interested before I check options.`;
+      } else if (temp === 'Pending') {
+        middle = `I wanted to check where things stand and see what needs to happen next.`;
+      } else if (temp === 'Cold') {
+        middle = `I did not want to assume you were still looking, but I wanted to check once before I close the loop.`;
+      } else if (temp === 'Verified Returning Customer') {
+        middle = `Since you have worked with us before, I wanted to make it simple to see what getting set back up could look like.`;
+      } else {
+        middle = `I wanted to follow up and see if this is still something you are considering.`;
+      }
+
+      const timingLine = timing === 'overdue'
+        ? 'I know I owed you a follow-up, so I wanted to get this back in front of you.'
+        : timing === 'due today'
+          ? 'I had this marked to follow up with you today.'
+          : '';
+
+      return `Hey ${name}, this is ${rep} with Rent-A-Center on Hepburn. I wanted to follow up about ${need}. ${timingLine ? timingLine + ' ' : ''}${middle} ${close}`;
+    }
+
+    function agentSpecificWhy(data) {
+      const category = detectAgentCategory(data);
+      const temp = agentPrimaryTemp(data);
+      const timing = agentTimingLabel(data);
+      const obj = agentObjectionType(data) || 'no formal objection';
+      return `This combines the customer state (${temp}), timing (${timing}), item/category (${category}), and objection signal (${obj}). It gives the rep a clear next move while staying inside Worry-Free policy boundaries.`;
+    }
+
+    function agentSpecificReason(data) {
+      const base = agentReason(data);
+      const temp = agentPrimaryTemp(data);
+      const category = detectAgentCategory(data);
+      const obj = agentObjectionType(data);
+      const parts = [base, `Detected state: ${temp}.`, `Detected need: ${category}.`];
+      if (obj) parts.push(`Detected objection: ${data.result}.`);
+      return parts.join(' ');
+    }
+
+    function agentSpecificNextBestAction(data) {
+      const obj = agentObjectionType(data);
+      const temp = agentPrimaryTemp(data);
+      if (obj) return `Use the ${agentSpecificPolicyAnchor(data)} angle, ask one clarifying question, then close for the next smallest action.`;
+      if (temp === 'Hot') return 'Call first. If no answer, send the recommended response immediately after.';
+      if (temp === 'Warm') return 'Send the recommended response and ask one simple question to confirm interest.';
+      if (temp === 'Pending') return 'Use the response to confirm status and identify the blocker.';
+      if (temp === 'Cold') return 'Use the soft follow-up. If no response, leave it inactive unless new interest appears.';
+      if (temp === 'Verified Returning Customer') return 'Use the returning-customer tone and make the next step easy to say yes to.';
+      return agentNextAction(data);
+    }
+
+    function buildAgentAssist(data) {
+      const priority = computeAgentPriority(data);
+      const score = agentScore(data);
+      const suggestedText = agentRecommendedResponse(data);
+      const callOpener = agentSpecificCallOpener(data);
+      const close = agentSpecificClose(data);
+      const trainerLabel = `${agentTone(data)} · ${agentObjectionType(data) ? (data.result || 'Objection') : (selectLanguageModule(data).label || 'General Follow-Up')}`;
+      const policyAnchor = agentSpecificPolicyAnchor(data);
+      const whyThisWorks = agentSpecificWhy(data);
+      const doNotSay = agentSpecificDoNotSay(data);
+      const reason = agentSpecificReason(data);
+      const nextBestAction = agentSpecificNextBestAction(data);
+      const trainerCopy = `Recommended Response:\n${suggestedText}\n\nWhy This Works:\n${whyThisWorks}\n\nPolicy Anchor:\n${policyAnchor}\n\nDo Not Say:\n${doNotSay}\n\nClose:\n${close}`;
+
+      return {
+        priority,
+        score,
+        reason,
+        nextBestAction,
+        suggestedText,
+        callOpener,
+        close,
+        trainerLabel,
+        policyAnchor,
+        whyThisWorks,
+        doNotSay,
+        trainerCopy
+      };
+    }
+
   </script>
 </body>
 </html>
