@@ -1,4 +1,4 @@
-<!-- 650 LeadForge · Home / Entry / Today / Archive · Side Panel Profiles · Rule-Based Agent Assist -->
+<!-- v6.0 · 650 LeadForge · Home dashboard + lead timeline side panel + Pipeline removed -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,18 +7,13 @@
   <meta name="theme-color" content="#08080d" />
   <meta name="description" content="650 LeadForge workstation for Store 00650." />
   <title>650 LeadForge</title>
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
-    rel="stylesheet"
-  >
-
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #08080d;
-      --surface: rgba(20, 20, 28, 0.72);
+      --surface: rgba(20, 20, 28, 0.7);
       --surface-2: rgba(255, 255, 255, 0.025);
       --border: rgba(255, 255, 255, 0.07);
       --border-strong: rgba(201, 169, 110, 0.4);
@@ -35,156 +30,65 @@
       --radius-lg: 16px;
       --radius-md: 11px;
       --radius-sm: 8px;
-      --max: 880px;
+      --max: 1180px;
       color-scheme: dark;
     }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html {
-      scroll-behavior: smooth;
-      color-scheme: dark;
-    }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { color-scheme: dark; }
     body {
       min-height: 100vh;
-      background:
-        radial-gradient(circle at 50% -10%, rgba(201, 169, 110, 0.07), transparent 32rem),
-        var(--bg);
+      background: var(--bg);
       color: var(--text);
       font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
     }
+    body.panel-open { overflow: hidden; }
+    button, input, textarea, select { font: inherit; color: inherit; }
+    button { cursor: pointer; }
+    .mono { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
 
-    button,
-    input,
-    textarea,
-    select {
-      font: inherit;
-      color: inherit;
-    }
-
-    button {
-      cursor: pointer;
-    }
-
-    .mono {
-      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    }
-
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
-    }
-
+    /* ===== GATE ===== */
     #gate {
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      display: grid;
-      place-items: center;
-      padding: 24px;
-      background:
-        radial-gradient(circle at 50% 20%, rgba(201, 169, 110, 0.08), transparent 30rem),
-        var(--bg);
+      position: fixed; inset: 0; z-index: 9999;
+      display: grid; place-items: center; padding: 24px;
+      background: radial-gradient(circle at 50% 20%, rgba(201, 169, 110, 0.08), transparent 30rem), var(--bg);
       overflow-y: auto;
     }
-
-    .gate-shell {
-      width: min(100%, 460px);
-      padding: 24px 0;
-    }
-
+    .gate-shell { width: min(100%, 460px); padding: 24px 0; }
     .gate-box {
       background: rgba(15, 15, 22, 0.96);
       border: 1px solid var(--border);
       border-radius: 22px;
       padding: 28px;
     }
-
     .gate-eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
+      display: inline-flex; align-items: center; gap: 7px;
       color: var(--muted);
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 0.18em; text-transform: uppercase;
       margin-bottom: 14px;
     }
-
-    .gate-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: var(--green);
-      box-shadow: 0 0 10px var(--green);
-    }
-
-    .gate-title {
-      font-size: 34px;
-      line-height: 1;
-      font-weight: 800;
-      letter-spacing: -0.045em;
-      color: var(--text);
-      margin-bottom: 6px;
-    }
-
-    .gate-title span {
-      color: var(--gold);
-    }
-
-    .gate-copy {
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.55;
-      margin-bottom: 22px;
-    }
-
+    .gate-dot { width: 6px; height: 6px; border-radius: 999px; background: var(--green); box-shadow: 0 0 10px var(--green); }
+    .gate-title { font-size: 34px; line-height: 1; font-weight: 800; letter-spacing: -0.045em; color: var(--text); margin-bottom: 6px; }
+    .gate-title span { color: var(--gold); }
+    .gate-copy { color: var(--muted); font-size: 12px; line-height: 1.55; margin-bottom: 22px; }
     .gate-step-label {
       color: var(--muted);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.16em; text-transform: uppercase;
       margin-bottom: 9px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      display: flex; align-items: center; gap: 8px;
     }
-
     .gate-step-num {
-      width: 20px;
-      height: 20px;
-      border-radius: 999px;
+      width: 20px; height: 20px; border-radius: 999px;
       border: 1px solid var(--border-strong);
       color: var(--gold-2);
-      display: grid;
-      place-items: center;
-      font-size: 10px;
-      font-weight: 700;
+      display: grid; place-items: center;
+      font-size: 10px; font-weight: 700;
     }
-
-    .rep-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 7px;
-      margin-bottom: 20px;
-    }
-
+    .rep-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; margin-bottom: 20px; }
     .rep-card {
       border: 1px solid var(--border);
       background: var(--surface-2);
@@ -194,63 +98,15 @@
       transition: all 150ms ease;
       position: relative;
     }
-
-    .rep-card:hover {
-      border-color: var(--border-strong);
-      background: rgba(201, 169, 110, 0.04);
-    }
-
-    .rep-card.selected {
-      border-color: var(--gold);
-      background: rgba(201, 169, 110, 0.08);
-    }
-
-    .rep-card.selected::after {
-      content: "✓";
-      position: absolute;
-      top: 4px;
-      right: 6px;
-      color: var(--gold);
-      font-weight: 800;
-      font-size: 10px;
-    }
-
-    .rep-initials {
-      font-size: 18px;
-      font-weight: 800;
-      letter-spacing: -0.04em;
-      color: var(--text);
-      margin-bottom: 2px;
-    }
-
-    .rep-card.selected .rep-initials {
-      color: var(--gold-2);
-    }
-
-    .rep-role {
-      font-size: 8px;
-      font-family: "JetBrains Mono", monospace;
-      color: var(--muted);
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-
-    .gate-form {
-      display: grid;
-      gap: 9px;
-    }
-
-    .gate-form.locked .gate-input,
-    .gate-form.locked .primary-btn {
-      opacity: 0.35;
-      pointer-events: none;
-    }
-
-    .gate-input,
-    .search-input,
-    .form-input,
-    .form-textarea,
-    .form-select {
+    .rep-card:hover { border-color: var(--border-strong); background: rgba(201, 169, 110, 0.04); }
+    .rep-card.selected { border-color: var(--gold); background: rgba(201, 169, 110, 0.08); }
+    .rep-card.selected::after { content: "✓"; position: absolute; top: 4px; right: 6px; color: var(--gold); font-weight: 800; font-size: 10px; }
+    .rep-initials { font-size: 18px; font-weight: 800; letter-spacing: -0.04em; color: var(--text); margin-bottom: 2px; }
+    .rep-card.selected .rep-initials { color: var(--gold-2); }
+    .rep-role { font-size: 8px; font-family: "JetBrains Mono", monospace; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+    .gate-form { display: grid; gap: 9px; }
+    .gate-form.locked .gate-input, .gate-form.locked .primary-btn { opacity: 0.35; pointer-events: none; }
+    .gate-input, .search-input, .form-input, .form-textarea, .form-select {
       width: 100%;
       color: var(--text);
       background: #0c0c14;
@@ -259,191 +115,75 @@
       outline: none;
       transition: border-color 150ms ease, box-shadow 150ms ease;
     }
-
-    .gate-input {
-      padding: 13px 14px;
-      text-align: center;
-      letter-spacing: 0.22em;
-      font-size: 12px;
-    }
-
-    .gate-input::placeholder,
-    .search-input::placeholder,
-    .form-input::placeholder,
-    .form-textarea::placeholder {
-      color: var(--faint);
-    }
-
-    .gate-input:focus,
-    .search-input:focus,
-    .form-input:focus,
-    .form-textarea:focus,
-    .form-select:focus {
+    .gate-input { padding: 13px 14px; text-align: center; letter-spacing: 0.22em; font-size: 12px; }
+    .gate-input::placeholder, .search-input::placeholder, .form-input::placeholder, .form-textarea::placeholder { color: var(--faint); }
+    .gate-input:focus, .search-input:focus, .form-input:focus, .form-textarea:focus, .form-select:focus {
       border-color: var(--gold);
       box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.12);
     }
-
     .primary-btn {
-      border: 0;
-      border-radius: var(--radius-md);
-      padding: 13px 14px;
-      color: #090908;
+      border: 0; border-radius: var(--radius-md);
+      padding: 13px 14px; color: #090908;
       background: var(--gold);
-      font-weight: 700;
-      letter-spacing: 0.08em;
+      font-weight: 700; letter-spacing: 0.08em;
       font-size: 12px;
       transition: filter 150ms ease, transform 150ms ease;
     }
+    .primary-btn:hover { filter: brightness(1.08); }
+    .primary-btn:active { transform: translateY(1px); }
+    .primary-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .gate-err { min-height: 14px; color: var(--red); font-size: 10px; letter-spacing: 0.06em; text-align: center; margin-top: 4px; }
+    .security-note { margin-top: 12px; color: var(--faint); font-size: 9px; line-height: 1.5; text-align: center; }
 
-    .primary-btn:hover {
-      filter: brightness(1.08);
-    }
-
-    .primary-btn:active {
-      transform: translateY(1px);
-    }
-
-    .primary-btn:disabled {
-      opacity: 0.35;
-      cursor: not-allowed;
-    }
-
-    .gate-err {
-      min-height: 14px;
-      color: var(--red);
-      font-size: 10px;
-      letter-spacing: 0.06em;
-      text-align: center;
-      margin-top: 4px;
-    }
-
-    .security-note {
-      margin-top: 12px;
-      color: var(--faint);
-      font-size: 9px;
-      line-height: 1.5;
-      text-align: center;
-    }
-
-    #app {
-      display: none;
-      width: min(100% - 24px, var(--max));
-      margin: 0 auto;
-      padding: 18px 0 50px;
-    }
-
+    /* ===== APP ===== */
+    #app { display: none; width: min(100% - 24px, var(--max)); margin: 0 auto; padding: 18px 0 50px; }
     .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 12px;
-      flex-wrap: wrap;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; margin-bottom: 12px; flex-wrap: wrap;
     }
-
-    .brand-lockup {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
+    .brand-lockup { display: flex; align-items: center; gap: 10px; }
     .mark {
-      width: 34px;
-      height: 34px;
-      border-radius: 10px;
-      display: grid;
-      place-items: center;
-      color: #080808;
-      background: var(--gold);
-      font-weight: 800;
-      letter-spacing: -0.06em;
-      font-size: 12px;
+      width: 34px; height: 34px; border-radius: 10px;
+      display: grid; place-items: center;
+      color: #080808; background: var(--gold);
+      font-weight: 800; letter-spacing: -0.06em; font-size: 12px;
     }
-
-    .logo {
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
-
-    .logo-sub {
-      margin-top: 1px;
-      color: var(--muted);
-      font-size: 9px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-
-    .topbar-actions {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
+    .logo { font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+    .logo-sub { margin-top: 1px; color: var(--muted); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; }
+    .topbar-actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
     .rep-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 6px 9px;
-      border-radius: 999px;
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 6px 9px; border-radius: 999px;
       border: 1px solid var(--border-strong);
       color: var(--gold-2);
       background: rgba(201, 169, 110, 0.05);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
     }
-
     .ghost-btn {
-      border: 1px solid var(--border);
-      color: var(--muted);
+      border: 1px solid var(--border); color: var(--muted);
       background: var(--surface-2);
-      padding: 6px 9px;
-      border-radius: 999px;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
+      padding: 6px 9px; border-radius: 999px;
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
       transition: all 150ms ease;
     }
-
-    .ghost-btn:hover {
-      color: var(--text);
-      border-color: var(--border-strong);
-    }
-
+    .ghost-btn:hover { color: var(--text); border-color: var(--border-strong); }
     .add-btn {
-      border: 0;
-      border-radius: 999px;
+      border: 0; border-radius: 999px;
       padding: 7px 13px;
-      color: #090908;
-      background: var(--gold);
-      font-weight: 700;
-      letter-spacing: 0.06em;
+      color: #090908; background: var(--gold);
+      font-weight: 700; letter-spacing: 0.06em;
       font-size: 10px;
       transition: filter 150ms ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
+      display: inline-flex; align-items: center; gap: 4px;
     }
+    .add-btn:hover { filter: brightness(1.08); }
+    .add-btn .plus { font-size: 14px; line-height: 1; font-weight: 800; }
 
-    .add-btn:hover {
-      filter: brightness(1.08);
-    }
-
-    .add-btn .plus {
-      font-size: 14px;
-      line-height: 1;
-      font-weight: 800;
-    }
-
+    /* STATUS STRIP */
     .status-strip {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between;
       gap: 12px;
       border: 1px solid var(--border);
       background: var(--surface);
@@ -453,60 +193,22 @@
       margin-bottom: 10px;
       flex-wrap: wrap;
     }
-
-    .status-strip-left {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
-
+    .status-strip-left { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
     .status-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 10px;
-      font-weight: 600;
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 10px; font-weight: 600;
       color: var(--muted);
     }
+    .status-pill strong { color: var(--text); font-weight: 700; font-size: 12px; }
+    .status-pill .dot { width: 6px; height: 6px; border-radius: 999px; background: var(--green); box-shadow: 0 0 8px var(--green); }
+    .status-pill.idle .dot { background: var(--muted); box-shadow: none; }
+    .status-pill.err .dot { background: var(--red); box-shadow: 0 0 8px var(--red); }
+    .status-pill.err strong { color: var(--red); }
+    .status-strip-right { color: var(--faint); font-size: 10px; }
 
-    .status-pill strong {
-      color: var(--text);
-      font-weight: 700;
-      font-size: 12px;
-    }
-
-    .status-pill .dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: var(--green);
-      box-shadow: 0 0 8px var(--green);
-    }
-
-    .status-pill.idle .dot {
-      background: var(--muted);
-      box-shadow: none;
-    }
-
-    .status-pill.err .dot {
-      background: var(--red);
-      box-shadow: 0 0 8px var(--red);
-    }
-
-    .status-pill.err strong {
-      color: var(--red);
-    }
-
-    .status-strip-right {
-      color: var(--faint);
-      font-size: 10px;
-    }
-
+    /* TABS */
     .tabs-row {
-      display: flex;
-      gap: 3px;
-      flex-wrap: wrap;
+      display: flex; gap: 3px; flex-wrap: wrap;
       border: 1px solid var(--border);
       background: var(--surface);
       backdrop-filter: blur(20px);
@@ -514,7 +216,6 @@
       padding: 5px;
       margin-bottom: 10px;
     }
-
     .tab-btn {
       flex: 1;
       min-width: 90px;
@@ -533,204 +234,157 @@
       justify-content: center;
       gap: 5px;
     }
-
-    .tab-btn:hover {
-      color: var(--text);
-      background: rgba(255, 255, 255, 0.025);
-    }
-
-    .tab-btn.active {
-      color: #090908;
-      background: var(--gold);
-    }
-
-    .tab-count {
+    .tab-btn:hover { color: var(--text); background: rgba(255,255,255,0.025); }
+    .tab-btn.active { color: #090908; background: var(--gold); }
+    .tab-btn .tab-emoji { font-size: 12px; }
+    .tab-btn .tab-count {
       font-family: "JetBrains Mono", monospace;
       font-size: 9px;
       opacity: 0.85;
       padding: 1px 4px;
       border-radius: 999px;
-      background: rgba(0, 0, 0, 0.18);
+      background: rgba(0,0,0,0.18);
     }
+    .tab-btn.active .tab-count { background: rgba(0,0,0,0.22); }
 
-    .tab-btn.active .tab-count {
-      background: rgba(0, 0, 0, 0.22);
-    }
-
-    .control-panel {
-      display: grid;
-      gap: 8px;
+    /* ===== HOME TAB ===== */
+    .home-grid { display: grid; gap: 10px; }
+    .home-section {
       border: 1px solid var(--border);
       background: var(--surface);
       backdrop-filter: blur(20px);
       border-radius: var(--radius-lg);
-      padding: 10px;
-      margin-bottom: 10px;
+      padding: 16px;
     }
+    .home-section-head {
+      display: flex; justify-content: space-between; align-items: baseline;
+      margin-bottom: 12px;
+    }
+    .home-section-title {
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .home-section-action {
+      font-size: 10px; font-weight: 600; color: var(--gold-2);
+      letter-spacing: 0.08em; text-transform: uppercase;
+      background: none; border: 0; padding: 0;
+    }
+    .home-section-action:hover { color: var(--gold); }
 
-    .entry-copy {
-      display: grid;
-      gap: 3px;
+    /* Quota band — now used only for the greeting wrapper */
+    .quota-band { display: grid; gap: 12px; }
+    .quota-greeting {
+      font-size: 18px; font-weight: 800; letter-spacing: -0.02em;
       margin-bottom: 2px;
     }
-
-    .entry-title {
-      color: var(--text);
-      font-size: 13px;
-      font-weight: 800;
-      letter-spacing: -0.02em;
+    .quota-greeting span { color: var(--gold-2); }
+    .quota-subgreeting {
+      color: var(--muted); font-size: 11px;
+      letter-spacing: 0.04em;
     }
 
-    .entry-sub {
-      color: var(--muted);
-      font-size: 11px;
-      line-height: 1.45;
-    }
-
-    .search-row {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 6px;
-    }
-
-    .search-input {
-      padding: 11px 13px;
-      font-size: 13px;
-    }
-
-    .search-btn {
-      min-width: 90px;
-      padding: 11px 16px;
-      font-size: 11px;
-    }
-
-    .results-head {
-      display: flex;
-      align-items: end;
-      justify-content: space-between;
-      gap: 10px;
-      margin: 12px 2px 8px;
-    }
-
-    .section-title {
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--text);
-    }
-
-    .section-kicker {
-      margin-top: 2px;
-      color: var(--muted);
-      font-size: 11px;
-    }
-
-    .refresh-btn {
+    /* Stat tiles */
+    .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .stat-tile {
       border: 1px solid var(--border);
       background: var(--surface-2);
-      color: var(--muted);
-      border-radius: 999px;
-      padding: 5px 10px;
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      transition: all 150ms ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
+      border-radius: var(--radius-md);
+      padding: 12px;
+      text-align: center;
     }
-
-    .refresh-btn:hover {
+    .stat-tile-value {
+      font-size: 24px; font-weight: 800; letter-spacing: -0.02em; line-height: 1;
       color: var(--text);
-      border-color: var(--border-strong);
+    }
+    .stat-tile-label {
+      margin-top: 6px;
+      font-size: 9px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--muted);
     }
 
-    .results {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
+    /* Home top-3 list and recent closes */
+    .home-list { display: flex; flex-direction: column; gap: 6px; }
+    .home-list-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      border-radius: var(--radius-md);
+      transition: all 140ms ease;
+      cursor: pointer;
+    }
+    .home-list-row:hover { border-color: var(--border-strong); background: rgba(201,169,110,0.04); }
+    .home-list-name {
+      flex: 1; min-width: 0;
+      color: var(--text); font-size: 13px; font-weight: 700; letter-spacing: -0.015em;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .home-list-meta {
+      color: var(--muted); font-size: 10px;
+      font-family: "JetBrains Mono", monospace;
+      letter-spacing: 0.04em;
+    }
+    .home-list-pill {
+      font-size: 8px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 3px 7px; border-radius: 999px;
+      border: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .home-list-empty {
+      text-align: center; padding: 16px;
+      color: var(--faint); font-size: 11px;
+      font-family: "JetBrains Mono", monospace;
     }
 
-    .home-grid {
-      display: grid;
-      gap: 10px;
-    }
-
-    .home-card {
+    /* ===== ENTRY TAB ===== */
+    .entry-panel {
       border: 1px solid var(--border);
       background: var(--surface);
       backdrop-filter: blur(20px);
       border-radius: var(--radius-lg);
-      padding: 14px;
+      padding: clamp(28px, 5vw, 56px) clamp(20px, 4vw, 48px);
+      margin: 24px auto 16px;
+      text-align: center;
+      max-width: 760px;
     }
-
-    .home-card-title {
-      color: var(--text);
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
+    .entry-eyebrow {
+      color: var(--gold-2); font-size: 10px; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .entry-title {
+      font-size: clamp(26px, 4vw, 38px);
+      font-weight: 800; letter-spacing: -0.035em;
+      line-height: 1.05;
       margin-bottom: 8px;
     }
-
-    .home-card-body {
+    .entry-copy {
       color: var(--muted);
-      font-size: 12px;
-      line-height: 1.5;
+      font-size: 13px;
+      line-height: 1.6;
+      margin: 0 auto 22px;
+      max-width: 540px;
     }
-
-    .home-card-body strong {
-      color: var(--text);
-    }
-
-    .rep-metric-grid {
+    .entry-search-row {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: minmax(0, 1fr) auto;
       gap: 8px;
+      max-width: 580px;
+      margin: 0 auto 12px;
+    }
+    .entry-input { padding: 16px 18px; font-size: 15px; }
+    .entry-search-btn { min-width: 110px; padding: 16px 22px; font-size: 12px; }
+    #entry-add-cta { max-width: 580px; margin: 8px auto 0; }
+    #entry-results {
+      max-width: 760px;
+      margin: 0 auto;
     }
 
-    .rep-metric {
-      border: 1px solid var(--border);
-      background: rgba(255, 255, 255, 0.025);
-      border-radius: var(--radius-md);
-      padding: 10px;
-    }
-
-    .rep-metric.active {
-      border-color: var(--border-strong);
-      background: rgba(201, 169, 110, 0.055);
-    }
-
-    .rep-metric-name {
-      color: var(--gold-2);
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
-
-    .rep-metric-role {
-      color: var(--muted);
-      font-size: 9px;
-      margin-top: 2px;
-    }
-
-    .rep-metric-quota {
-      color: var(--text);
-      font-size: 18px;
-      font-weight: 800;
-      margin-top: 8px;
-      letter-spacing: -0.04em;
-    }
-
-    .rep-metric-caption {
-      color: var(--faint);
-      font-size: 9px;
-      margin-top: 2px;
-    }
-
+    /* Search results — single-column tight list */
+    .results { display: flex; flex-direction: column; gap: 6px; }
     .card {
       position: relative;
       border: 1px solid var(--border);
@@ -739,543 +393,237 @@
       border-radius: var(--radius-md);
       padding: 11px 14px;
       transition: border-color 140ms ease, background 140ms ease;
+      cursor: pointer;
     }
-
     .card::before {
-      content: "";
-      position: absolute;
-      inset: 0 auto 0 0;
-      width: 2px;
+      content: ""; position: absolute;
+      inset: 0 auto 0 0; width: 2px;
       background: var(--gold);
       opacity: 0.5;
       border-radius: 2px 0 0 2px;
     }
-
-    .card:hover {
-      border-color: var(--border-strong);
-      background: rgba(20, 20, 28, 0.85);
-    }
-
-    .card:hover::before {
-      opacity: 0.9;
-    }
-
-    .card.overdue::before {
-      background: var(--red);
-      opacity: 0.75;
-    }
-
-    .card.due-today::before {
-      background: var(--green);
-      opacity: 0.75;
-    }
-
-    .card.archived {
-      opacity: 0.55;
-    }
-
-    .card.archived::before {
-      background: var(--faint);
-    }
-
-    .card-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      cursor: pointer;
-    }
-
-    .card-main {
-      flex: 1;
-      min-width: 0;
-      display: flex;
-      align-items: baseline;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
+    .card:hover { border-color: var(--border-strong); background: rgba(20, 20, 28, 0.85); }
+    .card:hover::before { opacity: 0.9; }
+    .card.overdue::before { background: var(--red); opacity: 0.75; }
+    .card.due-today::before { background: var(--green); opacity: 0.75; }
+    .card.archived { opacity: 0.5; }
+    .card.archived::before { background: var(--faint); }
+    .card-row { display: flex; align-items: center; gap: 10px; }
+    .card-main { flex: 1; min-width: 0; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
     .card-name {
-      color: var(--text);
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: -0.015em;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      color: var(--text); font-size: 14px;
+      font-weight: 700; letter-spacing: -0.015em;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
       max-width: 100%;
     }
-
-    .card-phone {
-      color: var(--muted);
-      font-size: 11px;
-      font-family: "JetBrains Mono", monospace;
-    }
-
+    .card-phone { color: var(--muted); font-size: 11px; font-family: "JetBrains Mono", monospace; }
     .card-quick-meta {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      color: var(--muted);
-      font-size: 10px;
+      display: flex; gap: 8px; align-items: center;
+      color: var(--muted); font-size: 10px;
       font-family: "JetBrains Mono", monospace;
       flex-wrap: wrap;
     }
-
-    .card-quick-meta strong {
-      color: var(--text);
-      font-weight: 600;
-    }
-
-    .card-right {
-      display: flex;
-      gap: 5px;
-      align-items: center;
-      flex-shrink: 0;
-    }
-
+    .card-quick-meta strong { color: var(--text); font-weight: 600; }
+    .card-right { display: flex; gap: 5px; align-items: center; flex-shrink: 0; }
     .pill {
-      display: inline-flex;
-      align-items: center;
+      display: inline-flex; align-items: center;
       color: var(--muted);
       border: 1px solid var(--border);
       background: var(--surface-2);
-      border-radius: 999px;
-      padding: 3px 7px;
-      font-size: 8px;
-      line-height: 1;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      white-space: nowrap;
+      border-radius: 999px; padding: 3px 7px;
+      font-size: 8px; line-height: 1;
+      font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; white-space: nowrap;
     }
+    .pill.hot { color: var(--red); border-color: rgba(255,100,115,0.4); background: rgba(255,100,115,0.07); }
+    .pill.warm { color: var(--orange); border-color: rgba(245,168,75,0.4); background: rgba(245,168,75,0.07); }
+    .pill.cold { color: var(--blue); border-color: rgba(111,156,255,0.4); background: rgba(111,156,255,0.07); }
+    .pill.new { color: var(--green); border-color: rgba(66,217,160,0.4); background: rgba(66,217,160,0.07); }
+    .pill.verified { color: var(--purple); border-color: rgba(184,140,255,0.4); background: rgba(184,140,255,0.07); }
+    .pill.pending { color: var(--purple); border-color: rgba(184,140,255,0.28); opacity: 0.7; }
+    .pill.owner { color: var(--gold-2); border-color: var(--border-strong); background: rgba(201,169,110,0.06); }
+    .pill.overdue { color: var(--red); border-color: rgba(255,100,115,0.4); background: rgba(255,100,115,0.07); }
+    .pill.due-today { color: var(--green); border-color: rgba(66,217,160,0.4); background: rgba(66,217,160,0.07); }
+    .pill.archived { color: var(--faint); border-color: var(--border); }
+    .pill.sold { color: var(--green); border-color: rgba(66,217,160,0.4); background: rgba(66,217,160,0.07); }
 
-    .pill.hot {
-      color: var(--red);
-      border-color: rgba(255, 100, 115, 0.4);
-      background: rgba(255, 100, 115, 0.07);
+    /* RESULTS HEAD */
+    .results-head {
+      display: flex; align-items: end; justify-content: space-between;
+      gap: 10px; margin: 12px 2px 8px;
     }
-
-    .pill.warm {
-      color: var(--orange);
-      border-color: rgba(245, 168, 75, 0.4);
-      background: rgba(245, 168, 75, 0.07);
-    }
-
-    .pill.cold {
-      color: var(--blue);
-      border-color: rgba(111, 156, 255, 0.4);
-      background: rgba(111, 156, 255, 0.07);
-    }
-
-    .pill.new {
-      color: var(--green);
-      border-color: rgba(66, 217, 160, 0.4);
-      background: rgba(66, 217, 160, 0.07);
-    }
-
-    .pill.verified {
-      color: var(--purple);
-      border-color: rgba(184, 140, 255, 0.4);
-      background: rgba(184, 140, 255, 0.07);
-    }
-
-    .pill.pending {
-      color: var(--purple);
-      border-color: rgba(184, 140, 255, 0.28);
-      opacity: 0.85;
-    }
-
-    .pill.owner {
-      color: var(--gold-2);
-      border-color: var(--border-strong);
-      background: rgba(201, 169, 110, 0.06);
-    }
-
-    .pill.overdue {
-      color: var(--red);
-      border-color: rgba(255, 100, 115, 0.4);
-      background: rgba(255, 100, 115, 0.07);
-    }
-
-    .pill.due-today {
-      color: var(--green);
-      border-color: rgba(66, 217, 160, 0.4);
-      background: rgba(66, 217, 160, 0.07);
-    }
-
-    .pill.archived {
-      color: var(--faint);
-      border-color: var(--border);
-    }
-
-    .expand-chevron {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      color: var(--muted);
-      font-size: 11px;
-      transition: transform 200ms ease, color 150ms ease;
-    }
-
-    .card.expanded .expand-chevron {
-      transform: rotate(180deg);
-      color: var(--gold-2);
-    }
-
-    .card-detail {
-      display: none;
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px solid var(--border);
-    }
-
-    .card.expanded .card-detail {
-      display: block;
-    }
-
-    .detail-meta {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 6px 14px;
-      margin-bottom: 10px;
-      font-size: 11px;
-      font-family: "JetBrains Mono", monospace;
-      color: var(--muted);
-    }
-
-    .detail-meta div {
-      display: flex;
-      gap: 5px;
-      align-items: baseline;
-    }
-
-    .detail-meta label {
-      font-size: 9px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--faint);
-    }
-
-    .detail-meta strong {
-      color: var(--text);
-      font-weight: 600;
-    }
-
-    .detail-section {
-      margin-top: 10px;
-    }
-
-    .detail-section-label {
-      color: var(--faint);
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      margin-bottom: 4px;
-    }
-
-    .detail-section-body {
-      color: #dcdce6;
-      font-size: 12px;
-      line-height: 1.5;
-    }
-
-    .detail-section-body.crm {
-      color: var(--gold-2);
-      font-family: "JetBrains Mono", monospace;
-      font-size: 11px;
-    }
-
-    .detail-extra-pills {
-      display: flex;
-      gap: 4px;
-      flex-wrap: wrap;
-      margin-top: 6px;
-    }
-
-    .agent-assist {
-      margin-top: 12px;
-      padding: 12px;
-      border: 1px solid rgba(201, 169, 110, 0.18);
-      background: rgba(201, 169, 110, 0.035);
-      border-radius: var(--radius-md);
-    }
-
-    .agent-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 9px;
-      flex-wrap: wrap;
-    }
-
-    .agent-title {
-      color: var(--gold-2);
-      font-size: 9px;
-      font-weight: 800;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-    }
-
-    .agent-priority {
-      display: inline-flex;
-      align-items: center;
-      border-radius: 999px;
-      padding: 4px 8px;
-      font-size: 8px;
-      font-weight: 800;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
+    .section-title { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text); }
+    .section-kicker { margin-top: 2px; color: var(--muted); font-size: 11px; }
+    .refresh-btn {
       border: 1px solid var(--border);
+      background: var(--surface-2);
       color: var(--muted);
-      background: rgba(255, 255, 255, 0.025);
-    }
-
-    .agent-priority.high {
-      color: var(--red);
-      border-color: rgba(255, 100, 115, 0.38);
-      background: rgba(255, 100, 115, 0.06);
-    }
-
-    .agent-priority.medium {
-      color: var(--orange);
-      border-color: rgba(245, 168, 75, 0.38);
-      background: rgba(245, 168, 75, 0.06);
-    }
-
-    .agent-priority.low {
-      color: var(--blue);
-      border-color: rgba(111, 156, 255, 0.34);
-      background: rgba(111, 156, 255, 0.05);
-    }
-
-    .agent-grid {
-      display: grid;
-      gap: 8px;
-    }
-
-    .agent-item {
-      border-top: 1px solid rgba(255, 255, 255, 0.055);
-      padding-top: 8px;
-    }
-
-    .agent-item:first-child {
-      border-top: 0;
-      padding-top: 0;
-    }
-
-    .agent-label {
-      color: var(--faint);
-      font-size: 8px;
-      font-weight: 800;
-      letter-spacing: 0.13em;
-      text-transform: uppercase;
-      margin-bottom: 3px;
-    }
-
-    .agent-body {
-      color: #dedee8;
-      font-size: 11px;
-      line-height: 1.5;
-    }
-
-    .agent-script {
-      color: var(--text);
-      background: rgba(0, 0, 0, 0.18);
-      border: 1px solid rgba(255, 255, 255, 0.055);
-      border-radius: var(--radius-sm);
-      padding: 8px;
-      font-size: 11px;
-      line-height: 1.48;
-    }
-
-    .agent-actions {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-      margin-top: 9px;
-    }
-
-    .copy-btn {
-      border: 1px solid var(--border-strong);
-      background: rgba(201, 169, 110, 0.055);
-      color: var(--gold-2);
       border-radius: 999px;
-      padding: 7px 10px;
-      font-size: 9px;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+      padding: 5px 10px;
+      font-size: 9px; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase;
       transition: all 150ms ease;
+      display: inline-flex; align-items: center; gap: 4px;
     }
+    .refresh-btn:hover { color: var(--text); border-color: var(--border-strong); }
 
-    .copy-btn:hover {
-      background: rgba(201, 169, 110, 0.1);
-    }
-
-    .copy-btn.copied {
-      color: #090908;
-      background: var(--gold);
-      border-color: transparent;
-    }
-
-    .detail-actions {
-      display: flex;
-      gap: 6px;
-      margin-top: 14px;
-      padding-top: 12px;
-      border-top: 1px solid var(--border);
-      flex-wrap: wrap;
-    }
-
-    .log-touch-btn {
-      border: 0;
-      border-radius: var(--radius-md);
-      padding: 9px 16px;
-      color: #090908;
-      background: var(--gold);
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      font-size: 11px;
-      transition: filter 150ms ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .log-touch-btn:hover {
-      filter: brightness(1.08);
-    }
-
-    .archive-btn {
-      border: 1px solid rgba(255, 100, 115, 0.32);
-      background: rgba(255, 100, 115, 0.04);
-      color: #ff9aa4;
-      border-radius: var(--radius-md);
-      padding: 9px 14px;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      font-size: 11px;
-      transition: all 150ms;
-    }
-
-    .archive-btn:hover {
-      background: rgba(255, 100, 115, 0.08);
-    }
-
-    .open-notion-btn {
-      border: 1px solid var(--border);
-      background: transparent;
-      color: var(--muted);
-      border-radius: var(--radius-md);
-      padding: 9px 12px;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      font-size: 11px;
-      transition: all 150ms;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .open-notion-btn:hover {
-      color: var(--text);
-      border-color: var(--border-strong);
-    }
-
-    .create-card {
-      border: 1px solid var(--border-strong);
-      background: rgba(201, 169, 110, 0.045);
-      border-radius: var(--radius-lg);
-      padding: 18px;
-      display: grid;
-      gap: 10px;
-    }
-
-    .create-title {
-      color: var(--text);
-      font-size: 14px;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-    }
-
-    .create-body {
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.5;
-    }
-
-    .create-actions {
-      display: flex;
-      gap: 7px;
-      flex-wrap: wrap;
-    }
-
-    .empty,
-    .loading-card,
-    .err-box {
+    /* EMPTY / LOADING / ERROR */
+    .empty, .loading-card, .err-box {
       border: 1px solid var(--border);
       background: var(--surface);
       backdrop-filter: blur(20px);
       border-radius: var(--radius-lg);
-      padding: 20px;
+      padding: 20px; color: var(--muted); line-height: 1.55;
+    }
+    .empty { text-align: center; }
+    .empty-headline { color: var(--text); font-size: 13px; font-weight: 700; margin-bottom: 4px; letter-spacing: -0.01em; }
+    .loading-card { position: relative; overflow: hidden; min-height: 80px; }
+    .loading-card::after {
+      content: ""; position: absolute; inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+      animation: shimmer 1.2s infinite; transform: translateX(-100%);
+    }
+    @keyframes shimmer { to { transform: translateX(100%); } }
+    .err-box { color: #ff9aa4; border-color: rgba(255,100,115,0.35); background: rgba(255,100,115,0.06); word-break: break-word; font-size: 12px; }
+    .err-box strong { color: #ffd7db; }
+
+    /* ===== LEAD PROFILE SIDE PANEL ===== */
+    .panel-backdrop {
+      position: fixed; inset: 0; z-index: 4000;
+      background: rgba(5, 5, 10, 0.62);
+      backdrop-filter: blur(6px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 200ms ease;
+    }
+    .panel-backdrop.open { opacity: 1; pointer-events: auto; }
+    .lead-panel {
+      position: fixed;
+      top: 0; right: 0; bottom: 0;
+      width: min(440px, 92vw);
+      background: #0c0c14;
+      border-left: 1px solid var(--border);
+      z-index: 4100;
+      transform: translateX(100%);
+      transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+      overflow-y: auto;
+      display: flex; flex-direction: column;
+    }
+    .lead-panel.open { transform: translateX(0); }
+    .lead-panel-head {
+      padding: 20px 22px 16px;
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0;
+      background: #0c0c14;
+      z-index: 2;
+    }
+    .lead-panel-toprow {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .lead-panel-name {
+      font-size: 22px; font-weight: 800; letter-spacing: -0.025em;
+      line-height: 1.1;
+      word-break: break-word;
+    }
+    .lead-panel-phone {
+      color: var(--muted); font-size: 12px;
+      font-family: "JetBrains Mono", monospace;
+      margin-top: 4px;
+    }
+    .lead-panel-close {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
       color: var(--muted);
+      display: grid; place-items: center;
+      font-size: 14px;
+      flex-shrink: 0;
+      transition: all 150ms;
+    }
+    .lead-panel-close:hover { color: var(--text); border-color: rgba(255,100,115,0.4); }
+    .lead-panel-pills {
+      display: flex; gap: 5px; flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .lead-panel-actions {
+      display: flex; gap: 6px; flex-wrap: wrap;
+    }
+    .lead-panel-actions .primary-btn { padding: 9px 14px; font-size: 11px; }
+    .lead-panel-actions .ghost-btn { padding: 9px 12px; font-size: 11px; text-decoration: none; }
+    .lead-panel-body {
+      padding: 16px 22px 28px;
+      flex: 1;
+    }
+    .timeline-label {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .timeline { position: relative; padding-left: 16px; }
+    .timeline::before {
+      content: ""; position: absolute;
+      left: 4px; top: 4px; bottom: 4px;
+      width: 1px; background: var(--border);
+    }
+    .timeline-entry { position: relative; padding-bottom: 18px; }
+    .timeline-entry::before {
+      content: ""; position: absolute;
+      left: -16px; top: 4px;
+      width: 9px; height: 9px;
+      border-radius: 50%;
+      background: var(--gold);
+      border: 2px solid #0c0c14;
+      box-shadow: 0 0 0 1px var(--border-strong);
+    }
+    .timeline-entry.overdue::before { background: var(--red); box-shadow: 0 0 0 1px rgba(255,100,115,0.4); }
+    .timeline-entry.due-today::before { background: var(--green); box-shadow: 0 0 0 1px rgba(66,217,160,0.4); }
+    .timeline-entry-head {
+      display: flex; align-items: baseline; gap: 8px;
+      margin-bottom: 4px;
+      flex-wrap: wrap;
+    }
+    .timeline-date { color: var(--text); font-size: 12px; font-weight: 700; letter-spacing: -0.01em; }
+    .timeline-touch { color: var(--muted); font-size: 11px; font-family: "JetBrains Mono", monospace; }
+    .timeline-pills { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 5px; margin-bottom: 5px; }
+    .timeline-meta {
+      font-size: 11px; color: var(--muted);
+      font-family: "JetBrains Mono", monospace;
+      margin-top: 4px;
       line-height: 1.55;
     }
-
-    .empty {
-      text-align: center;
+    .timeline-meta strong { color: var(--text); font-weight: 600; }
+    .timeline-context {
+      margin-top: 8px;
+      padding: 9px 11px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      border-radius: var(--radius-sm);
+      font-size: 12px; line-height: 1.55;
+      color: #dcdce6;
+    }
+    .timeline-crm {
+      margin-top: 6px;
+      padding: 9px 11px;
+      border: 1px solid var(--border-strong);
+      background: rgba(201, 169, 110, 0.04);
+      border-radius: var(--radius-sm);
+      font-size: 11px; line-height: 1.55;
+      color: var(--gold-2);
+      font-family: "JetBrains Mono", monospace;
+    }
+    .timeline-crm-label {
+      font-size: 8px; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--faint); margin-bottom: 3px;
     }
 
-    .empty-headline {
-      color: var(--text);
-      font-size: 13px;
-      font-weight: 700;
-      margin-bottom: 4px;
-      letter-spacing: -0.01em;
-    }
-
-    .loading-card {
-      position: relative;
-      overflow: hidden;
-      min-height: 80px;
-    }
-
-    .loading-card::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.04), transparent);
-      animation: shimmer 1.2s infinite;
-      transform: translateX(-100%);
-    }
-
-    @keyframes shimmer {
-      to {
-        transform: translateX(100%);
-      }
-    }
-
-    .err-box {
-      color: #ff9aa4;
-      border-color: rgba(255, 100, 115, 0.35);
-      background: rgba(255, 100, 115, 0.06);
-      word-break: break-word;
-      font-size: 12px;
-    }
-
-    .err-box strong {
-      color: #ffd7db;
-    }
-
+    /* MODALS (Add / Touch) */
     .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      z-index: 5000;
+      position: fixed; inset: 0; z-index: 5000;
       background: rgba(5, 5, 10, 0.78);
       backdrop-filter: blur(8px);
       display: none;
@@ -1284,11 +632,7 @@
       padding: 18px;
       overflow-y: auto;
     }
-
-    .modal-backdrop.open {
-      display: flex;
-    }
-
+    .modal-backdrop.open { display: flex; }
     .modal {
       width: min(100%, 600px);
       background: #0d0d14;
@@ -1297,192 +641,36 @@
       padding: 22px;
       margin: 18px 0;
     }
-
-    .modal-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-
-    .modal-title {
-      font-size: 16px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
-
-    .modal-sub {
-      color: var(--muted);
-      font-size: 10px;
-      margin-top: 2px;
-      letter-spacing: 0.04em;
-    }
-
+    .modal-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+    .modal-title { font-size: 16px; font-weight: 700; letter-spacing: -0.02em; }
+    .modal-sub { color: var(--muted); font-size: 10px; margin-top: 2px; letter-spacing: 0.04em; }
     .modal-close {
-      width: 28px;
-      height: 28px;
+      width: 28px; height: 28px;
       border-radius: 50%;
       border: 1px solid var(--border);
       background: var(--surface-2);
       color: var(--muted);
-      display: grid;
-      place-items: center;
+      display: grid; place-items: center;
       font-size: 12px;
       transition: all 150ms;
     }
-
-    .modal-close:hover {
-      color: var(--text);
-      border-color: rgba(255, 100, 115, 0.4);
-    }
-
-    .profile-panel {
-      width: min(100%, 520px);
-      min-height: 100vh;
-      margin-left: auto;
-      background: #0d0d14;
-      border-left: 1px solid var(--border);
-      padding: 18px;
-      overflow-y: auto;
-    }
-
-    .profile-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 14px;
-      padding-bottom: 14px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .profile-label {
-      color: var(--gold-2);
-      font-size: 9px;
-      font-weight: 800;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      margin-bottom: 5px;
-    }
-
-    .profile-name {
-      color: var(--text);
-      font-size: 22px;
-      font-weight: 800;
-      letter-spacing: -0.04em;
-    }
-
-    .profile-phone {
-      color: var(--muted);
-      font-size: 11px;
-      margin-top: 4px;
-    }
-
-    .profile-summary {
-      display: grid;
-      gap: 7px;
-      margin-top: 14px;
-    }
-
-    .profile-summary-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,0.02);
-      border-radius: var(--radius-md);
-      padding: 9px 10px;
-      font-size: 11px;
-    }
-
-    .profile-summary-row label {
-      color: var(--faint);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      font-size: 8px;
-      font-weight: 800;
-    }
-
-    .profile-summary-row strong {
-      color: var(--text);
-      text-align: right;
-    }
-
-    .profile-section {
-      margin-top: 18px;
-    }
-
-    .profile-section-title {
-      color: var(--gold-2);
-      font-size: 9px;
-      font-weight: 800;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      margin-bottom: 8px;
-    }
-
-    .profile-timeline {
-      display: grid;
-      gap: 8px;
-    }
-
-    .timeline-item {
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,0.025);
-      border-radius: var(--radius-md);
-      padding: 11px;
-    }
-
-    .timeline-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 6px;
-      color: var(--muted);
-      font-size: 10px;
-    }
-
-    .timeline-result {
-      color: var(--text);
-      font-size: 12px;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-
-    .timeline-context {
-      color: #dcdce6;
-      font-size: 11px;
-      line-height: 1.5;
-    }
-
+    .modal-close:hover { color: var(--text); border-color: rgba(255,100,115,0.4); }
     .mode-toggle {
-      display: inline-flex;
-      gap: 3px;
+      display: inline-flex; gap: 3px;
       border: 1px solid var(--border);
       border-radius: 999px;
       padding: 3px;
       margin-bottom: 12px;
       background: var(--surface-2);
     }
-
     .mode-btn {
-      border: 0;
-      background: transparent;
-      color: var(--muted);
-      padding: 5px 11px;
-      border-radius: 999px;
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+      border: 0; background: transparent; color: var(--muted);
+      padding: 5px 11px; border-radius: 999px;
+      font-size: 9px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
       transition: all 150ms;
     }
-
-    .mode-btn.active {
-      color: #090908;
-      background: var(--gold);
-    }
-
+    .mode-btn.active { color: #090908; background: var(--gold); }
     .customer-banner {
       border: 1px solid var(--border-strong);
       background: rgba(201, 169, 110, 0.04);
@@ -1490,128 +678,43 @@
       padding: 10px 12px;
       margin-bottom: 12px;
     }
-
-    .customer-banner-label {
-      color: var(--gold-2);
-      font-size: 8px;
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      margin-bottom: 3px;
-    }
-
-    .customer-banner-name {
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
-
-    .customer-banner-phone {
-      color: var(--muted);
-      font-size: 11px;
-      margin-top: 1px;
-      font-family: "JetBrains Mono", monospace;
-    }
-
-    .form-grid {
-      display: grid;
-      gap: 10px;
-    }
-
-    .form-row {
-      display: grid;
-      gap: 10px;
-    }
-
-    .form-row.two {
-      grid-template-columns: 1fr 1fr;
-    }
-
-    .field-group {
-      display: grid;
-      gap: 4px;
-    }
-
-    .field-label {
-      color: var(--muted);
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-
-    .field-label .req {
-      color: var(--red);
-      margin-left: 3px;
-    }
-
-    .form-input,
-    .form-textarea,
+    .customer-banner-label { color: var(--gold-2); font-size: 8px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 3px; }
+    .customer-banner-name { font-size: 14px; font-weight: 700; letter-spacing: -0.02em; }
+    .customer-banner-phone { color: var(--muted); font-size: 11px; margin-top: 1px; font-family: "JetBrains Mono", monospace; }
+    .form-grid { display: grid; gap: 10px; }
+    .form-row { display: grid; gap: 10px; }
+    .form-row.two { grid-template-columns: 1fr 1fr; }
+    .field-group { display: grid; gap: 4px; }
+    .field-label { color: var(--muted); font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+    .field-label .req { color: var(--red); margin-left: 3px; }
+    .form-input, .form-textarea, .form-select { padding: 9px 11px; font-size: 12px; }
+    .form-textarea { min-height: 65px; resize: vertical; font-family: inherit; }
     .form-select {
-      padding: 9px 11px;
-      font-size: 12px;
-    }
-
-    .form-textarea {
-      min-height: 65px;
-      resize: vertical;
-      font-family: inherit;
-    }
-
-    .form-select {
-      appearance: none;
-      -webkit-appearance: none;
+      appearance: none; -webkit-appearance: none;
       background-color: #0c0c14;
       color: var(--text);
-      background-image:
-        linear-gradient(45deg, transparent 50%, var(--muted) 50%),
-        linear-gradient(135deg, var(--muted) 50%, transparent 50%);
-      background-position:
-        calc(100% - 14px) calc(50% - 3px),
-        calc(100% - 10px) calc(50% - 3px);
+      background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+      background-position: calc(100% - 14px) calc(50% - 3px), calc(100% - 10px) calc(50% - 3px);
       background-size: 5px 5px, 5px 5px;
       background-repeat: no-repeat;
       padding-right: 28px;
     }
-
-    .form-select option {
-      background-color: #0c0c14;
-      color: var(--text);
-    }
-
-    .chip-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-    }
-
+    .form-select option { background-color: #0c0c14; color: var(--text); }
+    .chip-grid { display: flex; flex-wrap: wrap; gap: 4px; }
     .chip {
       border: 1px solid var(--border);
       background: var(--surface-2);
       color: var(--muted);
       border-radius: 999px;
       padding: 5px 9px;
-      font-size: 10px;
-      font-weight: 600;
+      font-size: 10px; font-weight: 600;
       transition: all 150ms ease;
       user-select: none;
     }
-
-    .chip:hover {
-      color: var(--text);
-      border-color: var(--border-strong);
-    }
-
-    .chip.selected {
-      color: #090908;
-      background: var(--gold);
-      border-color: transparent;
-    }
-
+    .chip:hover { color: var(--text); border-color: var(--border-strong); }
+    .chip.selected { color: #090908; background: var(--gold); border-color: transparent; }
     .checkbox-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      display: flex; align-items: center; gap: 8px;
       padding: 9px 11px;
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
@@ -1619,179 +722,58 @@
       cursor: pointer;
       user-select: none;
     }
-
-    .checkbox-row input[type="checkbox"] {
-      width: 14px;
-      height: 14px;
-      accent-color: var(--gold);
-      cursor: pointer;
-    }
-
-    .checkbox-row span {
-      font-size: 11px;
-      color: var(--text);
-      font-weight: 600;
-    }
-
-    .checkbox-row.archive {
-      border-color: rgba(255, 100, 115, 0.32);
-      background: rgba(255, 100, 115, 0.04);
-    }
-
-    .checkbox-row.archive span {
-      color: #ff9aa4;
-    }
-
-    .full-fields {
-      display: none;
-      gap: 10px;
-    }
-
-    .full-fields.open {
-      display: grid;
-    }
-
-    .form-footer {
-      margin-top: 14px;
-      display: flex;
-      gap: 6px;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .form-msg {
-      font-size: 10px;
-      color: var(--muted);
-      min-height: 12px;
-      flex: 1;
-    }
-
-    .form-msg.ok {
-      color: var(--green);
-    }
-
-    .form-msg.err {
-      color: var(--red);
-    }
-
-    .form-actions {
-      display: flex;
-      gap: 5px;
-    }
-
-    .submit-btn {
-      padding: 9px 16px;
-    }
-
+    .checkbox-row input[type="checkbox"] { width: 14px; height: 14px; accent-color: var(--gold); cursor: pointer; }
+    .checkbox-row span { font-size: 11px; color: var(--text); font-weight: 600; }
+    .checkbox-row.archive { border-color: rgba(255,100,115,0.32); background: rgba(255,100,115,0.04); }
+    .checkbox-row.archive span { color: #ff9aa4; }
+    .full-fields { display: none; gap: 10px; }
+    .full-fields.open { display: grid; }
+    .form-footer { margin-top: 14px; display: flex; gap: 6px; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+    .form-msg { font-size: 10px; color: var(--muted); min-height: 12px; flex: 1; }
+    .form-msg.ok { color: var(--green); }
+    .form-msg.err { color: var(--red); }
+    .form-actions { display: flex; gap: 5px; }
+    .submit-btn { padding: 9px 16px; }
     .cancel-btn {
       border: 1px solid var(--border);
       background: transparent;
       color: var(--muted);
       padding: 9px 12px;
       border-radius: var(--radius-md);
-      font-weight: 700;
-      letter-spacing: 0.06em;
+      font-weight: 700; letter-spacing: 0.06em;
       font-size: 10px;
       transition: all 150ms;
     }
-
-    .cancel-btn:hover {
-      color: var(--text);
-      border-color: var(--border-strong);
-    }
+    .cancel-btn:hover { color: var(--text); border-color: var(--border-strong); }
 
     .footer {
       margin-top: 24px;
       padding-top: 12px;
       border-top: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-      flex-wrap: wrap;
-      color: var(--faint);
-      font-size: 9px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
+      display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap;
+      color: var(--faint); font-size: 9px;
+      letter-spacing: 0.1em; text-transform: uppercase;
     }
 
     @media (max-width: 640px) {
-      #app {
-        width: min(100% - 18px, var(--max));
-        padding-top: 12px;
-      }
-
-      .topbar {
-        align-items: flex-start;
-        flex-direction: column;
-        gap: 8px;
-      }
-
-      .topbar-actions {
-        width: 100%;
-        justify-content: flex-start;
-      }
-
-      .search-row {
-        grid-template-columns: 1fr;
-      }
-
-      .search-btn {
-        width: 100%;
-      }
-
-      .gate-box {
-        padding: 20px;
-        border-radius: 16px;
-      }
-
-      .footer {
-        display: grid;
-      }
-
-      .modal {
-        padding: 16px;
-        margin: 8px 0;
-        border-radius: 12px;
-      }
-
-      .form-row.two {
-        grid-template-columns: 1fr;
-      }
-
-      .tab-btn {
-        min-width: auto;
-        flex: 1 1 calc(50% - 3px);
-        font-size: 9px;
-        padding: 8px 6px;
-      }
-
-      .card-row {
-        flex-wrap: wrap;
-      }
-
-      .card-right {
-        width: 100%;
-        justify-content: flex-end;
-      }
-
-      .detail-meta {
-        grid-template-columns: 1fr;
-      }
-
-      .rep-metric-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .profile-panel {
-        width: 100%;
-      }
+      #app { width: min(100% - 18px, var(--max)); padding-top: 12px; }
+      .topbar { align-items: flex-start; flex-direction: column; gap: 8px; }
+      .topbar-actions { width: 100%; justify-content: flex-start; }
+      .entry-search-row { grid-template-columns: 1fr; }
+      .entry-search-btn { width: 100%; }
+      .entry-panel { padding: 24px 18px; margin: 12px auto; }
+      .gate-box { padding: 20px; border-radius: 16px; }
+      .footer { display: grid; }
+      .modal { padding: 16px; margin: 8px 0; border-radius: 12px; }
+      .form-row.two { grid-template-columns: 1fr; }
+      .tab-btn { min-width: auto; flex: 1 1 calc(50% - 3px); font-size: 9px; padding: 8px 6px; }
+      .card-row { flex-wrap: wrap; }
+      .card-right { width: 100%; justify-content: flex-end; }
+      .stat-grid { grid-template-columns: 1fr; }
+      .lead-panel { width: 100vw; }
     }
-
     @media (prefers-reduced-motion: reduce) {
-      *,
-      *::before,
-      *::after {
+      *, *::before, *::after {
         animation-duration: 0.001ms !important;
         animation-iteration-count: 1 !important;
         scroll-behavior: auto !important;
@@ -1800,15 +782,13 @@
     }
   </style>
 </head>
-
 <body>
   <main id="gate" aria-label="Access gate">
     <section class="gate-shell">
       <div class="gate-box">
         <div class="gate-eyebrow"><span class="gate-dot"></span> Store 00650 · Workstation</div>
         <h1 class="gate-title">650 <span>LeadForge</span></h1>
-        <p class="gate-copy">Find customers, start leads, log touches, keep the book moving.</p>
-
+        <p class="gate-copy">Open your day, log touches, keep the book moving.</p>
         <div class="gate-step-label"><span class="gate-step-num">1</span> Select your rep</div>
         <div class="rep-grid">
           <button class="rep-card" type="button" data-rep="DG" onclick="selectRep('DG')">
@@ -1821,18 +801,16 @@
             <div class="rep-initials">TH</div><div class="rep-role">CAR</div>
           </button>
           <button class="rep-card" type="button" data-rep="KT" onclick="selectRep('KT')">
-            <div class="rep-initials">KT</div><div class="rep-role">CAR</div>
+            <div class="rep-initials">KT</div><div class="rep-role">SM</div>
           </button>
         </div>
-
         <div class="gate-step-label"><span class="gate-step-num">2</span> Enter access code</div>
         <form class="gate-form locked" id="gate-form" onsubmit="event.preventDefault(); tryGate();">
           <input id="gate-input" class="gate-input mono" type="password" placeholder="ACCESS CODE" autocomplete="off" />
           <button class="primary-btn" type="submit" id="gate-submit" disabled>Unlock</button>
           <div id="gate-err" class="gate-err mono" role="alert" aria-live="polite"></div>
         </form>
-
-        <p class="security-note mono">Rep selection presets Owner on new entries.</p>
+        <p class="security-note mono">Rep selection drives Home dashboard, My Work filters, and Owner pre-fill.</p>
       </div>
     </section>
   </main>
@@ -1846,7 +824,6 @@
           <div class="logo-sub mono">Workstation</div>
         </div>
       </div>
-
       <div class="topbar-actions">
         <div id="rep-badge" class="rep-badge">REP · DG</div>
         <button class="add-btn" type="button" onclick="openAddModal()"><span class="plus">+</span> New Lead</button>
@@ -1867,51 +844,113 @@
 
     <nav class="tabs-row" aria-label="Workstation views">
       <button class="tab-btn active" type="button" data-tab="home" onclick="setTab('home')">
-        Home
+        <span class="tab-emoji">🏠</span> Home
       </button>
       <button class="tab-btn" type="button" data-tab="entry" onclick="setTab('entry')">
-        Entry
+        <span class="tab-emoji">✏️</span> Entry
       </button>
       <button class="tab-btn" type="button" data-tab="today" onclick="setTab('today')">
-        Today <span class="tab-count" id="count-today">·</span>
+        <span class="tab-emoji">🟢</span> Today <span class="tab-count" id="count-today">·</span>
       </button>
       <button class="tab-btn" type="button" data-tab="archive" onclick="setTab('archive')">
-        Archive <span class="tab-count" id="count-archive">·</span>
+        <span class="tab-emoji">📦</span> Archive
       </button>
     </nav>
 
-    <section class="control-panel" id="entry-controls" aria-label="Lead entry controls">
-      <div class="entry-copy" id="entry-copy" style="display:none;">
-        <div class="entry-title">LeadForge Entry</div>
-        <div class="entry-sub">
-          Check existing customers or start a new lead from one place. If they exist, update their timeline. If not, start a new lead.
+    <!-- HOME VIEW -->
+    <section id="home-view" class="home-grid">
+      <!-- Greeting -->
+      <div class="home-section">
+        <div class="quota-band">
+          <div>
+            <div class="quota-greeting">Welcome, <span id="home-rep-name">DG</span></div>
+            <div class="quota-subgreeting mono" id="home-week-range">Loading your book…</div>
+          </div>
         </div>
       </div>
 
-      <div class="search-row" id="entry-search-row" style="display:none;">
-        <label class="sr-only" for="q">Enter customer name or phone</label>
-        <input
-          id="q"
-          class="search-input mono"
-          type="search"
-          placeholder="Enter customer name or phone"
-          autocomplete="off"
-          oninput="handleEntryInput()"
-          onkeydown="if(event.key==='Enter'){event.preventDefault();handleEntrySubmit();}"
-        />
-        <button class="primary-btn search-btn" type="button" onclick="handleEntrySubmit()">Continue</button>
+      <!-- Stat tiles -->
+      <div class="home-section">
+        <div class="home-section-head">
+          <div class="home-section-title">My Book — Snapshot</div>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-tile">
+            <div class="stat-tile-value" id="home-active-count">—</div>
+            <div class="stat-tile-label">Active Leads</div>
+          </div>
+          <div class="stat-tile">
+            <div class="stat-tile-value" id="home-due-count">—</div>
+            <div class="stat-tile-label">Due / Overdue</div>
+          </div>
+          <div class="stat-tile">
+            <div class="stat-tile-value" id="home-hot-count">—</div>
+            <div class="stat-tile-label">Hot Leads</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Today's Top 3 -->
+      <div class="home-section">
+        <div class="home-section-head">
+          <div class="home-section-title">Hit These First</div>
+          <button class="home-section-action" type="button" onclick="setTab('today')">See all →</button>
+        </div>
+        <div class="home-list" id="home-top3"></div>
+      </div>
+
+      <!-- Recent Closes -->
+      <div class="home-section">
+        <div class="home-section-head">
+          <div class="home-section-title">Recent Closes</div>
+        </div>
+        <div class="home-list" id="home-recent-closes"></div>
       </div>
     </section>
 
-    <section class="results-head" aria-label="Results heading">
-      <div>
-        <h3 class="section-title" id="view-title">Home</h3>
-        <p class="section-kicker" id="view-kicker">Rep dashboard and daily command view.</p>
+    <!-- ENTRY VIEW -->
+    <section id="entry-view" style="display: none;">
+      <div class="entry-panel">
+        <div class="entry-eyebrow">Lookup or Add</div>
+        <h2 class="entry-title">Find or start a lead</h2>
+        <p class="entry-copy">Type a name or phone. If they exist, tap them to see the full timeline and log a new touch. If not, start a new lead with that name pre-filled.</p>
+        <div class="entry-search-row">
+          <label class="sr-only" for="q">Search by name or phone</label>
+          <input id="q" class="search-input entry-input mono" type="search" placeholder="John Smith or (570) 555-1234" autocomplete="off" onkeydown="if(event.key==='Enter')runEntrySearch()" />
+          <button class="primary-btn entry-search-btn" type="button" onclick="runEntrySearch()">Search</button>
+        </div>
+        <div id="entry-add-cta" style="display: none;">
+          <button class="add-btn" type="button" onclick="openAddModalFromEntry()" style="width: 100%; padding: 11px;">
+            <span class="plus">+</span> Add <span id="entry-add-name" style="margin: 0 4px;">"this name"</span> as new lead
+          </button>
+        </div>
       </div>
-      <button class="refresh-btn mono" type="button" onclick="refreshCurrentTab()"><span>↻</span> Refresh</button>
+      <div id="entry-results" class="results"></div>
     </section>
 
-    <section id="results" class="results" aria-live="polite"></section>
+    <!-- TODAY VIEW -->
+    <section id="today-view" style="display: none;">
+      <div class="results-head">
+        <div>
+          <h3 class="section-title">Today</h3>
+          <p class="section-kicker">Overdue + due today, sorted by follow-up date. Tap a card to open the customer panel.</p>
+        </div>
+        <button class="refresh-btn mono" type="button" onclick="loadToday()"><span>↻</span> Refresh</button>
+      </div>
+      <div id="today-results" class="results"></div>
+    </section>
+
+    <!-- ARCHIVE VIEW -->
+    <section id="archive-view" style="display: none;">
+      <div class="results-head">
+        <div>
+          <h3 class="section-title">Archive</h3>
+          <p class="section-kicker">Sold and closed contacts. Read-only history.</p>
+        </div>
+        <button class="refresh-btn mono" type="button" onclick="loadArchive()"><span>↻</span> Refresh</button>
+      </div>
+      <div id="archive-results" class="results"></div>
+    </section>
 
     <footer class="footer mono">
       <span>437 Hepburn St · Williamsport, PA</span>
@@ -1920,26 +959,30 @@
     </footer>
   </div>
 
-  <div id="profile-panel-backdrop" class="modal-backdrop" role="dialog" aria-modal="true">
-    <aside class="profile-panel">
-      <div class="profile-head">
+  <!-- LEAD PROFILE SIDE PANEL -->
+  <div id="panel-backdrop" class="panel-backdrop" onclick="closeLeadPanel()"></div>
+  <aside id="lead-panel" class="lead-panel" aria-label="Customer profile">
+    <div class="lead-panel-head">
+      <div class="lead-panel-toprow">
         <div>
-          <div class="profile-label mono">Customer Profile</div>
-          <div class="profile-name" id="profile-name">—</div>
-          <div class="profile-phone mono" id="profile-phone"></div>
+          <div class="lead-panel-name" id="panel-customer-name">—</div>
+          <div class="lead-panel-phone" id="panel-customer-phone"></div>
         </div>
-        <button class="modal-close" type="button" onclick="closeProfilePanel()" aria-label="Close">✕</button>
+        <button class="lead-panel-close" type="button" onclick="closeLeadPanel()" aria-label="Close panel">✕</button>
       </div>
-
-      <div class="profile-summary" id="profile-summary"></div>
-
-      <div class="profile-section">
-        <div class="profile-section-title mono">Timeline</div>
-        <div id="profile-timeline" class="profile-timeline"></div>
+      <div class="lead-panel-pills" id="panel-pills"></div>
+      <div class="lead-panel-actions">
+        <button class="primary-btn" type="button" onclick="openTouchFromPanel()">+ Log New Touch</button>
+        <a id="panel-notion-link" class="ghost-btn mono" href="#" target="_blank" rel="noopener">Open in Notion ↗</a>
       </div>
-    </aside>
-  </div>
+    </div>
+    <div class="lead-panel-body">
+      <div class="timeline-label">Timeline</div>
+      <div class="timeline" id="panel-timeline"></div>
+    </div>
+  </aside>
 
+  <!-- ADD LEAD MODAL -->
   <div id="add-modal" class="modal-backdrop" role="dialog" aria-modal="true">
     <div class="modal">
       <div class="modal-head">
@@ -1949,12 +992,10 @@
         </div>
         <button class="modal-close" type="button" onclick="closeAddModal()" aria-label="Close">✕</button>
       </div>
-
       <div class="mode-toggle">
         <button class="mode-btn active" type="button" onclick="setMode('quick')" id="mode-quick">Quick</button>
         <button class="mode-btn" type="button" onclick="setMode('full')" id="mode-full">Full Profile</button>
       </div>
-
       <form id="add-form" class="form-grid" onsubmit="event.preventDefault(); submitLead();">
         <div class="form-row two">
           <div class="field-group">
@@ -1966,20 +1007,16 @@
             <input id="f-phone" class="form-input" type="tel" placeholder="(570) 555-0100" autocomplete="off" />
           </div>
         </div>
-
         <div class="field-group">
           <label class="field-label" for="f-context">Context / Notes</label>
           <textarea id="f-context" class="form-textarea" placeholder="What did they want? Promised callback? Capture it."></textarea>
         </div>
-
         <div class="form-row two">
           <div class="field-group">
             <label class="field-label" for="f-owner">Owner</label>
             <select id="f-owner" class="form-select">
-              <option value="DG">DG</option>
-              <option value="KB">KB</option>
-              <option value="TH">TH</option>
-              <option value="KT">KT</option>
+              <option value="DG">DG</option><option value="KB">KB</option>
+              <option value="TH">TH</option><option value="KT">KT</option>
             </select>
           </div>
           <div class="field-group">
@@ -1993,7 +1030,6 @@
             </select>
           </div>
         </div>
-
         <div id="full-fields" class="full-fields">
           <div class="form-row two">
             <div class="field-group">
@@ -2029,7 +1065,6 @@
               </select>
             </div>
           </div>
-
           <div class="form-row two">
             <div class="field-group">
               <label class="field-label" for="f-nextstep">Next Step</label>
@@ -2047,7 +1082,6 @@
               <input id="f-when" class="form-input" type="date" />
             </div>
           </div>
-
           <div class="field-group">
             <label class="field-label">Temp</label>
             <div class="chip-grid" id="chips-temp">
@@ -2056,10 +1090,9 @@
               <button class="chip" type="button" data-value="Warm">Warm</button>
               <button class="chip" type="button" data-value="Cold">Cold</button>
               <button class="chip" type="button" data-value="Pending">Pending</button>
-              <button class="chip" type="button" data-value="⭐ VERIFIED - Returning Customer">Verified</button>
+              <button class="chip" type="button" data-value="⭐ VERIFIED - Returning Customer">⭐ Verified</button>
             </div>
           </div>
-
           <div class="field-group">
             <label class="field-label">Wish List</label>
             <div class="chip-grid" id="chips-wishlist">
@@ -2073,7 +1106,6 @@
               <button class="chip" type="button" data-value="Bundle / Multi-Item">Bundle</button>
             </div>
           </div>
-
           <div class="form-row two">
             <label class="checkbox-row archive">
               <input id="f-archived" type="checkbox" />
@@ -2085,7 +1117,6 @@
             </label>
           </div>
         </div>
-
         <div class="form-footer">
           <div id="form-msg" class="form-msg mono"></div>
           <div class="form-actions">
@@ -2097,22 +1128,21 @@
     </div>
   </div>
 
+  <!-- TOUCH MODAL -->
   <div id="touch-modal" class="modal-backdrop" role="dialog" aria-modal="true">
     <div class="modal">
       <div class="modal-head">
         <div>
           <div class="modal-title">Log New Touch</div>
-          <div class="modal-sub mono">Creates a new row — history preserved</div>
+          <div class="modal-sub mono">Creates a new row — full history preserved</div>
         </div>
         <button class="modal-close" type="button" onclick="closeTouchModal()" aria-label="Close">✕</button>
       </div>
-
       <div class="customer-banner">
         <div class="customer-banner-label">Customer</div>
         <div class="customer-banner-name" id="touch-customer-name">—</div>
         <div class="customer-banner-phone" id="touch-customer-phone"></div>
       </div>
-
       <form id="touch-form" class="form-grid" onsubmit="event.preventDefault(); submitTouch();">
         <div class="form-row two">
           <div class="field-group">
@@ -2137,7 +1167,6 @@
             </select>
           </div>
         </div>
-
         <div class="form-row two">
           <div class="field-group">
             <label class="field-label" for="t-result">Result <span class="req">*</span></label>
@@ -2171,17 +1200,14 @@
             </select>
           </div>
         </div>
-
         <div class="field-group">
           <label class="field-label" for="t-when">Follow-Up Date</label>
           <input id="t-when" class="form-input" type="date" />
         </div>
-
         <div class="field-group">
           <label class="field-label" for="t-context">Context / Notes</label>
           <textarea id="t-context" class="form-textarea" placeholder="What was discussed? Objections? Commitments? Next move?"></textarea>
         </div>
-
         <div class="field-group">
           <label class="field-label">Temp Update</label>
           <div class="chip-grid" id="chips-touch-temp">
@@ -2189,10 +1215,9 @@
             <button class="chip" type="button" data-value="Warm">Warm</button>
             <button class="chip" type="button" data-value="Cold">Cold</button>
             <button class="chip" type="button" data-value="Pending">Pending</button>
-            <button class="chip" type="button" data-value="⭐ VERIFIED - Returning Customer">Verified</button>
+            <button class="chip" type="button" data-value="⭐ VERIFIED - Returning Customer">⭐ Verified</button>
           </div>
         </div>
-
         <div class="form-row two">
           <label class="checkbox-row archive">
             <input id="t-archived" type="checkbox" />
@@ -2203,12 +1228,11 @@
             <span>Logged in Salesforce</span>
           </label>
         </div>
-
         <div class="form-footer">
           <div id="touch-msg" class="form-msg mono"></div>
           <div class="form-actions">
             <button class="cancel-btn" type="button" onclick="closeTouchModal()">Cancel</button>
-            <button class="primary-btn submit-btn" type="submit" id="touch-submit-btn">Log New Touch</button>
+            <button class="primary-btn submit-btn" type="submit" id="touch-submit-btn">Log Touch</button>
           </div>
         </div>
       </form>
@@ -2216,20 +1240,33 @@
   </div>
 
   <script>
-    const WORKER_URL = 'https://650-search-proxy.dnljgrnr.workers.dev';
+    // =================================================================
+    // CONFIG
+    // =================================================================
+    const WORKER_URL  = 'https://650-search-proxy.dnljgrnr.workers.dev';
     const DATABASE_ID = '08e4ef11-b30d-462c-a447-9a1d9045be72';
     const ACCESS_CODE = 'GOATS650';
-    const SESSION_KEY = 'lf_unlocked_v5';
-    const REP_KEY = 'lf_rep_v5';
+    const SESSION_KEY = 'lf_unlocked_v6';
+    const REP_KEY = 'lf_rep_v6';
+
+    // Rep role table — used for role display in rep_badge and home greeting
+    const REP_ROLES = {
+      'DG': 'SAM',
+      'KB': 'CAM',
+      'TH': 'CAR',
+      'KT': 'SM'
+    };
+    // =================================================================
 
     let currentTab = 'home';
     let currentRep = null;
     let pendingRepSelection = null;
-    let activeCustomer = null;
-    let entryDebounce = null;
+    let activeCustomer = null; // for Touch modal
+    let activePanelCustomer = null; // for Panel-to-Touch
 
     const $ = (id) => document.getElementById(id);
 
+    // ===== GATE =====
     function selectRep(initials) {
       pendingRepSelection = initials;
       document.querySelectorAll('.rep-card').forEach(card => {
@@ -2244,13 +1281,11 @@
       const input = $('gate-input');
       const err = $('gate-err');
       const value = input.value.trim();
-
       if (!pendingRepSelection) {
         err.textContent = 'SELECT YOUR REP FIRST';
         setTimeout(() => { err.textContent = ''; }, 1800);
         return;
       }
-
       if (value === ACCESS_CODE) {
         sessionStorage.setItem(SESSION_KEY, '1');
         sessionStorage.setItem(REP_KEY, pendingRepSelection);
@@ -2259,7 +1294,6 @@
         showApp();
         return;
       }
-
       err.textContent = 'ACCESS DENIED';
       input.value = '';
       input.focus();
@@ -2270,7 +1304,7 @@
       $('gate').style.display = 'none';
       $('app').style.display = 'block';
       $('rep-badge').textContent = 'REP · ' + currentRep;
-      $('f-owner').value = currentRep || 'DG';
+      $('f-owner').value = currentRep;
       setTab('home');
     }
 
@@ -2279,7 +1313,6 @@
       sessionStorage.removeItem(REP_KEY);
       currentRep = null;
       pendingRepSelection = null;
-      activeCustomer = null;
       $('app').style.display = 'none';
       $('gate').style.display = 'grid';
       $('gate-input').value = '';
@@ -2287,11 +1320,10 @@
       $('gate-submit').disabled = true;
       document.querySelectorAll('.rep-card').forEach(c => c.classList.remove('selected'));
       setLiveStatus('Ready', 'idle');
-      $('results').innerHTML = '';
       $('status-count').textContent = '0';
       closeAddModal();
       closeTouchModal();
-      closeProfilePanel();
+      closeLeadPanel();
     }
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -2300,86 +1332,29 @@
         currentRep = savedRep;
         showApp();
       }
-
       initChipHandlers();
-
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-          if ($('add-modal').classList.contains('open')) closeAddModal();
-          if ($('touch-modal').classList.contains('open')) closeTouchModal();
-          if ($('profile-panel-backdrop').classList.contains('open')) closeProfilePanel();
+          if ($('add-modal').classList.contains('open')) { closeAddModal(); return; }
+          if ($('touch-modal').classList.contains('open')) { closeTouchModal(); return; }
+          if ($('lead-panel').classList.contains('open')) { closeLeadPanel(); return; }
         }
       });
     });
 
+    // ===== UTILITIES =====
     function setLiveStatus(stateText, className) {
       $('status-state').textContent = stateText;
       $('live-status').className = 'status-pill' + (className ? ' ' + className : '');
     }
-
     function setLastUpdated() {
       const now = new Date();
-      $('status-updated').textContent = 'Updated ' + now.toLocaleTimeString([], {
-        hour: 'numeric',
-        minute: '2-digit'
-      });
+      $('status-updated').textContent = 'Updated ' + now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
     }
-
-    function todayISO() {
-      return new Date().toISOString().split('T')[0];
-    }
-
-    function tomorrowISO() {
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      return tomorrow.toISOString().split('T')[0];
-    }
-
     function escapeHtml(value) {
       if (value === null || value === undefined) return '';
-      return String(value).replace(/[&<>"']/g, (m) => ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#39;'
-      }[m]));
+      return String(value).replace(/[&<>"']/g, (m) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
     }
-
-    function escapeForInline(value) {
-      return escapeHtml(value).replace(/'/g, '&#39;');
-    }
-
-    function decodeHtml(value) {
-      const txt = document.createElement('textarea');
-      txt.innerHTML = value || '';
-      return txt.value;
-    }
-
-    function normalizeText(value) {
-      if (Array.isArray(value)) return value.join(' ').toLowerCase();
-      return String(value || '').toLowerCase();
-    }
-
-    function hasValue(value, needle) {
-      return normalizeText(value).includes(String(needle || '').toLowerCase());
-    }
-
-    function looksLikePhone(value) {
-      const digits = String(value || '').replace(/\D/g, '');
-      return digits.length >= 7 && /^[\d\s()+.-]+$/.test(String(value || '').trim());
-    }
-
-    function isDateOverdue(dateValue) {
-      if (!dateValue) return false;
-      return String(dateValue).slice(0, 10) < todayISO();
-    }
-
-    function isDateToday(dateValue) {
-      if (!dateValue) return false;
-      return String(dateValue).slice(0, 10) === todayISO();
-    }
-
     function pillClass(value) {
       if (!value) return '';
       const text = String(value).toLowerCase();
@@ -2393,1056 +1368,574 @@
       if (text.includes('pending')) return 'pending';
       return '';
     }
+    function todayISO() { return new Date().toISOString().split('T')[0]; }
 
     function getProp(properties, name) {
       if (!properties || !properties[name]) return null;
       const prop = properties[name];
-
       switch (prop.type) {
-        case 'title':
-          return prop.title.map(i => i.plain_text).join('');
-        case 'rich_text':
-          return prop.rich_text.map(i => i.plain_text).join('');
-        case 'phone_number':
-          return prop.phone_number;
-        case 'select':
-          return prop.select ? prop.select.name : null;
-        case 'multi_select':
-          return prop.multi_select.map(i => i.name);
-        case 'date':
-          return prop.date ? prop.date.start : null;
-        case 'checkbox':
-          return prop.checkbox;
+        case 'title': return prop.title.map(i => i.plain_text).join('');
+        case 'rich_text': return prop.rich_text.map(i => i.plain_text).join('');
+        case 'phone_number': return prop.phone_number;
+        case 'select': return prop.select ? prop.select.name : null;
+        case 'multi_select': return prop.multi_select.map(i => i.name);
+        case 'date': return prop.date ? prop.date.start : null;
+        case 'checkbox': return prop.checkbox;
         case 'formula':
           if (prop.formula.type === 'string') return prop.formula.string;
           if (prop.formula.type === 'number') return prop.formula.number;
           if (prop.formula.type === 'boolean') return prop.formula.boolean;
           if (prop.formula.type === 'date') return prop.formula.date ? prop.formula.date.start : null;
           return null;
-        case 'last_edited_time':
-          return prop.last_edited_time;
-        case 'created_time':
-          return prop.created_time;
-        case 'number':
-          return prop.number;
-        case 'url':
-          return prop.url;
-        case 'email':
-          return prop.email;
-        default:
-          return null;
+        case 'number': return prop.number;
+        case 'url': return prop.url;
+        case 'email': return prop.email;
+        default: return null;
       }
     }
 
-    function getLastUpdated(page) {
-      return page.last_edited_time || '';
-    }
-
-    function getPageData(page) {
-      const p = page.properties || {};
-      return {
-        pageId: page.id || '',
-        pageUrl: page.url || '',
-        name: getProp(p, 'Customer Name') || 'Unnamed',
-        phone: getProp(p, 'Phone') || '',
-        date: getProp(p, 'Date') || '',
-        when: getProp(p, 'WHEN') || '',
-        owner: getProp(p, 'Owner') || '',
-        touch: getProp(p, 'Touch') || '',
-        purpose: getProp(p, 'Purpose') || '',
-        result: getProp(p, 'Result') || '',
-        nextStep: getProp(p, 'Next Step') || '',
-        temps: getProp(p, 'Temp') || [],
-        wishList: getProp(p, 'Wish List') || [],
-        context: getProp(p, 'Context') || '',
-        archived: getProp(p, 'Archived') === true,
-        logged: getProp(p, 'Logged?') === true,
-        status: getProp(p, 'Status') || '',
-        crmNote: getProp(p, 'Log in SalesForce') || '',
-        lastUpdated: getLastUpdated(page)
-      };
-    }
-
-    async function notionRequest(payload) {
-      const response = await fetch(WORKER_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      let data;
-      try {
-        data = await response.json();
-      } catch (e) {
-        data = { error: 'Non-JSON response from Worker' };
-      }
-
-      if (!response.ok) {
-        throw { status: response.status, data };
-      }
-
-      return data;
-    }
-
-    function archivedFilter(isArchived) {
-      return {
-        property: 'Archived',
-        checkbox: {
-          equals: isArchived
-        }
-      };
-    }
-
-    async function queryPages(filter, sorts, pageSize) {
-      const all = [];
-      let cursor = undefined;
-
-      do {
-        const data = await notionRequest({
-          action: 'query',
-          databaseId: DATABASE_ID,
-          filter,
-          sorts,
-          page_size: pageSize || 50,
-          start_cursor: cursor
-        });
-
-        if (Array.isArray(data.results)) {
-          all.push(...data.results);
-        }
-
-        cursor = data.has_more ? data.next_cursor : null;
-      } while (cursor);
-
-      return all;
-    }
-
-    function sortNewest(a, b) {
-      return new Date(b.last_edited_time || 0) - new Date(a.last_edited_time || 0);
-    }
-
-    function sortByWhen(a, b) {
-      const ad = getProp(a.properties, 'WHEN') || '9999-12-31';
-      const bd = getProp(b.properties, 'WHEN') || '9999-12-31';
-      if (ad !== bd) return ad.localeCompare(bd);
-      return sortNewest(a, b);
-    }
-
-    function renderLoading() {
-      $('results').innerHTML = `<div class="loading-card mono">Loading from Notion…</div>`;
-    }
-
-    function renderEmpty(message, headline) {
-      $('results').innerHTML = `
-        <div class="empty mono">
-          ${headline ? `<div class="empty-headline">${escapeHtml(headline)}</div>` : ''}
-          ${escapeHtml(message)}
-        </div>
-      `;
-      $('status-count').textContent = '0';
-    }
-
-    function renderError(httpStatus, data) {
-      setLiveStatus('Error', 'err');
-      $('status-count').textContent = '0';
-
-      const message = (data && (data.error || data.message)) || 'Unknown error';
-      const code = (data && data.code) ? data.code : '';
-
-      let hint = '';
-      if (httpStatus === 500 && /NOTION_TOKEN/i.test(message)) {
-        hint = '<br><br><strong>Fix:</strong> Cloudflare → Worker → Settings → Variables and Secrets → NOTION_TOKEN.';
-      } else if (httpStatus === 401 || code === 'unauthorized') {
-        hint = '<br><br><strong>Fix:</strong> Notion token invalid. Refresh at notion.so/my-integrations.';
-      } else if (httpStatus === 404 || /object_not_found|could not find/i.test(message)) {
-        hint = '<br><br><strong>Fix:</strong> Open Contact Log → ⋯ → Connections → add integration.';
-      } else if (httpStatus === 400 && /validation/i.test(message)) {
-        hint = '<br><br><strong>Fix:</strong> Check Notion property names and select options exactly.';
-      }
-
-      let raw = '';
-      try {
-        raw = JSON.stringify(data).slice(0, 800);
-      } catch (e) {
-        raw = String(data).slice(0, 800);
-      }
-
-      $('results').innerHTML = `
-        <div class="err-box mono">
-          <strong>HTTP ${escapeHtml(httpStatus)}${code ? ' · ' + escapeHtml(code) : ''}</strong><br>
-          ${escapeHtml(message)}
-          ${hint}
-          <br><br><strong>Raw:</strong> ${escapeHtml(raw)}
-        </div>
-      `;
-      setLastUpdated();
-    }
-
-    const TAB_CONFIG = {
-      home: {
-        title: 'Home',
-        kicker: 'Rep dashboard and daily command view.',
-        status: 'Home'
-      },
-      entry: {
-        title: 'Entry',
-        kicker: 'Start by typing a customer name or phone.',
-        status: 'Entry'
-      },
-      today: {
-        title: 'Today',
-        kicker: 'Overdue and due-today work. Hit these first.',
-        status: 'Today'
-      },
-      archive: {
-        title: 'Archive',
-        kicker: 'Archived contacts and closed history.',
-        status: 'Archive'
-      }
+    // ===== TAB SWITCHING =====
+    const TAB_VIEWS = {
+      'home': 'home-view',
+      'entry': 'entry-view',
+      'today': 'today-view',
+      'archive': 'archive-view'
+    };
+    const TAB_NAMES = {
+      'home': 'Home', 'entry': 'Entry', 'today': 'Today', 'archive': 'Archive'
     };
 
     function setTab(tab) {
       currentTab = tab;
-
       document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.tab === tab);
       });
-
-      const cfg = TAB_CONFIG[tab];
-      $('view-title').textContent = cfg.title;
-      $('view-kicker').textContent = cfg.kicker;
-      $('status-tab').textContent = cfg.status;
-
-      const isEntry = tab === 'entry';
-      $('entry-copy').style.display = isEntry ? 'grid' : 'none';
-      $('entry-search-row').style.display = isEntry ? 'grid' : 'none';
-
-      setLiveStatus('Ready', 'idle');
-
-      if (tab === 'home') {
-        renderHome();
-      } else if (tab === 'entry') {
-        showEntryHome();
-      } else {
-        loadTab();
+      // Hide all views
+      Object.values(TAB_VIEWS).forEach(id => { const el = $(id); if (el) el.style.display = 'none'; });
+      const showId = TAB_VIEWS[tab];
+      if (showId) $(showId).style.display = '';
+      $('status-tab').textContent = TAB_NAMES[tab] || tab;
+      // Load tab data
+      switch (tab) {
+        case 'home': loadHome(); break;
+        case 'entry': clearEntry(); break;
+        case 'today': loadToday(); break;
+        case 'archive': loadArchive(); break;
       }
     }
 
-    async function renderHome() {
-      setLiveStatus('Loading', '');
-      renderLoading();
+    // ===== NOTION FETCH =====
+    async function notionQuery(body) {
+      const response = await fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      let data;
+      try { data = await response.json(); } catch (e) { data = { error: 'Non-JSON response from Worker.' }; }
+      return { ok: response.ok, status: response.status, data };
+    }
 
+    function archivedFalseFilter() {
+      return { property: 'Archived', checkbox: { equals: false } };
+    }
+
+    // ===== HOME LOAD =====
+    async function loadHome() {
+      setLiveStatus('Loading', 'idle');
+      $('home-rep-name').textContent = currentRep;
+      const role = REP_ROLES[currentRep] || '';
+      $('home-week-range').textContent = role ? `${role} · ${currentRep}` : currentRep;
+
+      // Fire workload queries in parallel
       try {
-        const activePages = await queryPages(
-          archivedFilter(false),
-          [{ timestamp: 'last_edited_time', direction: 'descending' }],
-          100
-        );
+        const [closesRes, top3Res] = await Promise.all([
+          // Recent closes — last 3 Agreement Signed by rep (for the Recent Closes block)
+          notionQuery({
+            action: 'query',
+            databaseId: DATABASE_ID,
+            page_size: 3,
+            sorts: [{ property: 'Date', direction: 'descending' }],
+            filter: { and: [
+              { property: 'Owner', select: { equals: currentRep } },
+              { property: 'Result', select: { equals: 'Agreement Signed' } }
+            ]}
+          }),
+          // Top 3 due/overdue
+          notionQuery({
+            action: 'query',
+            databaseId: DATABASE_ID,
+            page_size: 3,
+            sorts: [{ property: 'WHEN', direction: 'ascending' }],
+            filter: { and: [
+              archivedFalseFilter(),
+              { property: 'Owner', select: { equals: currentRep } },
+              { property: 'WHEN', date: { on_or_before: todayISO() } }
+            ]}
+          })
+        ]);
 
-        const todayPages = activePages.filter(page => {
-          const d = getPageData(page);
-          return d.when && (isDateToday(d.when) || isDateOverdue(d.when));
-        });
+        // Workload counts — fetch up to 100 each, count results
+        const activeCount = await fetchCountForFilter({ and: [archivedFalseFilter(), { property: 'Owner', select: { equals: currentRep } }] });
+        const dueCount = await fetchCountForFilter({ and: [
+          archivedFalseFilter(),
+          { property: 'Owner', select: { equals: currentRep } },
+          { property: 'WHEN', date: { on_or_before: todayISO() } }
+        ]});
+        const hotCount = await fetchCountForFilter({ and: [
+          archivedFalseFilter(),
+          { property: 'Owner', select: { equals: currentRep } },
+          { property: 'Temp', multi_select: { contains: 'Hot' } }
+        ]});
 
-        const myPages = activePages.filter(page => {
-          const d = getPageData(page);
-          return d.owner === currentRep;
-        });
+        $('home-active-count').textContent = activeCount;
+        $('home-due-count').textContent = dueCount;
+        $('home-hot-count').textContent = hotCount;
+        $('count-today').textContent = dueCount;
 
-        const hotPages = activePages.filter(page => {
-          const d = getPageData(page);
-          return hasValue(d.temps, 'Hot');
-        });
+        // Top 3
+        const top3 = top3Res.ok && Array.isArray(top3Res.data.results) ? top3Res.data.results : [];
+        renderHomeList('home-top3', top3, 'empty-top3');
 
-        $('status-count').textContent = String(activePages.length);
+        // Recent closes
+        const closes = closesRes.ok && Array.isArray(closesRes.data.results) ? closesRes.data.results : [];
+        renderHomeList('home-recent-closes', closes, 'empty-closes', true);
 
-        $('results').innerHTML = `
-          <div class="home-grid">
-            <section class="home-card">
-              <div class="home-card-title">Rep Dashboard</div>
-              <div class="rep-metric-grid">
-                <div class="rep-metric ${currentRep === 'DG' ? 'active' : ''}">
-                  <div class="rep-metric-name">DG</div>
-                  <div class="rep-metric-role">SAM</div>
-                  <div class="rep-metric-quota">10 / 4</div>
-                  <div class="rep-metric-caption">Daily quota</div>
-                </div>
-                <div class="rep-metric ${currentRep === 'KB' ? 'active' : ''}">
-                  <div class="rep-metric-name">KB</div>
-                  <div class="rep-metric-role">CAM</div>
-                  <div class="rep-metric-quota">6 / 3</div>
-                  <div class="rep-metric-caption">Daily quota</div>
-                </div>
-                <div class="rep-metric ${currentRep === 'TH' ? 'active' : ''}">
-                  <div class="rep-metric-name">TH</div>
-                  <div class="rep-metric-role">CAR</div>
-                  <div class="rep-metric-quota">2 / 2</div>
-                  <div class="rep-metric-caption">Daily quota</div>
-                </div>
-                <div class="rep-metric ${currentRep === 'KT' ? 'active' : ''}">
-                  <div class="rep-metric-name">KT</div>
-                  <div class="rep-metric-role">CAR</div>
-                  <div class="rep-metric-quota">2 / 2</div>
-                  <div class="rep-metric-caption">Daily quota</div>
-                </div>
-              </div>
-            </section>
+        setLiveStatus('Live', '');
+        $('status-count').textContent = String(activeCount);
+        setLastUpdated();
+      } catch (e) {
+        renderHomeError({ status: 500, data: { error: e.message } });
+      }
+    }
 
-            <section class="home-card">
-              <div class="home-card-title">Command Snapshot</div>
-              <div class="home-card-body">
-                Active Contacts: <strong>${activePages.length}</strong><br>
-                Due / Overdue Today: <strong>${todayPages.length}</strong><br>
-                My Active Contacts: <strong>${myPages.length}</strong><br>
-                Hot Leads: <strong>${hotPages.length}</strong>
-              </div>
-            </section>
+    async function fetchCountForFilter(filter) {
+      // Fetch up to 100, count results. Notion doesn't return totals in regular query.
+      const res = await notionQuery({
+        action: 'query',
+        databaseId: DATABASE_ID,
+        page_size: 100,
+        filter
+      });
+      if (!res.ok) return '—';
+      return Array.isArray(res.data.results) ? res.data.results.length : 0;
+    }
 
-            <section class="home-card">
-              <div class="home-card-title">Execution Direction</div>
-              <div class="home-card-body">
-                Work Today first, use Entry for every customer lookup or new lead, and open the side profile when timeline context is needed before logging the next touch.
-              </div>
-            </section>
+    function renderHomeList(targetId, pages, emptyKey, isClose) {
+      const el = $(targetId);
+      if (!pages.length) {
+        const msg = isClose ? 'No closes recorded yet this period.' : 'Nothing due today. Clean slate.';
+        el.innerHTML = `<div class="home-list-empty">${escapeHtml(msg)}</div>`;
+        return;
+      }
+      el.innerHTML = pages.map(page => {
+        const p = page.properties || {};
+        const name = getProp(p, 'Customer Name') || 'Unnamed';
+        const phone = getProp(p, 'Phone') || '';
+        const when = getProp(p, 'WHEN') || '';
+        const date = getProp(p, 'Date') || '';
+        const result = getProp(p, 'Result') || '';
+        const safeName = escapeHtml(name).replace(/"/g, '&quot;');
+        const safePhone = escapeHtml(phone).replace(/"/g, '&quot;');
+        const pageId = page.id || '';
+        const pageUrl = page.url || '';
+
+        let pillHtml = '';
+        if (isClose && result) {
+          pillHtml = `<span class="home-list-pill pill sold">${escapeHtml(result)}</span>`;
+        } else if (when) {
+          const today = todayISO();
+          if (when < today) pillHtml = `<span class="home-list-pill pill overdue">Overdue</span>`;
+          else if (when === today) pillHtml = `<span class="home-list-pill pill due-today">Today</span>`;
+        }
+
+        const meta = isClose ? (date || '') : (when || '');
+        return `
+          <div class="home-list-row" onclick='openLeadPanel("${safeName}", "${safePhone}", "${escapeHtml(pageUrl)}")'>
+            <div class="home-list-name">${escapeHtml(name)}</div>
+            ${meta ? `<div class="home-list-meta">${escapeHtml(meta)}</div>` : ''}
+            ${pillHtml}
           </div>
         `;
-
-        updateTabCounts();
-        setLiveStatus('Ready', 'idle');
-        setLastUpdated();
-      } catch (err) {
-        renderError(err.status || 500, err.data || { error: err.message || 'Home load failed' });
-      }
+      }).join('');
     }
 
-    function refreshCurrentTab() {
-      if (currentTab === 'home') {
-        renderHome();
-        return;
-      }
-
-      if (currentTab === 'entry') {
-        const q = $('q').value.trim();
-        if (q) handleEntrySubmit();
-        else showEntryHome();
-        return;
-      }
-
-      loadTab();
+    function renderHomeError(res) {
+      setLiveStatus('Error', 'err');
+      const msg = (res.data && (res.data.error || res.data.message)) || 'Unknown error';
+      $('home-top3').innerHTML = `<div class="home-list-empty">Error loading: ${escapeHtml(msg)}</div>`;
+      $('home-recent-closes').innerHTML = '';
+      setLastUpdated();
     }
 
-    function showEntryHome() {
+    // ===== ENTRY TAB =====
+    function clearEntry() {
       $('q').value = '';
-      $('status-count').textContent = '0';
-      setLiveStatus('Ready', 'idle');
-      $('results').innerHTML = `
-        <div class="empty mono">
-          <div class="empty-headline">Find or start a customer</div>
-          Type a name or phone number above. If they exist, update their timeline. If not, start a new lead.
-        </div>
-      `;
+      $('entry-results').innerHTML = '';
+      $('entry-add-cta').style.display = 'none';
     }
 
-    function handleEntryInput() {
-      clearTimeout(entryDebounce);
-      const q = $('q').value.trim();
+    async function runEntrySearch() {
+      const query = $('q').value.trim();
+      if (!query) { clearEntry(); return; }
+      setLiveStatus('Searching', 'idle');
+      $('entry-results').innerHTML = `<div class="loading-card mono">Searching…</div>`;
+      $('entry-add-cta').style.display = 'none';
 
-      if (!q) {
-        showEntryHome();
+      const body = {
+        action: 'query',
+        databaseId: DATABASE_ID,
+        page_size: 20,
+        sorts: [{ property: 'Last Updated', direction: 'descending' }],
+        filter: { and: [
+          archivedFalseFilter(),
+          { or: [
+            { property: 'Customer Name', title: { contains: query } },
+            { property: 'Phone', phone_number: { contains: query } }
+          ]}
+        ]}
+      };
+
+      const res = await notionQuery(body);
+      if (!res.ok) {
+        renderEntryError(res.status, res.data);
         return;
       }
-
-      if (q.length < 2) return;
-
-      entryDebounce = setTimeout(() => {
-        handleEntrySubmit();
-      }, 350);
-    }
-
-    async function handleEntrySubmit() {
-      const q = $('q').value.trim();
-
-      if (!q) {
-        showEntryHome();
-        return;
-      }
-
-      renderLoading();
-      setLiveStatus('Searching', '');
-
-      try {
-        const filter = archivedFilter(false);
-        const sorts = [{ timestamp: 'last_edited_time', direction: 'descending' }];
-        const pages = await queryPages(filter, sorts, 100);
-
-        const needle = q.toLowerCase().replace(/\D/g, '');
-        const words = q.toLowerCase();
-
-        const matches = pages.filter(page => {
-          const d = getPageData(page);
-          const phoneDigits = String(d.phone || '').replace(/\D/g, '');
-          const nameMatch = d.name.toLowerCase().includes(words);
-          const phoneMatch = needle.length >= 3 && phoneDigits.includes(needle);
-          return nameMatch || phoneMatch;
-        }).slice(0, 25);
-
-        if (matches.length) {
-          $('status-count').textContent = String(matches.length);
-          $('view-title').textContent = 'Possible Matches';
-          $('view-kicker').textContent = 'Select the customer and log the latest touch.';
-          $('results').innerHTML = matches.map(renderCard).join('') + `
-            <div class="create-card">
-              <div class="create-title">Not the right customer?</div>
-              <div class="create-body">Create a new lead using: <strong>${escapeHtml(q)}</strong></div>
-              <div class="create-actions">
-                <button class="primary-btn" type="button" onclick="openAddModal('${escapeForInline(q)}')">Start Lead</button>
-              </div>
-            </div>
-          `;
-        } else {
-          $('status-count').textContent = '0';
-          $('view-title').textContent = 'No Match';
-          $('view-kicker').textContent = 'Start a new lead from the typed value.';
-          $('results').innerHTML = `
-            <div class="create-card">
-              <div class="create-title">No existing customer found.</div>
-              <div class="create-body">Create a new lead for: <strong>${escapeHtml(q)}</strong></div>
-              <div class="create-actions">
-                <button class="primary-btn" type="button" onclick="openAddModal('${escapeForInline(q)}')">Start Lead</button>
-              </div>
-            </div>
-          `;
-        }
-
-        setLiveStatus('Ready', 'idle');
-        setLastUpdated();
-      } catch (err) {
-        renderError(err.status || 500, err.data || { error: err.message || 'Unknown error' });
-      }
-    }
-
-    async function loadTab() {
-      renderLoading();
-      setLiveStatus('Loading', '');
-
-      try {
-        let pages = [];
-        let filter = archivedFilter(false);
-        let sorts = [{ timestamp: 'last_edited_time', direction: 'descending' }];
-
-        if (currentTab === 'archive') {
-          filter = archivedFilter(true);
-          pages = await queryPages(filter, sorts, 100);
-          pages.sort(sortNewest);
-        } else {
-          pages = await queryPages(filter, sorts, 100);
-
-          if (currentTab === 'today') {
-            pages = pages.filter(page => {
-              const d = getPageData(page);
-              return !d.archived && d.when && (isDateToday(d.when) || isDateOverdue(d.when));
-            }).sort(sortByWhen);
-          }
-        }
-
-        renderPages(pages);
-        updateTabCounts();
-        setLiveStatus('Ready', 'idle');
-        setLastUpdated();
-      } catch (err) {
-        renderError(err.status || 500, err.data || { error: err.message || 'Unknown error' });
-      }
-    }
-
-    async function updateTabCounts() {
-      try {
-        const activePages = await queryPages(
-          archivedFilter(false),
-          [{ timestamp: 'last_edited_time', direction: 'descending' }],
-          100
-        );
-
-        const archivedPages = await queryPages(
-          archivedFilter(true),
-          [{ timestamp: 'last_edited_time', direction: 'descending' }],
-          100
-        );
-
-        const todayCount = activePages.filter(page => {
-          const d = getPageData(page);
-          return d.when && (isDateToday(d.when) || isDateOverdue(d.when));
-        }).length;
-
-        $('count-today').textContent = todayCount;
-        $('count-archive').textContent = archivedPages.length;
-      } catch (e) {
-        $('count-today').textContent = '·';
-        $('count-archive').textContent = '·';
-      }
-    }
-
-    function renderPages(pages) {
+      const pages = Array.isArray(res.data.results) ? res.data.results : [];
       $('status-count').textContent = String(pages.length);
+      setLiveStatus('Live', '');
+      setLastUpdated();
 
       if (!pages.length) {
-        if (currentTab === 'today') renderEmpty('No due or overdue work found.', 'Today is clear');
-        else if (currentTab === 'archive') renderEmpty('No archived contacts found.', 'Archive empty');
-        else renderEmpty('No records found.', 'Empty');
+        $('entry-results').innerHTML = `
+          <div class="empty mono">
+            <div class="empty-headline">No match for "${escapeHtml(query)}"</div>
+            Start a new lead with this name?
+          </div>
+        `;
+        $('entry-add-name').textContent = `"${query}"`;
+        $('entry-add-cta').style.display = 'block';
+        $('entry-add-cta').dataset.queryName = query;
+      } else {
+        $('entry-results').innerHTML = pages.map(renderResultCard).join('');
+        // Also show the Add CTA — they may want to add anyway
+        $('entry-add-name').textContent = `"${query}" as new lead anyway`;
+        $('entry-add-cta').style.display = 'block';
+        $('entry-add-cta').dataset.queryName = query;
+      }
+    }
+
+    function renderEntryError(httpStatus, data) {
+      setLiveStatus('Error', 'err');
+      const message = (data && (data.error || data.message)) || 'Unknown error';
+      $('entry-results').innerHTML = `<div class="err-box mono"><strong>HTTP ${escapeHtml(httpStatus)}</strong><br>${escapeHtml(message)}</div>`;
+      setLastUpdated();
+    }
+
+    function openAddModalFromEntry() {
+      const name = $('entry-add-cta').dataset.queryName || '';
+      openAddModal();
+      if (name && !name.match(/^\d/)) {
+        $('f-name').value = name;
+      } else if (name) {
+        $('f-phone').value = name;
+      }
+    }
+
+    // ===== TODAY TAB =====
+    async function loadToday() {
+      setLiveStatus('Loading', 'idle');
+      $('today-results').innerHTML = `<div class="loading-card mono">Loading today's work…</div>`;
+      const res = await notionQuery({
+        action: 'query',
+        databaseId: DATABASE_ID,
+        page_size: 50,
+        sorts: [{ property: 'WHEN', direction: 'ascending' }],
+        filter: { and: [
+          archivedFalseFilter(),
+          { property: 'WHEN', date: { on_or_before: todayISO() } }
+        ]}
+      });
+      if (!res.ok) { renderListError('today-results', res); return; }
+      const pages = Array.isArray(res.data.results) ? res.data.results : [];
+      $('status-count').textContent = String(pages.length);
+      $('count-today').textContent = pages.length;
+      setLiveStatus('Live', '');
+      setLastUpdated();
+      if (!pages.length) {
+        $('today-results').innerHTML = `<div class="empty mono"><div class="empty-headline">Clean slate</div>Nothing overdue or due today. Either ahead of the curve or time to log new leads.</div>`;
         return;
       }
-
-      $('results').innerHTML = pages.map(renderCard).join('');
+      $('today-results').innerHTML = pages.map(renderResultCard).join('');
     }
 
-    function cleanCategoryLabel(value) {
-      const text = String(value || '').trim();
-
-      if (!text) return '';
-      if (/washer|dryer/i.test(text)) return 'washer and dryer options';
-      if (/refrigerator|appliance/i.test(text)) return 'appliance options';
-      if (/bedroom|mattress/i.test(text)) return 'bedroom options';
-      if (/living|furniture/i.test(text)) return 'furniture options';
-      if (/tv|entertainment/i.test(text)) return 'TV and entertainment options';
-      if (/laptop|computer/i.test(text)) return 'laptop options';
-      if (/gaming|console/i.test(text)) return 'gaming options';
-      if (/bundle|multi/i.test(text)) return 'bundle options';
-      if (/ac|air conditioner|portable|window/i.test(text)) return 'AC options';
-
-      return text.toLowerCase();
-    }
-
-    function detectCategory(wishList, context, purpose) {
-      const wishes = Array.isArray(wishList) ? wishList : [];
-      const combined = `${wishes.join(' ')} ${context || ''} ${purpose || ''}`;
-
-      const direct = wishes.find(w =>
-        /washer|dryer|refrigerator|appliance|bedroom|mattress|living|furniture|tv|entertainment|laptop|computer|gaming|console|bundle|multi|ac|air conditioner|portable|window/i.test(w)
-      );
-
-      if (direct) return cleanCategoryLabel(direct);
-
-      if (/washer|dryer/i.test(combined)) return 'washer and dryer options';
-      if (/refrigerator|appliance/i.test(combined)) return 'appliance options';
-      if (/bedroom|mattress/i.test(combined)) return 'bedroom options';
-      if (/living|furniture|sofa|couch/i.test(combined)) return 'furniture options';
-      if (/tv|entertainment/i.test(combined)) return 'TV and entertainment options';
-      if (/laptop|computer/i.test(combined)) return 'laptop options';
-      if (/gaming|console|ps5|xbox/i.test(combined)) return 'gaming options';
-      if (/bundle|multi/i.test(combined)) return 'bundle options';
-      if (/\bac\b|air conditioner|portable|window unit|btu/i.test(combined)) return 'AC options';
-
-      return 'what you were looking at';
-    }
-
-    function summarizeReason(data) {
-      if (data.archived) return 'This record is archived. Use for history only unless it needs to be reopened.';
-      if (isDateOverdue(data.when)) return `Follow-up date is overdue${data.nextStep ? ` and the next step is ${data.nextStep}` : ''}.`;
-      if (isDateToday(data.when)) return `Follow-up is due today${data.nextStep ? ` and the next step is ${data.nextStep}` : ''}.`;
-      if (hasValue(data.result, 'OBJ')) return `Customer has an unresolved objection: ${data.result}.`;
-      if (hasValue(data.temps, 'Hot')) return 'Customer is marked Hot, so the next contact should be direct and conversion-focused.';
-      if (hasValue(data.temps, '⭐ VERIFIED - Returning Customer')) return 'Verified returning customer. Use a comeback tone and make the next step simple.';
-      if (hasValue(data.purpose, 'Conversion/Reactivation')) return 'Reactivation/conversion opportunity. Focus on getting them set back up.';
-      if (hasValue(data.temps, 'Warm')) return 'Warm lead. Keep the follow-up helpful, specific, and low-friction.';
-      if (hasValue(data.temps, 'Pending')) return 'Pending lead. Use a status-check angle and move the decision forward.';
-      return 'No urgent trigger found. Use a simple follow-up to clarify interest and next step.';
-    }
-
-    function solveConcernPhrase(result, temps, purpose) {
-      if (hasValue(result, 'OBJ — Price / Weekly')) return 'find a weekly option that fits better';
-      if (hasValue(result, 'OBJ — Total Cost')) return 'keep the setup flexible and focused on solving the immediate home need';
-      if (hasValue(result, 'OBJ — Timing')) return 'work around your timing or payday window';
-      if (hasValue(result, 'OBJ — Needs to Think')) return 'clear up the part you are unsure about';
-      if (hasValue(result, 'OBJ — Needs Partner')) return 'make this easy to explain and review together';
-      if (hasValue(purpose, 'Conversion/Reactivation')) return 'help get you set back up without making it complicated';
-      if (hasValue(temps, 'Hot')) return 'keep this simple and move quickly';
-      if (hasValue(temps, 'Warm')) return 'send over a realistic option';
-      if (hasValue(temps, 'Pending')) return 'confirm where things stand';
-      return 'help you compare the best available option';
-    }
-
-    function nextActionPhrase(data) {
-      if (data.archived) return 'Review only. Do not contact unless the record should be reopened.';
-      if (hasValue(data.result, 'No Answer') || hasValue(data.result, 'Left Message')) return 'Send a short text, then call again later if the lead is Hot or due today.';
-      if (hasValue(data.result, 'OBJ')) return 'Follow up with the objection-specific angle and ask for a simple next step.';
-      if (hasValue(data.nextStep, 'Write Agreement')) return 'Call directly and move toward writing the agreement.';
-      if (hasValue(data.nextStep, 'Come Into Store')) return 'Confirm visit timing and remove friction around what they need to bring.';
-      if (hasValue(data.purpose, 'Conversion/Reactivation')) return 'Use a returning-customer message and offer to check current options.';
-      if (hasValue(data.temps, 'Hot')) return 'Call first. If no answer, send the suggested text immediately after.';
-      if (hasValue(data.temps, 'Warm') || hasValue(data.temps, 'Pending')) return 'Send the suggested text and ask one clear question.';
-      return 'Send a light follow-up to confirm whether they are still looking.';
-    }
-
-    function simpleChoiceQuestion(data) {
-      if (hasValue(data.result, 'OBJ — Price / Weekly')) return 'Would you want me to check lower weekly options?';
-      if (hasValue(data.result, 'OBJ — Total Cost')) return 'Would it help if I showed you the most flexible option first?';
-      if (hasValue(data.result, 'OBJ — Timing')) return 'Would today or your next payday be better to look at options?';
-      if (hasValue(data.result, 'OBJ — Needs to Think')) return 'What part are you still weighing out?';
-      if (hasValue(data.result, 'OBJ — Needs Partner')) return 'Would it help if I gave you the simple version to review together?';
-      if (hasValue(data.result, 'No Answer') || hasValue(data.result, 'Left Message')) return 'Would a quick call or text be easier?';
-      if (hasValue(data.nextStep, 'Come Into Store')) return 'Would today or tomorrow be better for you to stop in?';
-      if (hasValue(data.nextStep, 'Write Agreement')) return 'Would you like me to get the agreement started?';
-      if (hasValue(data.temps, 'Hot')) return 'Do you want me to check the best option for you today?';
-      return 'Are you still looking, or should I check back another time?';
-    }
-
-    function callQuestion(data) {
-      if (hasValue(data.result, 'OBJ — Price / Weekly')) return 'Was the weekly payment the main thing, or was there another concern too?';
-      if (hasValue(data.result, 'OBJ — Total Cost')) return 'Was the total cost the main concern, or are you mainly trying to solve the immediate need?';
-      if (hasValue(data.result, 'OBJ — Timing')) return 'Are we still working around the same payday window, or did anything change?';
-      if (hasValue(data.result, 'OBJ — Needs to Think')) return 'What part of the decision are you still unsure about?';
-      if (hasValue(data.result, 'OBJ — Needs Partner')) return 'What would your partner need to feel comfortable with the option?';
-      if (hasValue(data.result, 'No Answer') || hasValue(data.result, 'Left Message')) return 'I wanted to see if you were still looking or if timing changed.';
-      if (hasValue(data.nextStep, 'Come Into Store')) return 'Are you still able to stop in, or should we adjust the timing?';
-      if (hasValue(data.nextStep, 'Write Agreement')) return 'Are you ready for me to get the agreement started?';
-      return 'Are you still looking at this, or has anything changed on your end?';
-    }
-
-    function computePriority(data) {
-      if (data.archived) return 'Low';
-
-      const high =
-        isDateOverdue(data.when) ||
-        hasValue(data.temps, 'Hot') ||
-        String(data.result || '').startsWith('OBJ') ||
-        (hasValue(data.nextStep, 'CB/Follow Up') && (isDateToday(data.when) || isDateOverdue(data.when))) ||
-        (hasValue(data.temps, '⭐ VERIFIED - Returning Customer') && !hasValue(data.nextStep, 'No Further Action'));
-
-      if (high) return 'High';
-
-      const medium =
-        isDateToday(data.when) ||
-        hasValue(data.temps, 'Warm') ||
-        hasValue(data.temps, 'Pending') ||
-        data.result === 'Needs Follow-Up' ||
-        hasValue(data.purpose, 'Conversion/Reactivation');
-
-      if (medium) return 'Medium';
-
-      return 'Low';
-    }
-
-    function buildAgentAssist(data) {
-      const rep = data.owner || currentRep || 'Daniel';
-      const name = data.name || 'there';
-      const category = detectCategory(data.wishList, data.context, data.purpose);
-      const reason = summarizeReason(data);
-      const nextBestAction = nextActionPhrase(data);
-      const concern = solveConcernPhrase(data.result, data.temps, data.purpose);
-      const choice = simpleChoiceQuestion(data);
-      const callAsk = callQuestion(data);
-      const priority = computePriority(data);
-
-      const suggestedText =
-        `Hey ${name}, this is ${rep} with Rent-A-Center on Hepburn. I wanted to follow up about ${category}. ${reason.replace(/\.$/, '')}. ${choice}`;
-
-      const callOpener =
-        `Hey ${name}, this is ${rep} with Rent-A-Center on Hepburn. I’m following up from when we talked about ${category}. ${callAsk}`;
-
-      const close =
-        `If I can ${concern}, would it make sense to ${
-          hasValue(data.nextStep, 'Come Into Store')
-            ? 'stop in and look at the best option'
-            : hasValue(data.nextStep, 'Write Agreement')
-              ? 'get the next step started'
-              : 'look at the best option today'
-        }?`;
-
-      return {
-        priority,
-        reason,
-        nextBestAction,
-        suggestedText,
-        callOpener,
-        close
-      };
-    }
-
-    function renderAgentAssist(agent) {
-      const priorityClass = String(agent.priority || 'Low').toLowerCase();
-
-      return `
-        <div class="agent-assist">
-          <div class="agent-head">
-            <div class="agent-title mono">Agent Assist · Follow-Up</div>
-            <div class="agent-priority ${escapeHtml(priorityClass)}">${escapeHtml(agent.priority)} Priority</div>
-          </div>
-
-          <div class="agent-grid">
-            <div class="agent-item">
-              <div class="agent-label">Reason</div>
-              <div class="agent-body">${escapeHtml(agent.reason)}</div>
-            </div>
-
-            <div class="agent-item">
-              <div class="agent-label">Next Best Action</div>
-              <div class="agent-body">${escapeHtml(agent.nextBestAction)}</div>
-            </div>
-
-            <div class="agent-item">
-              <div class="agent-label">Suggested Text</div>
-              <div class="agent-script" data-copy-text="${escapeHtml(agent.suggestedText)}">${escapeHtml(agent.suggestedText)}</div>
-            </div>
-
-            <div class="agent-item">
-              <div class="agent-label">Suggested Call Opener</div>
-              <div class="agent-script" data-copy-call="${escapeHtml(agent.callOpener)}">${escapeHtml(agent.callOpener)}</div>
-            </div>
-
-            <div class="agent-item">
-              <div class="agent-label">Suggested Close</div>
-              <div class="agent-body">${escapeHtml(agent.close)}</div>
-            </div>
-          </div>
-
-          <div class="agent-actions">
-            <button class="copy-btn mono" type="button" onclick="event.stopPropagation(); copyFromAgentButton(this, 'text')">Copy Text</button>
-            <button class="copy-btn mono" type="button" onclick="event.stopPropagation(); copyFromAgentButton(this, 'call')">Copy Call Opener</button>
-          </div>
-        </div>
-      `;
-    }
-
-    async function copyToClipboard(text) {
-      try {
-        await navigator.clipboard.writeText(text);
-        return true;
-      } catch (err) {
-        const ta = document.createElement('textarea');
-        ta.value = text;
-        ta.setAttribute('readonly', '');
-        ta.style.position = 'fixed';
-        ta.style.left = '-9999px';
-        document.body.appendChild(ta);
-        ta.select();
-
-        let ok = false;
-        try {
-          ok = document.execCommand('copy');
-        } catch (e) {
-          ok = false;
-        }
-
-        document.body.removeChild(ta);
-        return ok;
+    // ===== ARCHIVE TAB =====
+    async function loadArchive() {
+      setLiveStatus('Loading', 'idle');
+      $('archive-results').innerHTML = `<div class="loading-card mono">Loading archive…</div>`;
+      const res = await notionQuery({
+        action: 'query',
+        databaseId: DATABASE_ID,
+        page_size: 50,
+        sorts: [{ property: 'Last Updated', direction: 'descending' }],
+        filter: { property: 'Archived', checkbox: { equals: true } }
+      });
+      if (!res.ok) { renderListError('archive-results', res); return; }
+      const pages = Array.isArray(res.data.results) ? res.data.results : [];
+      $('status-count').textContent = String(pages.length);
+      setLiveStatus('Live', '');
+      setLastUpdated();
+      if (!pages.length) {
+        $('archive-results').innerHTML = `<div class="empty mono"><div class="empty-headline">Empty archive</div>No sold/closed contacts yet.</div>`;
+        return;
       }
+      $('archive-results').innerHTML = pages.map(renderResultCard).join('');
     }
 
-    async function copyFromAgentButton(button, type) {
-      const box = button.closest('.agent-assist');
-
-      const target =
-        type === 'call'
-          ? box.querySelector('[data-copy-call]')
-          : box.querySelector('[data-copy-text]');
-
-      const attr = type === 'call' ? 'data-copy-call' : 'data-copy-text';
-      const text = target ? (target.getAttribute(attr) || target.textContent || '') : '';
-
-      const original = button.textContent;
-      const ok = await copyToClipboard(text);
-
-      button.textContent = ok ? 'Copied' : 'Copy Failed';
-      button.classList.toggle('copied', ok);
-
-      setTimeout(() => {
-        button.textContent = original;
-        button.classList.remove('copied');
-      }, 1100);
+    function renderListError(targetId, res) {
+      setLiveStatus('Error', 'err');
+      const message = (res.data && (res.data.error || res.data.message)) || 'Unknown error';
+      $(targetId).innerHTML = `<div class="err-box mono"><strong>HTTP ${escapeHtml(res.status)}</strong><br>${escapeHtml(message)}</div>`;
+      setLastUpdated();
     }
 
-    function renderCard(page, index) {
-      const d = getPageData(page);
-      const agent = buildAgentAssist(d);
+    // ===== RESULT CARD (shared by Entry/Today/Archive) =====
+    function renderResultCard(page) {
+      const p = page.properties || {};
+      const name = getProp(p, 'Customer Name') || 'Unnamed';
+      const phone = getProp(p, 'Phone') || '';
+      const temps = getProp(p, 'Temp') || [];
+      const nextStep = getProp(p, 'Next Step') || '';
+      const owner = getProp(p, 'Owner') || '';
+      const when = getProp(p, 'WHEN') || '';
+      const status = getProp(p, 'Status') || '';
+      const archived = getProp(p, 'Archived') === true;
 
       let cardClass = 'card';
-      if (d.archived) cardClass += ' archived';
-      else if (d.status && d.status.toLowerCase().includes('overdue')) cardClass += ' overdue';
-      else if (d.status && d.status.toLowerCase().includes('due today')) cardClass += ' due-today';
-      else if (isDateOverdue(d.when)) cardClass += ' overdue';
-      else if (isDateToday(d.when)) cardClass += ' due-today';
+      if (archived) cardClass += ' archived';
+      else if (status && status.toLowerCase().includes('overdue')) cardClass += ' overdue';
+      else if (status && status.toLowerCase().includes('due today')) cardClass += ' due-today';
 
       let primaryPill = '';
-      if (d.archived) primaryPill = `<span class="pill archived">Archived</span>`;
-      else if (d.status) primaryPill = `<span class="pill ${pillClass(d.status)}">${escapeHtml(d.status)}</span>`;
-      else if (Array.isArray(d.temps) && d.temps.length) primaryPill = `<span class="pill ${pillClass(d.temps[0])}">${escapeHtml(d.temps[0])}</span>`;
-
-      const otherTempPills = (Array.isArray(d.temps) ? d.temps : [])
-        .filter(t => !primaryPill.includes(t))
-        .map(t => `<span class="pill ${pillClass(t)}">${escapeHtml(t)}</span>`)
-        .join('');
+      if (archived) primaryPill = `<span class="pill archived">Archived</span>`;
+      else if (status) primaryPill = `<span class="pill ${pillClass(status)}">${escapeHtml(status)}</span>`;
+      else if (Array.isArray(temps) && temps.length) primaryPill = `<span class="pill ${pillClass(temps[0])}">${escapeHtml(temps[0])}</span>`;
 
       const quickMeta = [];
-      if (d.nextStep) quickMeta.push(`<strong>${escapeHtml(d.nextStep)}</strong>`);
-      if (d.when) quickMeta.push(`${escapeHtml(d.when)}`);
+      if (nextStep) quickMeta.push(`<strong>${escapeHtml(nextStep)}</strong>`);
+      if (when) quickMeta.push(escapeHtml(when));
 
-      const detailMetaItems = [];
-      if (d.purpose) detailMetaItems.push(`<div><label>Purpose</label><strong>${escapeHtml(d.purpose)}</strong></div>`);
-      if (d.touch) detailMetaItems.push(`<div><label>Touch</label><strong>${escapeHtml(d.touch)}</strong></div>`);
-      if (d.result) detailMetaItems.push(`<div><label>Result</label><strong>${escapeHtml(d.result)}</strong></div>`);
-      if (d.nextStep) detailMetaItems.push(`<div><label>Next</label><strong>${escapeHtml(d.nextStep)}</strong></div>`);
-      if (d.when) detailMetaItems.push(`<div><label>When</label><strong>${escapeHtml(d.when)}</strong></div>`);
-      if (d.lastUpdated) detailMetaItems.push(`<div><label>Updated</label><strong>${escapeHtml(String(d.lastUpdated).slice(0, 10))}</strong></div>`);
-
-      const wishlistPills = (Array.isArray(d.wishList) ? d.wishList : [])
-        .map(w => `<span class="pill">${escapeHtml(w)}</span>`)
-        .join('');
-
-      const safeName = escapeHtml(d.name).replace(/"/g, '&quot;');
-      const safePhone = escapeHtml(d.phone).replace(/"/g, '&quot;');
+      const safeName = escapeHtml(name).replace(/"/g, '&quot;');
+      const safePhone = escapeHtml(phone).replace(/"/g, '&quot;');
+      const safeUrl = escapeHtml(page.url || '');
 
       return `
-        <article class="${cardClass}" data-name="${safeName}" data-phone="${safePhone}" data-page-id="${escapeHtml(d.pageId)}">
-          <div class="card-row" onclick="toggleCard(this.parentElement)">
+        <article class="${cardClass}" onclick='openLeadPanel("${safeName}", "${safePhone}", "${safeUrl}")'>
+          <div class="card-row">
             <div class="card-main">
-              <span class="card-name">${escapeHtml(d.name)}</span>
-              ${d.phone ? `<span class="card-phone">${escapeHtml(d.phone)}</span>` : ''}
+              <span class="card-name">${escapeHtml(name)}</span>
+              ${phone ? `<span class="card-phone">${escapeHtml(phone)}</span>` : ''}
               ${quickMeta.length ? `<span class="card-quick-meta">${quickMeta.join(' · ')}</span>` : ''}
             </div>
             <div class="card-right">
-              ${d.owner ? `<span class="pill owner">${escapeHtml(d.owner)}</span>` : ''}
+              ${owner ? `<span class="pill owner">${escapeHtml(owner)}</span>` : ''}
               ${primaryPill}
-              <span class="expand-chevron">▾</span>
-            </div>
-          </div>
-
-          <div class="card-detail">
-            ${detailMetaItems.length ? `<div class="detail-meta">${detailMetaItems.join('')}</div>` : ''}
-
-            ${otherTempPills ? `<div class="detail-extra-pills">${otherTempPills}</div>` : ''}
-            ${wishlistPills ? `<div class="detail-extra-pills">${wishlistPills}</div>` : ''}
-
-            ${d.context ? `
-              <div class="detail-section">
-                <div class="detail-section-label">Context</div>
-                <div class="detail-section-body">${escapeHtml(d.context)}</div>
-              </div>
-            ` : ''}
-
-            ${d.crmNote ? `
-              <div class="detail-section">
-                <div class="detail-section-label">Last CRM Note</div>
-                <div class="detail-section-body crm">${escapeHtml(d.crmNote)}</div>
-              </div>
-            ` : ''}
-
-            ${renderAgentAssist(agent)}
-
-            <div class="detail-actions">
-              <button class="log-touch-btn" type="button" onclick="event.stopPropagation(); openTouchModalFromCard(this.closest('.card'))">Log New Touch</button>
-              <button class="open-notion-btn" type="button" onclick="event.stopPropagation(); openProfilePanelFromCard(this.closest('.card'))">View Profile</button>
-              ${d.pageUrl ? `<a class="open-notion-btn" href="${escapeHtml(d.pageUrl)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Open in Notion</a>` : ''}
-              ${(!d.archived && d.pageId) ? `<button class="archive-btn" type="button" onclick="event.stopPropagation(); archivePageFromCard(this.closest('.card'))">Archive</button>` : ''}
             </div>
           </div>
         </article>
       `;
     }
 
-    function toggleCard(card) {
-      document.querySelectorAll('.card.expanded').forEach(c => {
-        if (c !== card) c.classList.remove('expanded');
-      });
-      card.classList.toggle('expanded');
+    // =================================================================
+    // LEAD PROFILE SIDE PANEL
+    // =================================================================
+    function openLeadPanel(name, phone, url) {
+      // Decode HTML entities (because name comes via dataset/onclick attribute)
+      const decode = (s) => {
+        const txt = document.createElement('textarea');
+        txt.innerHTML = s;
+        return txt.value;
+      };
+      name = decode(name || '');
+      phone = decode(phone || '');
+      url = decode(url || '');
+
+      activePanelCustomer = { name, phone };
+      $('panel-customer-name').textContent = name;
+      $('panel-customer-phone').textContent = phone;
+      $('panel-pills').innerHTML = '';
+      $('panel-timeline').innerHTML = `<div class="home-list-empty">Loading timeline…</div>`;
+      if (url) {
+        $('panel-notion-link').href = url;
+        $('panel-notion-link').style.display = '';
+      } else {
+        $('panel-notion-link').style.display = 'none';
+      }
+
+      $('panel-backdrop').classList.add('open');
+      $('lead-panel').classList.add('open');
+      document.body.classList.add('panel-open');
+
+      loadLeadTimeline(name);
     }
 
-    async function openProfilePanelFromCard(cardEl) {
-      const name = decodeHtml(cardEl.dataset.name || '').trim();
-      const phone = decodeHtml(cardEl.dataset.phone || '').trim();
+    function closeLeadPanel() {
+      $('panel-backdrop').classList.remove('open');
+      $('lead-panel').classList.remove('open');
+      document.body.classList.remove('panel-open');
+      activePanelCustomer = null;
+    }
 
-      $('profile-name').textContent = name || 'Unnamed';
-      $('profile-phone').textContent = phone || '';
-      $('profile-summary').innerHTML = `
-        <div class="profile-summary-row">
-          <label>Status</label>
-          <strong>Loading</strong>
+    async function loadLeadTimeline(name) {
+      const res = await notionQuery({
+        action: 'query',
+        databaseId: DATABASE_ID,
+        page_size: 50,
+        sorts: [{ property: 'Date', direction: 'descending' }],
+        filter: { property: 'Customer Name', title: { equals: name } }
+      });
+      if (!res.ok) {
+        $('panel-timeline').innerHTML = `<div class="err-box mono"><strong>Failed to load timeline.</strong><br>${escapeHtml((res.data && res.data.error) || 'Unknown error')}</div>`;
+        return;
+      }
+      const pages = Array.isArray(res.data.results) ? res.data.results : [];
+      if (!pages.length) {
+        $('panel-timeline').innerHTML = `<div class="home-list-empty">No timeline entries found for this exact name. Try opening from Notion or check spelling.</div>`;
+        return;
+      }
+
+      // Build aggregate pills from most recent entry
+      const first = pages[0];
+      const fp = first.properties || {};
+      const firstOwner = getProp(fp, 'Owner') || '';
+      const firstStatus = getProp(fp, 'Status') || '';
+      const firstTemps = getProp(fp, 'Temp') || [];
+      const firstArchived = getProp(fp, 'Archived') === true;
+
+      const pillsHtml = [];
+      if (firstOwner) pillsHtml.push(`<span class="pill owner">${escapeHtml(firstOwner)}</span>`);
+      if (firstArchived) pillsHtml.push(`<span class="pill archived">Archived</span>`);
+      else if (firstStatus) pillsHtml.push(`<span class="pill ${pillClass(firstStatus)}">${escapeHtml(firstStatus)}</span>`);
+      (Array.isArray(firstTemps) ? firstTemps : []).forEach(t => {
+        pillsHtml.push(`<span class="pill ${pillClass(t)}">${escapeHtml(t)}</span>`);
+      });
+      $('panel-pills').innerHTML = pillsHtml.join('');
+
+      $('panel-timeline').innerHTML = pages.map(renderTimelineEntry).join('');
+    }
+
+    function renderTimelineEntry(page) {
+      const p = page.properties || {};
+      const date = getProp(p, 'Date') || '';
+      const touch = getProp(p, 'Touch') || '';
+      const purpose = getProp(p, 'Purpose') || '';
+      const result = getProp(p, 'Result') || '';
+      const nextStep = getProp(p, 'Next Step') || '';
+      const when = getProp(p, 'WHEN') || '';
+      const context = getProp(p, 'Context') || '';
+      const status = getProp(p, 'Status') || '';
+      const temps = getProp(p, 'Temp') || [];
+      const crmNote = getProp(p, 'Log in SalesForce') || '';
+
+      let entryClass = 'timeline-entry';
+      if (status && status.toLowerCase().includes('overdue')) entryClass += ' overdue';
+      else if (status && status.toLowerCase().includes('due today')) entryClass += ' due-today';
+
+      const pillsHtml = [];
+      (Array.isArray(temps) ? temps : []).forEach(t => {
+        pillsHtml.push(`<span class="pill ${pillClass(t)}">${escapeHtml(t)}</span>`);
+      });
+
+      const metaItems = [];
+      if (purpose) metaItems.push(`<strong>${escapeHtml(purpose)}</strong>`);
+      if (result) metaItems.push(`Result: <strong>${escapeHtml(result)}</strong>`);
+      if (nextStep) metaItems.push(`Next: <strong>${escapeHtml(nextStep)}</strong>`);
+      if (when) metaItems.push(`When: <strong>${escapeHtml(when)}</strong>`);
+
+      return `
+        <div class="${entryClass}">
+          <div class="timeline-entry-head">
+            <span class="timeline-date">${escapeHtml(date || 'No date')}</span>
+            ${touch ? `<span class="timeline-touch">${escapeHtml(touch)}</span>` : ''}
+          </div>
+          ${pillsHtml.length ? `<div class="timeline-pills">${pillsHtml.join('')}</div>` : ''}
+          ${metaItems.length ? `<div class="timeline-meta">${metaItems.join(' · ')}</div>` : ''}
+          ${context ? `<div class="timeline-context">${escapeHtml(context)}</div>` : ''}
+          ${crmNote ? `<div class="timeline-crm"><div class="timeline-crm-label">Last CRM Note</div>${escapeHtml(crmNote)}</div>` : ''}
         </div>
       `;
-      $('profile-timeline').innerHTML = `<div class="loading-card mono">Loading timeline…</div>`;
-      $('profile-panel-backdrop').classList.add('open');
-
-      try {
-        const allPages = await queryPages(
-          undefined,
-          [{ timestamp: 'last_edited_time', direction: 'descending' }],
-          100
-        );
-
-        const phoneDigits = phone.replace(/\D/g, '');
-
-        const related = allPages.filter(page => {
-          const d = getPageData(page);
-          const pagePhoneDigits = String(d.phone || '').replace(/\D/g, '');
-          const sameName = name && d.name.toLowerCase() === name.toLowerCase();
-          const samePhone = phoneDigits && pagePhoneDigits && pagePhoneDigits === phoneDigits;
-          return sameName || samePhone;
-        }).sort((a, b) => {
-          const ad = getProp(a.properties, 'Date') || a.last_edited_time || '';
-          const bd = getProp(b.properties, 'Date') || b.last_edited_time || '';
-          return String(bd).localeCompare(String(ad));
-        });
-
-        if (!related.length) {
-          $('profile-summary').innerHTML = `
-            <div class="profile-summary-row">
-              <label>Status</label>
-              <strong>No timeline found</strong>
-            </div>
-          `;
-          $('profile-timeline').innerHTML = `
-            <div class="empty mono">
-              <div class="empty-headline">No related rows found</div>
-              This customer has no matching timeline rows.
-            </div>
-          `;
-          return;
-        }
-
-        const latest = getPageData(related[0]);
-
-        $('profile-summary').innerHTML = `
-          <div class="profile-summary-row">
-            <label>Owner</label>
-            <strong>${escapeHtml(latest.owner || '—')}</strong>
-          </div>
-          <div class="profile-summary-row">
-            <label>Temp</label>
-            <strong>${escapeHtml((latest.temps || []).join(', ') || '—')}</strong>
-          </div>
-          <div class="profile-summary-row">
-            <label>Next Step</label>
-            <strong>${escapeHtml(latest.nextStep || '—')}</strong>
-          </div>
-          <div class="profile-summary-row">
-            <label>When</label>
-            <strong>${escapeHtml(latest.when || '—')}</strong>
-          </div>
-          <div class="profile-summary-row">
-            <label>Rows</label>
-            <strong>${related.length}</strong>
-          </div>
-        `;
-
-        $('profile-timeline').innerHTML = related.map(page => {
-          const d = getPageData(page);
-          return `
-            <div class="timeline-item">
-              <div class="timeline-top mono">
-                <span>${escapeHtml(d.date || String(d.lastUpdated || '').slice(0, 10) || '—')}</span>
-                <span>${escapeHtml(d.owner || '—')} · ${escapeHtml(d.touch || 'Touch')}</span>
-              </div>
-              <div class="timeline-result">${escapeHtml(d.result || d.nextStep || 'Logged Touch')}</div>
-              <div class="timeline-context">
-                ${escapeHtml(d.context || d.crmNote || 'No context entered.')}
-              </div>
-            </div>
-          `;
-        }).join('');
-      } catch (err) {
-        $('profile-timeline').innerHTML = `
-          <div class="err-box mono">
-            Timeline failed to load.
-          </div>
-        `;
-      }
     }
 
-    function closeProfilePanel() {
-      $('profile-panel-backdrop').classList.remove('open');
+    function openTouchFromPanel() {
+      if (!activePanelCustomer) return;
+      const { name, phone } = activePanelCustomer;
+      activeCustomer = { name, phone };
+      $('touch-customer-name').textContent = name;
+      $('touch-customer-phone').textContent = phone;
+      $('touch-modal').classList.add('open');
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      $('t-when').value = tomorrow.toISOString().split('T')[0];
+      $('t-touch').value = 'Phone Call';
+      $('t-purpose').value = 'Follow-Up';
+      $('t-result').value = '';
+      $('t-nextstep').value = 'CB/Follow Up';
+      $('t-context').value = '';
+      $('t-archived').checked = false;
+      $('t-logged').checked = false;
+      document.querySelectorAll('#chips-touch-temp .chip').forEach(c => c.classList.remove('selected'));
+      $('touch-msg').textContent = '';
+      $('touch-msg').className = 'form-msg mono';
+      $('touch-submit-btn').disabled = false;
+      $('touch-submit-btn').textContent = 'Log Touch';
+      $('t-result').focus();
     }
 
-    async function archivePageFromCard(cardEl) {
-      const pageId = cardEl.dataset.pageId;
-      if (!pageId) return;
-
-      if (!confirm('Archive this contact from active views?')) return;
-
-      setLiveStatus('Archiving', '');
-
-      try {
-        await notionRequest({
-          action: 'update',
-          pageId,
-          properties: {
-            'Archived': {
-              checkbox: true
-            }
-          }
-        });
-
-        refreshCurrentTab();
-      } catch (err) {
-        renderError(err.status || 500, err.data || { error: err.message || 'Archive failed' });
-      }
-    }
-
-    function openAddModal(prefill) {
-      resetAddForm();
-
+    // =================================================================
+    // MODALS — Add Lead / Touch (unchanged from v5.1)
+    // =================================================================
+    function openAddModal() {
       $('add-modal').classList.add('open');
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      $('f-when').value = tomorrow.toISOString().split('T')[0];
       $('f-owner').value = currentRep || 'DG';
-      $('f-when').value = tomorrowISO();
-
-      const value = decodeHtml(prefill || '').trim();
-
-      if (value) {
-        if (looksLikePhone(value)) {
-          $('f-phone').value = value;
-          $('f-name').focus();
-        } else {
-          $('f-name').value = value;
-          $('f-context').focus();
-        }
-      } else {
-        $('f-name').focus();
-      }
-
+      $('f-name').focus();
       $('form-msg').textContent = '';
       $('form-msg').className = 'form-msg mono';
     }
-
     function closeAddModal() {
       $('add-modal').classList.remove('open');
       resetAddForm();
     }
-
     function resetAddForm() {
-      $('f-name').value = '';
-      $('f-phone').value = '';
-      $('f-context').value = '';
+      $('f-name').value = ''; $('f-phone').value = ''; $('f-context').value = '';
       $('f-owner').value = currentRep || 'DG';
       $('f-touch').value = 'New Lead';
       $('f-purpose').value = 'New Lead';
-      $('f-result').value = '';
-      $('f-nextstep').value = '';
+      $('f-result').value = ''; $('f-nextstep').value = '';
       $('f-when').value = '';
-      $('f-archived').checked = false;
-      $('f-logged').checked = false;
-
+      $('f-archived').checked = false; $('f-logged').checked = false;
       document.querySelectorAll('#chips-temp .chip').forEach(c => {
         c.classList.toggle('selected', c.dataset.value === 'New Lead');
       });
-
       document.querySelectorAll('#chips-wishlist .chip').forEach(c => c.classList.remove('selected'));
-
       $('form-msg').textContent = '';
       $('form-msg').className = 'form-msg mono';
       $('submit-btn').disabled = false;
       $('submit-btn').textContent = 'Save Lead';
       setMode('quick');
     }
-
     function setMode(mode) {
       $('mode-quick').classList.toggle('active', mode === 'quick');
       $('mode-full').classList.toggle('active', mode === 'full');
       $('full-fields').classList.toggle('open', mode === 'full');
     }
-
     function initChipHandlers() {
       document.querySelectorAll('.chip').forEach(chip => {
         chip.addEventListener('click', () => chip.classList.toggle('selected'));
       });
     }
-
     function getSelectedChips(groupId) {
       return Array.from(document.querySelectorAll(`#${groupId} .chip.selected`)).map(c => c.dataset.value);
     }
@@ -3461,7 +1954,6 @@
       const logged = $('f-logged').checked;
       const temps = getSelectedChips('chips-temp');
       const wishlist = getSelectedChips('chips-wishlist');
-
       const properties = {};
       properties['Customer Name'] = { title: [{ text: { content: name } }] };
       if (phone) properties['Phone'] = { phone_number: phone };
@@ -3477,7 +1969,6 @@
       if (wishlist.length) properties['Wish List'] = { multi_select: wishlist.map(n => ({ name: n })) };
       properties['Archived'] = { checkbox: archived };
       properties['Logged?'] = { checkbox: logged };
-
       return properties;
     }
 
@@ -3485,70 +1976,47 @@
       const msg = $('form-msg');
       const btn = $('submit-btn');
       const name = $('f-name').value.trim();
-
       if (!name) {
         msg.textContent = 'Customer Name is required.';
         msg.className = 'form-msg mono err';
         $('f-name').focus();
         return;
       }
-
       btn.disabled = true;
       btn.textContent = 'Saving…';
       msg.textContent = 'Creating contact in Notion…';
       msg.className = 'form-msg mono';
-
       try {
         const properties = buildAddLeadPayload();
-
-        await notionRequest({
-          action: 'create',
-          databaseId: DATABASE_ID,
-          properties
+        const response = await fetch(WORKER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'create', databaseId: DATABASE_ID, properties })
         });
-
-        msg.textContent = `${name} saved. Refreshing…`;
+        let data;
+        try { data = await response.json(); } catch (e) { data = { error: 'Non-JSON response' }; }
+        if (!response.ok) {
+          msg.textContent = `Failed (HTTP ${response.status}): ${data.error || data.message || 'Unknown error'}`;
+          msg.className = 'form-msg mono err';
+          btn.disabled = false;
+          btn.textContent = 'Save Lead';
+          return;
+        }
+        msg.textContent = `✓ ${name} saved. Refreshing…`;
         msg.className = 'form-msg mono ok';
-
         setTimeout(() => {
           closeAddModal();
-          if (currentTab === 'entry') handleEntrySubmit();
-          else refreshCurrentTab();
+          if (currentTab === 'home') loadHome();
+          else if (currentTab === 'entry') runEntrySearch();
+          else if (currentTab === 'today') loadToday();
+          else if (currentTab === 'archive') loadArchive();
         }, 900);
-      } catch (err) {
-        msg.textContent = `Failed: ${(err.data && (err.data.error || err.data.message)) || err.message || 'Unknown error'}`;
+      } catch (error) {
+        msg.textContent = `Network error: ${error.message}`;
         msg.className = 'form-msg mono err';
         btn.disabled = false;
         btn.textContent = 'Save Lead';
       }
-    }
-
-    function openTouchModalFromCard(cardEl) {
-      activeCustomer = {
-        name: decodeHtml(cardEl.dataset.name || ''),
-        phone: decodeHtml(cardEl.dataset.phone || '')
-      };
-
-      $('touch-customer-name').textContent = activeCustomer.name;
-      $('touch-customer-phone').textContent = activeCustomer.phone;
-
-      $('touch-modal').classList.add('open');
-      $('t-when').value = tomorrowISO();
-      $('t-touch').value = 'Phone Call';
-      $('t-purpose').value = 'Follow-Up';
-      $('t-result').value = '';
-      $('t-nextstep').value = 'CB/Follow Up';
-      $('t-context').value = '';
-      $('t-archived').checked = false;
-      $('t-logged').checked = false;
-
-      document.querySelectorAll('#chips-touch-temp .chip').forEach(c => c.classList.remove('selected'));
-
-      $('touch-msg').textContent = '';
-      $('touch-msg').className = 'form-msg mono';
-      $('touch-submit-btn').disabled = false;
-      $('touch-submit-btn').textContent = 'Log New Touch';
-      $('t-result').focus();
     }
 
     function closeTouchModal() {
@@ -3566,7 +2034,6 @@
       const archived = $('t-archived').checked;
       const logged = $('t-logged').checked;
       const temps = getSelectedChips('chips-touch-temp');
-
       const properties = {};
       properties['Customer Name'] = { title: [{ text: { content: activeCustomer.name } }] };
       if (activeCustomer.phone) properties['Phone'] = { phone_number: activeCustomer.phone };
@@ -3581,7 +2048,6 @@
       if (temps.length) properties['Temp'] = { multi_select: temps.map(n => ({ name: n })) };
       properties['Archived'] = { checkbox: archived };
       properties['Logged?'] = { checkbox: logged };
-
       return properties;
     }
 
@@ -3589,41 +2055,51 @@
       const msg = $('touch-msg');
       const btn = $('touch-submit-btn');
       const result = $('t-result').value;
-
       if (!result) {
         msg.textContent = 'Result is required.';
         msg.className = 'form-msg mono err';
         $('t-result').focus();
         return;
       }
-
       btn.disabled = true;
       btn.textContent = 'Logging…';
-      msg.textContent = 'Logging new touch in Notion…';
+      msg.textContent = 'Logging touch in Notion…';
       msg.className = 'form-msg mono';
-
       try {
         const properties = buildTouchPayload();
-
-        await notionRequest({
-          action: 'create',
-          databaseId: DATABASE_ID,
-          properties
+        const response = await fetch(WORKER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'create', databaseId: DATABASE_ID, properties })
         });
-
-        msg.textContent = `Touch logged for ${activeCustomer.name}. Refreshing…`;
+        let data;
+        try { data = await response.json(); } catch (e) { data = { error: 'Non-JSON response' }; }
+        if (!response.ok) {
+          msg.textContent = `Failed (HTTP ${response.status}): ${data.error || data.message || 'Unknown error'}`;
+          msg.className = 'form-msg mono err';
+          btn.disabled = false;
+          btn.textContent = 'Log Touch';
+          return;
+        }
+        const customerName = activeCustomer.name;
+        msg.textContent = `✓ Touch logged for ${customerName}. Refreshing…`;
         msg.className = 'form-msg mono ok';
-
         setTimeout(() => {
           closeTouchModal();
-          if (currentTab === 'entry') handleEntrySubmit();
-          else refreshCurrentTab();
+          // If panel is open, reload its timeline
+          if ($('lead-panel').classList.contains('open') && activePanelCustomer) {
+            loadLeadTimeline(activePanelCustomer.name);
+          }
+          if (currentTab === 'home') loadHome();
+          else if (currentTab === 'entry') runEntrySearch();
+          else if (currentTab === 'today') loadToday();
+          else if (currentTab === 'archive') loadArchive();
         }, 900);
-      } catch (err) {
-        msg.textContent = `Failed: ${(err.data && (err.data.error || err.data.message)) || err.message || 'Unknown error'}`;
+      } catch (error) {
+        msg.textContent = `Network error: ${error.message}`;
         msg.className = 'form-msg mono err';
         btn.disabled = false;
-        btn.textContent = 'Log New Touch';
+        btn.textContent = 'Log Touch';
       }
     }
   </script>
