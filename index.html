@@ -1084,6 +1084,68 @@
       letter-spacing: 0.1em; text-transform: uppercase;
     }
 
+
+    .view-filter-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: 7px;
+      margin-bottom: 10px;
+    }
+    .view-filter-btn {
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 7px 11px;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: all 150ms ease;
+    }
+    .view-filter-btn:hover,
+    .view-filter-btn.active {
+      color: #090908;
+      background: var(--gold);
+      border-color: transparent;
+    }
+
+    /* Centered customer profile modal */
+    .panel-backdrop {
+      display: none;
+      opacity: 1;
+      pointer-events: auto;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+    }
+    .panel-backdrop.open { display: flex; }
+    .lead-panel {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      right: auto;
+      bottom: auto;
+      width: min(860px, calc(100vw - 28px));
+      max-height: calc(100vh - 36px);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      transform: translate(-50%, -50%) scale(0.98);
+      opacity: 0;
+      pointer-events: none;
+      box-shadow: 0 30px 90px rgba(0,0,0,0.45);
+    }
+    .lead-panel.open {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .lead-panel-head { border-radius: 18px 18px 0 0; }
+
     @media (max-width: 640px) {
       #app { width: min(100% - 18px, var(--max)); padding-top: 12px; }
       .topbar { align-items: flex-start; flex-direction: column; gap: 8px; }
@@ -1099,7 +1161,7 @@
       .card-row { flex-wrap: wrap; }
       .card-right { width: 100%; justify-content: flex-end; }
       .stat-grid { grid-template-columns: 1fr; }
-      .lead-panel { width: 100vw; }
+      .lead-panel { width: calc(100vw - 18px); max-height: calc(100vh - 18px); }
       .detail-meta, .panel-detail-grid { grid-template-columns: 1fr; }
     }
     @media (prefers-reduced-motion: reduce) {
@@ -1140,7 +1202,7 @@
           <button class="primary-btn" type="submit" id="gate-submit" disabled>Unlock</button>
           <div id="gate-err" class="gate-err mono" role="alert" aria-live="polite"></div>
         </form>
-        <p class="security-note mono">Rep selection drives Home dashboard, My Work filters, and Owner pre-fill.</p>
+        <p class="security-note mono">Rep selection drives Owner pre-fill, filters, and contact ownership.</p>
       </div>
     </section>
   </main>
@@ -1167,83 +1229,29 @@
           <span class="dot"></span> <strong id="status-state">Ready</strong>
         </div>
         <div class="status-pill"><strong id="status-count">0</strong> in view</div>
-        <div class="status-pill"><strong id="status-tab">Home</strong></div>
+        <div class="status-pill"><strong id="status-tab">Entry</strong></div>
       </div>
       <div class="status-strip-right mono" id="status-updated">Awaiting</div>
     </section>
 
     <nav class="tabs-row" aria-label="Workstation views">
-      <button class="tab-btn active" type="button" data-tab="home" onclick="setTab('home')">
-        <span class="tab-emoji">🏠</span> Home
-      </button>
-      <button class="tab-btn" type="button" data-tab="entry" onclick="setTab('entry')">
-        <span class="tab-emoji">✏️</span> Entry
+      <button class="tab-btn active" type="button" data-tab="entry" onclick="setTab('entry')">
+        Entry
       </button>
       <button class="tab-btn" type="button" data-tab="today" onclick="setTab('today')">
-        <span class="tab-emoji">🟢</span> Today <span class="tab-count" id="count-today">·</span>
+        Today <span class="tab-count" id="count-today">·</span>
       </button>
       <button class="tab-btn" type="button" data-tab="archive" onclick="setTab('archive')">
-        <span class="tab-emoji">📦</span> Archive
+        Archive
       </button>
     </nav>
 
-    <!-- HOME VIEW -->
-    <section id="home-view" class="home-grid">
-      <!-- Greeting -->
-      <div class="home-section">
-        <div class="quota-band">
-          <div>
-            <div class="quota-greeting">Welcome, <span id="home-rep-name">DG</span></div>
-            <div class="quota-subgreeting mono" id="home-week-range">Loading your book…</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Stat tiles -->
-      <div class="home-section">
-        <div class="home-section-head">
-          <div class="home-section-title">My Book — Snapshot</div>
-        </div>
-        <div class="stat-grid">
-          <div class="stat-tile">
-            <div class="stat-tile-value" id="home-active-count">—</div>
-            <div class="stat-tile-label">Active Leads</div>
-          </div>
-          <div class="stat-tile">
-            <div class="stat-tile-value" id="home-due-count">—</div>
-            <div class="stat-tile-label">Due / Overdue</div>
-          </div>
-          <div class="stat-tile">
-            <div class="stat-tile-value" id="home-hot-count">—</div>
-            <div class="stat-tile-label">Hot Leads</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Today's Top 3 -->
-      <div class="home-section">
-        <div class="home-section-head">
-          <div class="home-section-title">Hit These First</div>
-          <button class="home-section-action" type="button" onclick="setTab('today')">See all →</button>
-        </div>
-        <div class="home-list" id="home-top3"></div>
-      </div>
-
-      <!-- Recent Closes -->
-      <div class="home-section">
-        <div class="home-section-head">
-          <div class="home-section-title">Recent Closes</div>
-        </div>
-        <div class="home-list" id="home-recent-closes"></div>
-      </div>
-    </section>
-
-    <!-- ENTRY VIEW -->
-    <section id="entry-view" style="display: none;">
+    <!-- ENTRY HUB VIEW -->
+    <section id="entry-view">
       <div class="entry-panel">
-        <div class="entry-eyebrow">Lookup or Add</div>
+        <div class="entry-eyebrow">Entry Hub</div>
         <h2 class="entry-title">Find or start a lead</h2>
-        <p class="entry-copy">Type a name or phone. If they exist, tap them to see the full timeline and log a new touch. If not, start a new lead with that name pre-filled.</p>
+        <p class="entry-copy">Type a name or phone. If they exist, open the card, review Agent Assist, then log the next touch. If not, start a new lead with the value pre-filled.</p>
         <div class="entry-search-row">
           <label class="sr-only" for="q">Search by name or phone</label>
           <input id="q" class="search-input entry-input mono" type="search" placeholder="John Smith or (570) 555-1234" autocomplete="off" onkeydown="if(event.key==='Enter')runEntrySearch()" />
@@ -1256,16 +1264,42 @@
         </div>
       </div>
       <div id="entry-results" class="results"></div>
+
+      <div id="entry-hub-lists" class="home-grid" style="margin-top: 14px;">
+        <div class="home-section">
+          <div class="home-section-head">
+            <div class="home-section-title">Hit These First</div>
+            <button class="home-section-action" type="button" onclick="setTab('today')">See all</button>
+          </div>
+          <div class="home-list" id="home-top3"></div>
+        </div>
+
+        <div class="home-section">
+          <div class="home-section-head">
+            <div class="home-section-title">Recent Closes</div>
+          </div>
+          <div class="home-list" id="home-recent-closes"></div>
+        </div>
+      </div>
     </section>
 
     <!-- TODAY VIEW -->
     <section id="today-view" style="display: none;">
       <div class="results-head">
         <div>
-          <h3 class="section-title">Today</h3>
-          <p class="section-kicker">Overdue + due today, sorted by follow-up date. Tap a card to open the customer panel.</p>
+          <h3 class="section-title" id="today-view-title">Today</h3>
+          <p class="section-kicker" id="today-view-kicker">Overdue + due today, sorted by follow-up date.</p>
         </div>
         <button class="refresh-btn mono" type="button" onclick="loadToday()"><span>↻</span> Refresh</button>
+      </div>
+      <div class="view-filter-row" aria-label="Today views">
+        <button class="view-filter-btn active" type="button" data-today-filter="today" onclick="setTodayFilter('today')">Today</button>
+        <button class="view-filter-btn" type="button" data-today-filter="upcoming" onclick="setTodayFilter('upcoming')">Upcoming</button>
+        <button class="view-filter-btn" type="button" data-today-filter="followup" onclick="setTodayFilter('followup')">Follow-Up</button>
+        <button class="view-filter-btn" type="button" data-today-filter="hot" onclick="setTodayFilter('hot')">Hot Leads</button>
+        <button class="view-filter-btn" type="button" data-today-filter="wishlist" onclick="setTodayFilter('wishlist')">Wish List</button>
+        <button class="view-filter-btn" type="button" data-today-filter="owner" onclick="setTodayFilter('owner')">By Owner</button>
+        <button class="view-filter-btn" type="button" data-today-filter="inactive" onclick="setTodayFilter('inactive')">Inactive</button>
       </div>
       <div id="today-results" class="results"></div>
     </section>
@@ -1289,9 +1323,9 @@
     </footer>
   </div>
 
-  <!-- LEAD PROFILE SIDE PANEL -->
+  <!-- LEAD PROFILE CENTER MODAL -->
   <div id="panel-backdrop" class="panel-backdrop" onclick="closeLeadPanel()"></div>
-  <aside id="lead-panel" class="lead-panel" aria-label="Customer profile">
+  <section id="lead-panel" class="lead-panel" aria-label="Customer profile">
     <div class="lead-panel-head">
       <div class="lead-panel-toprow">
         <div>
@@ -1325,7 +1359,7 @@
       <div class="timeline-label">Timeline</div>
       <div class="timeline" id="panel-timeline"></div>
     </div>
-  </aside>
+  </section>
 
   <!-- ADD LEAD MODAL -->
   <div id="add-modal" class="modal-backdrop" role="dialog" aria-modal="true">
@@ -1641,7 +1675,8 @@
     };
     // =================================================================
 
-    let currentTab = 'home';
+    let currentTab = 'entry';
+    let currentTodayFilter = 'today';
     let currentRep = null;
     let pendingRepSelection = null;
     let activeCustomer = null; // for Touch modal
@@ -1688,7 +1723,7 @@
       $('app').style.display = 'block';
       $('rep-badge').textContent = 'REP · ' + currentRep;
       $('f-owner').value = currentRep;
-      setTab('home');
+      setTab('entry');
     }
 
     function lockApp() {
@@ -1785,13 +1820,12 @@
 
     // ===== TAB SWITCHING =====
     const TAB_VIEWS = {
-      'home': 'home-view',
       'entry': 'entry-view',
       'today': 'today-view',
       'archive': 'archive-view'
     };
     const TAB_NAMES = {
-      'home': 'Home', 'entry': 'Entry', 'today': 'Today', 'archive': 'Archive'
+      'entry': 'Entry', 'today': 'Today', 'archive': 'Archive'
     };
 
     function setTab(tab) {
@@ -1806,8 +1840,7 @@
       $('status-tab').textContent = TAB_NAMES[tab] || tab;
       // Load tab data
       switch (tab) {
-        case 'home': loadHome(); break;
-        case 'entry': clearEntry(); break;
+        case 'entry': clearEntry(); loadEntryHub(); break;
         case 'today': loadToday(); break;
         case 'archive': loadArchive(); break;
       }
@@ -1829,17 +1862,11 @@
       return { property: 'Archived', checkbox: { equals: false } };
     }
 
-    // ===== HOME LOAD =====
-    async function loadHome() {
+    // ===== ENTRY HUB LOAD =====
+    async function loadEntryHub() {
       setLiveStatus('Loading', 'idle');
-      $('home-rep-name').textContent = currentRep;
-      const role = REP_ROLES[currentRep] || '';
-      $('home-week-range').textContent = role ? `${role} · ${currentRep}` : currentRep;
-
-      // Fire workload queries in parallel
       try {
         const [closesRes, top3Res] = await Promise.all([
-          // Recent closes — last 3 Agreement Signed by rep (for the Recent Closes block)
           notionQuery({
             action: 'query',
             databaseId: DATABASE_ID,
@@ -1850,7 +1877,6 @@
               { property: 'Result', select: { equals: 'Agreement Signed' } }
             ]}
           }),
-          // Top 3 due/overdue
           notionQuery({
             action: 'query',
             databaseId: DATABASE_ID,
@@ -1864,34 +1890,21 @@
           })
         ]);
 
-        // Workload counts — fetch up to 100 each, count results
-        const activeCount = await fetchCountForFilter({ and: [archivedFalseFilter(), { property: 'Owner', select: { equals: currentRep } }] });
         const dueCount = await fetchCountForFilter({ and: [
           archivedFalseFilter(),
           { property: 'Owner', select: { equals: currentRep } },
           { property: 'WHEN', date: { on_or_before: todayISO() } }
         ]});
-        const hotCount = await fetchCountForFilter({ and: [
-          archivedFalseFilter(),
-          { property: 'Owner', select: { equals: currentRep } },
-          { property: 'Temp', multi_select: { contains: 'Hot' } }
-        ]});
-
-        $('home-active-count').textContent = activeCount;
-        $('home-due-count').textContent = dueCount;
-        $('home-hot-count').textContent = hotCount;
         $('count-today').textContent = dueCount;
 
-        // Top 3
         const top3 = top3Res.ok && Array.isArray(top3Res.data.results) ? top3Res.data.results : [];
         renderHomeList('home-top3', top3, 'empty-top3');
 
-        // Recent closes
         const closes = closesRes.ok && Array.isArray(closesRes.data.results) ? closesRes.data.results : [];
         renderHomeList('home-recent-closes', closes, 'empty-closes', true);
 
         setLiveStatus('Live', '');
-        $('status-count').textContent = String(activeCount);
+        $('status-count').textContent = String(dueCount);
         setLastUpdated();
       } catch (e) {
         renderHomeError({ status: 500, data: { error: e.message } });
@@ -2032,27 +2045,98 @@
     }
 
     // ===== TODAY TAB =====
+    function setTodayFilter(filter) {
+      currentTodayFilter = filter;
+      document.querySelectorAll('[data-today-filter]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.todayFilter === filter);
+      });
+      loadToday();
+    }
+
+    function todayFilterConfig(filter) {
+      const base = archivedFalseFilter();
+      const configs = {
+        today: {
+          title: 'Today',
+          kicker: 'Overdue + due today, sorted by follow-up date.',
+          sorts: [{ property: 'WHEN', direction: 'ascending' }],
+          filter: { and: [base, { property: 'WHEN', date: { on_or_before: todayISO() } }] },
+          empty: 'Nothing overdue or due today.'
+        },
+        upcoming: {
+          title: 'Upcoming',
+          kicker: 'Future follow-ups sorted by date.',
+          sorts: [{ property: 'WHEN', direction: 'ascending' }],
+          filter: { and: [base, { property: 'WHEN', date: { after: todayISO() } }] },
+          empty: 'No upcoming follow-ups found.'
+        },
+        followup: {
+          title: 'Follow-Up',
+          kicker: 'Contacts with CB/Follow Up as the next step.',
+          sorts: [{ property: 'WHEN', direction: 'ascending' }],
+          filter: { and: [base, { property: 'Next Step', select: { equals: 'CB/Follow Up' } }] },
+          empty: 'No CB/Follow Up contacts found.'
+        },
+        hot: {
+          title: 'Hot Leads',
+          kicker: 'Active contacts marked Hot.',
+          sorts: [{ property: 'Last Updated', direction: 'descending' }],
+          filter: { and: [base, { property: 'Temp', multi_select: { contains: 'Hot' } }] },
+          empty: 'No Hot leads found.'
+        },
+        wishlist: {
+          title: 'Wish List',
+          kicker: 'Active contacts with wishlist categories captured.',
+          sorts: [{ property: 'Last Updated', direction: 'descending' }],
+          filter: { and: [base, { property: 'Wish List', multi_select: { is_not_empty: true } }] },
+          empty: 'No wishlist contacts found.'
+        },
+        owner: {
+          title: 'By Owner',
+          kicker: `Active contacts owned by ${currentRep}.`,
+          sorts: [{ property: 'Last Updated', direction: 'descending' }],
+          filter: { and: [base, { property: 'Owner', select: { equals: currentRep } }] },
+          empty: `No active contacts owned by ${currentRep}.`
+        },
+        inactive: {
+          title: 'Inactive',
+          kicker: 'Cold, no further action, or no future follow-up date.',
+          sorts: [{ property: 'Last Updated', direction: 'descending' }],
+          filter: { and: [
+            base,
+            { or: [
+              { property: 'Temp', multi_select: { contains: 'Cold' } },
+              { property: 'Next Step', select: { equals: 'No Further Action' } },
+              { property: 'WHEN', date: { is_empty: true } }
+            ]}
+          ]},
+          empty: 'No inactive contacts found.'
+        }
+      };
+      return configs[filter] || configs.today;
+    }
+
     async function loadToday() {
+      const cfg = todayFilterConfig(currentTodayFilter);
+      $('today-view-title').textContent = cfg.title;
+      $('today-view-kicker').textContent = cfg.kicker;
       setLiveStatus('Loading', 'idle');
-      $('today-results').innerHTML = `<div class="loading-card mono">Loading today's work…</div>`;
+      $('today-results').innerHTML = `<div class="loading-card mono">Loading ${escapeHtml(cfg.title)}…</div>`;
       const res = await notionQuery({
         action: 'query',
         databaseId: DATABASE_ID,
-        page_size: 50,
-        sorts: [{ property: 'WHEN', direction: 'ascending' }],
-        filter: { and: [
-          archivedFalseFilter(),
-          { property: 'WHEN', date: { on_or_before: todayISO() } }
-        ]}
+        page_size: 75,
+        sorts: cfg.sorts,
+        filter: cfg.filter
       });
       if (!res.ok) { renderListError('today-results', res); return; }
       const pages = Array.isArray(res.data.results) ? res.data.results : [];
       $('status-count').textContent = String(pages.length);
-      $('count-today').textContent = pages.length;
+      if (currentTodayFilter === 'today') $('count-today').textContent = pages.length;
       setLiveStatus('Live', '');
       setLastUpdated();
       if (!pages.length) {
-        $('today-results').innerHTML = `<div class="empty mono"><div class="empty-headline">Clean slate</div>Nothing overdue or due today. Either ahead of the curve or time to log new leads.</div>`;
+        $('today-results').innerHTML = `<div class="empty mono"><div class="empty-headline">No records</div>${escapeHtml(cfg.empty)}</div>`;
         return;
       }
       $('today-results').innerHTML = pages.map(renderResultCard).join('');
@@ -2235,6 +2319,143 @@
       return 'help you compare the best available option';
     }
 
+    const AGENT_LANGUAGE_BANK = {
+      priceWeekly: {
+        label: 'Objection · Price / Weekly',
+        policyAnchor: 'Worry-Free Guarantee · Three Flexible Payment Options',
+        recommendedResponse: 'I hear you. The weekly number matters. The best move is not to pressure you into something that feels tight, it is to look at which payment option fits your pay schedule and keeps the setup realistic.',
+        whyThisWorks: 'It validates the concern, keeps the conversation inside the Worry-Free payment flexibility anchor, and redirects from price resistance to fit.',
+        doNotSay: 'Do not promise approval, discounts, lower payments, waived fees, or a specific payment until the store verifies the item and agreement terms.',
+        close: 'If I can check the option that fits your pay schedule best, would it make sense to look at that first?'
+      },
+      totalCost: {
+        label: 'Objection · Total Cost',
+        policyAnchor: 'Worry-Free Guarantee · Easy Returns / Upgrade Anytime / Free Service & Repairs',
+        recommendedResponse: 'That makes sense. The total cost is worth understanding. The value here is flexibility and support while solving the home need now. We can walk through the option clearly so you know what you are choosing before moving forward.',
+        whyThisWorks: 'It does not argue with the customer. It acknowledges total cost, then anchors the value around flexibility, service support, and solving the immediate need without pressure.',
+        doNotSay: 'Do not minimize the total cost, hide the cost, compare inaccurately to cash pricing, or imply the customer must keep the item.',
+        close: 'If I can make the terms clear and keep the option flexible, would it be worth reviewing the best fit?'
+      },
+      timing: {
+        label: 'Objection · Timing',
+        policyAnchor: 'Worry-Free Guarantee · Three Flexible Payment Options / Easy Returns',
+        recommendedResponse: 'Timing is workable. We can look at what lines up with your pay schedule and make sure the next step fits when you are actually ready. I do not want to rush you into the wrong timing.',
+        whyThisWorks: 'It positions the rep as helpful and practical while staying inside payment flexibility and return flexibility. It avoids making promises about holds or approvals.',
+        doNotSay: 'Do not promise a hold, future availability, approval, or exact payment date outcome unless the store has verified it.',
+        close: 'Would today or your next payday be the better window for me to check options with you?'
+      },
+      needsThink: {
+        label: 'Objection · Needs to Think',
+        policyAnchor: 'Worry-Free Guarantee · No Credit Needed / Free Service & Repairs / Easy Returns',
+        recommendedResponse: 'That is fair. Usually when someone wants to think it over, there is one specific part that is still unclear. I can make this simple: the item, the payment option, the support, and what the next step would look like.',
+        whyThisWorks: 'It respects the pause while asking for the real friction point. The Worry-Free anchors reduce perceived risk without pressuring the customer.',
+        doNotSay: 'Do not dismiss the customer’s hesitation, pressure them, or claim there is no risk. Keep the answer grounded in policy-backed flexibility.',
+        close: 'What part would you want clearer before making a decision?'
+      },
+      needsPartner: {
+        label: 'Objection · Needs Partner',
+        policyAnchor: 'Worry-Free Guarantee · Free Delivery & Setup / Free Service & Repairs / Three Flexible Payment Options',
+        recommendedResponse: 'That makes sense. If someone else is part of the decision, the easiest thing is to make the option simple to explain: what it solves, what the payment looks like, and what support comes with it.',
+        whyThisWorks: 'It helps the customer become the messenger without creating pressure. It frames the decision around household outcome, payment fit, and support.',
+        doNotSay: 'Do not tell the customer to ignore their partner or make the decision without them. Do not make promises that are not verified.',
+        close: 'Would it help if I gave you the simple version to review together?'
+      },
+      paymentTiming: {
+        label: 'Payment Timing',
+        policyAnchor: 'Worry-Free Guarantee · Three Flexible Payment Options',
+        recommendedResponse: 'We can talk through timing around how you get paid and review the payment options that may fit best. The goal is to make the next step realistic, not forced.',
+        whyThisWorks: 'It keeps the conversation practical and compliant by discussing options without promising payment schedules or agreement outcomes before verification.',
+        doNotSay: 'Do not promise a specific due date, payoff date, skipped payment, or approval without verified agreement data.',
+        close: 'Would weekly, semi-monthly, or monthly timing be easier for you to review first?'
+      },
+      reactivation: {
+        label: 'Reactivation',
+        policyAnchor: 'Worry-Free Guarantee · No Credit Needed / Easy Returns / Upgrade Anytime',
+        recommendedResponse: 'Since you have worked with us before, the best move is to keep this simple and see what currently fits your home and your timing. I can check current options and help you get set back up the right way.',
+        whyThisWorks: 'It uses a returning-customer tone and reduces friction without implying guaranteed approval, availability, or terms.',
+        doNotSay: 'Do not guarantee the same item, same terms, approval, or availability. Verify first.',
+        close: 'Do you want me to check what would make the most sense to get you set back up?'
+      },
+      conversion: {
+        label: 'Conversion',
+        policyAnchor: 'Worry-Free Guarantee · Free Delivery & Setup / Free Service & Repairs / Three Flexible Payment Options',
+        recommendedResponse: 'Based on what you are looking for, the next step is to narrow this to the option that solves the need, fits the payment rhythm, and gives you support after delivery.',
+        whyThisWorks: 'It moves the customer from browsing to decision by tying the item to need, payment fit, and service support.',
+        doNotSay: 'Do not overstate savings, guarantee availability, or rush the customer with false urgency.',
+        close: 'If this solves the need and fits the payment, would it make sense to start the agreement?'
+      },
+      retention: {
+        label: 'Retention / Save',
+        policyAnchor: 'Worry-Free Guarantee · Easy Returns / Free Service & Repairs / Loaner Items',
+        recommendedResponse: 'Let us slow this down and figure out what is actually causing the issue. Depending on the situation, we can review service, support, return options, or what the next best step is.',
+        whyThisWorks: 'It protects the account by diagnosing before reacting and keeps the language inside Worry-Free support options.',
+        doNotSay: 'Do not argue with the customer, blame them, promise a loaner/service outcome before verification, or make payment concessions outside policy.',
+        close: 'What is the main issue you need solved first so I can point this in the right direction?'
+      },
+      faqDelivery: {
+        label: 'FAQ · Delivery / Setup',
+        policyAnchor: 'Worry-Free Guarantee · Free Delivery & Setup',
+        recommendedResponse: 'Delivery and setup are part of the support we can review with you. We will look at the item, timing, and what can be handled during regular business hours.',
+        whyThisWorks: 'It answers the FAQ clearly while avoiding unverified scheduling or service promises.',
+        doNotSay: 'Do not promise a delivery time, same-day delivery, or setup beyond policy before verifying with the store.',
+        close: 'Would you like me to check what delivery timing may be available?'
+      },
+      faqService: {
+        label: 'FAQ · Service / Repairs',
+        policyAnchor: 'Worry-Free Guarantee · Free Service & Repairs / Loaner Items',
+        recommendedResponse: 'If an item needs service while it is on rent, we can review the service process and determine the right next step. If eligible, support options may include service handling and a comparable loaner while the item is being serviced.',
+        whyThisWorks: 'It uses Worry-Free service language without guaranteeing eligibility before verification.',
+        doNotSay: 'Do not promise every item qualifies for on-site service or a loaner until the store verifies the item and situation.',
+        close: 'Can you tell me what the item is doing so I can help route the service correctly?'
+      },
+      faqReturn: {
+        label: 'FAQ · Returns',
+        policyAnchor: 'Worry-Free Guarantee · Easy Returns',
+        recommendedResponse: 'If the item is not working for you right now, we can review return options and what that means for the agreement. The goal is to keep the next step clear and simple.',
+        whyThisWorks: 'It addresses return friction directly and keeps the conversation policy-grounded.',
+        doNotSay: 'Do not pressure the customer to keep an item or promise account outcomes outside the agreement terms.',
+        close: 'Do you want to review options to keep it, service it, exchange direction, or schedule a return?'
+      },
+      general: {
+        label: 'General Follow-Up',
+        policyAnchor: 'Worry-Free Guarantee · Customer flexibility and support',
+        recommendedResponse: 'I wanted to follow up and keep this simple. If you are still looking, I can help narrow it down to the option that fits your home, timing, and payment comfort.',
+        whyThisWorks: 'It is low-pressure, direct, and keeps the conversation focused on fit and next action.',
+        doNotSay: 'Do not overpromise approval, availability, discounts, payment changes, or policy exceptions.',
+        close: 'Are you still looking, or should I check back another time?'
+      }
+    };
+
+    function selectLanguageModule(data) {
+      const combined = `${data.result || ''} ${data.purpose || ''} ${data.nextStep || ''} ${data.context || ''} ${(data.wishList || []).join(' ')} ${(data.temps || []).join(' ')}`.toLowerCase();
+
+      if (agentHas(data.result, 'OBJ — Price / Weekly')) return AGENT_LANGUAGE_BANK.priceWeekly;
+      if (agentHas(data.result, 'OBJ — Total Cost')) return AGENT_LANGUAGE_BANK.totalCost;
+      if (agentHas(data.result, 'OBJ — Timing')) return AGENT_LANGUAGE_BANK.timing;
+      if (agentHas(data.result, 'OBJ — Needs to Think')) return AGENT_LANGUAGE_BANK.needsThink;
+      if (agentHas(data.result, 'OBJ — Needs Partner')) return AGENT_LANGUAGE_BANK.needsPartner;
+
+      if (/payday|pay day|payment|pay schedule|weekly|biweekly|semi-monthly|monthly|due date|payoff|early purchase/.test(combined)) return AGENT_LANGUAGE_BANK.paymentTiming;
+      if (agentHas(data.purpose, 'Conversion/Reactivation') || agentHas(data.temps, '⭐ VERIFIED - Returning Customer')) return AGENT_LANGUAGE_BANK.reactivation;
+      if (agentHas(data.result, 'Committed') || agentHas(data.result, 'Positive Response') || agentHas(data.nextStep, 'Write Agreement')) return AGENT_LANGUAGE_BANK.conversion;
+      if (/return|cancel|pick up|pickup|issue|problem|not working|broken|service|repair|loaner/.test(combined)) return AGENT_LANGUAGE_BANK.retention;
+      if (/delivery|setup|deliver|drop off|bring it/.test(combined)) return AGENT_LANGUAGE_BANK.faqDelivery;
+      if (/service|repair|loaner|not working|broken|fix/.test(combined)) return AGENT_LANGUAGE_BANK.faqService;
+      if (/return|bring back|pickup|pick up|cancel/.test(combined)) return AGENT_LANGUAGE_BANK.faqReturn;
+
+      return AGENT_LANGUAGE_BANK.general;
+    }
+
+    function buildTrainerResponse(data, module) {
+      const name = data.name || 'there';
+      const rep = data.owner || currentRep || 'DG';
+      const category = detectAgentCategory(data);
+      const opener = `Hey ${name}, this is ${rep} with Rent-A-Center on Hepburn. I wanted to follow up about ${category}.`;
+      const response = `${opener} ${module.recommendedResponse}`;
+      const close = module.close;
+      return `${response} ${close}`;
+    }
+
     function buildAgentAssist(data) {
       const rep = data.owner || currentRep || 'DG';
       const name = data.name || 'there';
@@ -2246,10 +2467,11 @@
       const concern = agentConcern(data);
       const priority = computeAgentPriority(data);
       const score = agentScore(data);
+      const languageModule = selectLanguageModule(data);
 
-      const suggestedText = `Hey ${name}, this is ${rep} with Rent-A-Center on Hepburn. I wanted to follow up about ${category}. ${reason.replace(/\.$/, '')}. ${choice}`;
+      const suggestedText = buildTrainerResponse(data, languageModule);
       const callOpener = `Hey ${name}, this is ${rep} with Rent-A-Center on Hepburn. I’m following up from when we talked about ${category}. ${callAsk}`;
-      const close = `If I can ${concern}, would it make sense to ${
+      const close = languageModule.close || `If I can ${concern}, would it make sense to ${
         agentHas(data.nextStep, 'Come Into Store')
           ? 'stop in and look at the best option'
           : agentHas(data.nextStep, 'Write Agreement')
@@ -2257,7 +2479,22 @@
             : 'look at the best option today'
       }?`;
 
-      return { priority, score, reason, nextBestAction, suggestedText, callOpener, close };
+      const trainerCopy = `Recommended Response:\n${suggestedText}\n\nWhy This Works:\n${languageModule.whyThisWorks}\n\nPolicy Anchor:\n${languageModule.policyAnchor}\n\nDo Not Say:\n${languageModule.doNotSay}\n\nClose:\n${close}`;
+
+      return {
+        priority,
+        score,
+        reason,
+        nextBestAction,
+        suggestedText,
+        callOpener,
+        close,
+        trainerLabel: languageModule.label,
+        policyAnchor: languageModule.policyAnchor,
+        whyThisWorks: languageModule.whyThisWorks,
+        doNotSay: languageModule.doNotSay,
+        trainerCopy
+      };
     }
 
     function renderAgentAssist(agent) {
@@ -2265,10 +2502,30 @@
       return `
         <div class="agent-assist">
           <div class="agent-head">
-            <div class="agent-title mono">Agent Assist</div>
+            <div class="agent-title mono">Agent Assist · Response Trainer</div>
             <div class="agent-priority ${escapeHtml(priorityClass)}">${escapeHtml(agent.priority)} · ${escapeHtml(agent.score)}</div>
           </div>
           <div class="agent-grid">
+            <div class="agent-item">
+              <div class="agent-label">Training Lane</div>
+              <div class="agent-body">${escapeHtml(agent.trainerLabel)}</div>
+            </div>
+            <div class="agent-item">
+              <div class="agent-label">Recommended Response</div>
+              <div class="agent-script" data-copy-text="${escapeHtml(agent.suggestedText)}">${escapeHtml(agent.suggestedText)}</div>
+            </div>
+            <div class="agent-item">
+              <div class="agent-label">Why This Works</div>
+              <div class="agent-body">${escapeHtml(agent.whyThisWorks)}</div>
+            </div>
+            <div class="agent-item">
+              <div class="agent-label">Policy Anchor</div>
+              <div class="agent-body">${escapeHtml(agent.policyAnchor)}</div>
+            </div>
+            <div class="agent-item">
+              <div class="agent-label">Do Not Say</div>
+              <div class="agent-body">${escapeHtml(agent.doNotSay)}</div>
+            </div>
             <div class="agent-item">
               <div class="agent-label">Reason</div>
               <div class="agent-body">${escapeHtml(agent.reason)}</div>
@@ -2278,21 +2535,19 @@
               <div class="agent-body">${escapeHtml(agent.nextBestAction)}</div>
             </div>
             <div class="agent-item">
-              <div class="agent-label">Suggested Text</div>
-              <div class="agent-script" data-copy-text="${escapeHtml(agent.suggestedText)}">${escapeHtml(agent.suggestedText)}</div>
-            </div>
-            <div class="agent-item">
               <div class="agent-label">Suggested Call Opener</div>
               <div class="agent-script" data-copy-call="${escapeHtml(agent.callOpener)}">${escapeHtml(agent.callOpener)}</div>
             </div>
             <div class="agent-item">
-              <div class="agent-label">Suggested Close</div>
+              <div class="agent-label">Close</div>
               <div class="agent-body">${escapeHtml(agent.close)}</div>
             </div>
+            <div class="agent-script" style="display:none;" data-copy-trainer="${escapeHtml(agent.trainerCopy)}">${escapeHtml(agent.trainerCopy)}</div>
           </div>
           <div class="agent-actions">
-            <button class="copy-btn mono" type="button" onclick="event.stopPropagation(); copyFromAgentButton(this, 'text')">Copy Text</button>
+            <button class="copy-btn mono" type="button" onclick="event.stopPropagation(); copyFromAgentButton(this, 'text')">Copy Response</button>
             <button class="copy-btn mono" type="button" onclick="event.stopPropagation(); copyFromAgentButton(this, 'call')">Copy Call Opener</button>
+            <button class="copy-btn mono" type="button" onclick="event.stopPropagation(); copyFromAgentButton(this, 'trainer')">Copy Trainer Notes</button>
           </div>
         </div>
       `;
@@ -2319,8 +2574,20 @@
 
     async function copyFromAgentButton(button, type) {
       const box = button.closest('.agent-assist');
-      const target = type === 'call' ? box.querySelector('[data-copy-call]') : box.querySelector('[data-copy-text]');
-      const attr = type === 'call' ? 'data-copy-call' : 'data-copy-text';
+      let target;
+      let attr;
+
+      if (type === 'call') {
+        target = box.querySelector('[data-copy-call]');
+        attr = 'data-copy-call';
+      } else if (type === 'trainer') {
+        target = box.querySelector('[data-copy-trainer]');
+        attr = 'data-copy-trainer';
+      } else {
+        target = box.querySelector('[data-copy-text]');
+        attr = 'data-copy-text';
+      }
+
       const text = target ? (target.getAttribute(attr) || target.textContent || '') : '';
       const original = button.textContent;
       const ok = await copyAgentText(text);
@@ -2481,7 +2748,7 @@
       if (currentTab === 'entry') runEntrySearch();
       else if (currentTab === 'today') loadToday();
       else if (currentTab === 'archive') loadArchive();
-      else loadHome();
+      else loadEntryHub();
     }
 
     // =================================================================
@@ -2776,7 +3043,7 @@
         msg.className = 'form-msg mono ok';
         setTimeout(() => {
           closeAddModal();
-          if (currentTab === 'home') loadHome();
+          if (currentTab === 'entry') loadEntryHub();
           else if (currentTab === 'entry') runEntrySearch();
           else if (currentTab === 'today') loadToday();
           else if (currentTab === 'archive') loadArchive();
@@ -3063,7 +3330,7 @@
           if ($('lead-panel').classList.contains('open') && activePanelCustomer) {
             loadLeadTimeline(activePanelCustomer.name);
           }
-          if (currentTab === 'home') loadHome();
+          if (currentTab === 'entry') loadEntryHub();
           else if (currentTab === 'entry') runEntrySearch();
           else if (currentTab === 'today') loadToday();
           else if (currentTab === 'archive') loadArchive();
