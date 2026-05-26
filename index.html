@@ -1,4 +1,4 @@
-<!-- v8 · 650 LeadForge · Compact Agent Assist answers + reasoning -->
+<!-- v8 · 650 LeadForge · Feedback Capture + Compact Agent Assist -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -666,6 +666,45 @@
       color: #090908;
       background: var(--gold);
       border-color: transparent;
+    }
+
+    .feedback-capture-summary {
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      border-radius: var(--radius-md);
+      padding: 11px;
+      display: grid;
+      gap: 7px;
+      margin-bottom: 12px;
+    }
+
+    .feedback-capture-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.4;
+    }
+
+    .feedback-capture-row strong {
+      color: var(--text);
+      font-weight: 700;
+      text-align: right;
+    }
+
+    .feedback-preview-box {
+      border: 1px solid rgba(201, 169, 110, 0.22);
+      background: rgba(201, 169, 110, 0.035);
+      border-radius: var(--radius-md);
+      padding: 10px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.55;
+      max-height: 170px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+      white-space: pre-wrap;
     }
     .panel-section { margin-bottom: 16px; }
     .panel-section-title {
@@ -1403,7 +1442,47 @@
   </section>
 
   <!-- ADD LEAD MODAL -->
-  <div id="add-modal" class="modal-backdrop" role="dialog" aria-modal="true">
+    <div id="feedback-modal" class="modal-backdrop" role="dialog" aria-modal="true">
+    <div class="modal">
+      <div class="modal-head">
+        <div>
+          <div class="modal-title">Agent Feedback Capture</div>
+          <div class="modal-sub mono">Saves to Agent Feedback Log only</div>
+        </div>
+        <button class="modal-close" type="button" onclick="closeFeedbackModal()" aria-label="Close">✕</button>
+      </div>
+
+      <div class="feedback-capture-summary">
+        <div class="feedback-capture-row"><span>Customer</span><strong id="fb-customer">—</strong></div>
+        <div class="feedback-capture-row"><span>Rep</span><strong id="fb-rep">—</strong></div>
+        <div class="feedback-capture-row"><span>Feedback Label</span><strong id="fb-label">—</strong></div>
+        <div class="feedback-capture-row"><span>Source Page ID</span><strong id="fb-source">—</strong></div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Recommended Response</label>
+        <div id="fb-response-preview" class="feedback-preview-box"></div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="fb-notes">Daniel Revision Notes</label>
+        <textarea id="fb-notes" class="form-textarea" placeholder="Example: Make this more direct, mention payday timing, softer tone, better close, more policy support."></textarea>
+      </div>
+
+      <div id="feedback-msg" class="form-msg mono" style="margin-top:10px;"></div>
+
+      <div class="form-footer">
+        <div class="form-msg mono">Feedback does not touch Contact Log.</div>
+        <div class="form-actions">
+          <button class="cancel-btn" type="button" onclick="closeFeedbackModal()">Cancel</button>
+          <button class="cancel-btn" type="button" onclick="copyCurrentFeedbackNote(this)">Copy Feedback Note</button>
+          <button class="primary-btn submit-btn" type="button" id="feedback-save-btn" onclick="saveFeedbackCapture()">Save Feedback</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div id="add-modal" class="modal-backdrop" role="dialog" aria-modal="true">
     <div class="modal">
       <div class="modal-head">
         <div>
@@ -1722,6 +1801,7 @@
     let pendingRepSelection = null;
     let activeCustomer = null; // for Touch modal
     let activePanelCustomer = null; // for Panel-to-Touch
+    let activeFeedbackCapture = null;
 
     const $ = (id) => document.getElementById(id);
 
@@ -1780,6 +1860,7 @@
       document.querySelectorAll('.rep-card').forEach(c => c.classList.remove('selected'));
       setLiveStatus('Ready', 'idle');
       $('status-count').textContent = '0';
+      closeFeedbackModal();
       closeAddModal();
       closeTouchModal();
       closeLeadPanel();
@@ -1794,6 +1875,7 @@
       initChipHandlers();
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
+          if ($('feedback-modal').classList.contains('open')) { closeFeedbackModal(); return; }
           if ($('add-modal').classList.contains('open')) { closeAddModal(); return; }
           if ($('touch-modal').classList.contains('open')) { closeTouchModal(); return; }
           if ($('lead-panel').classList.contains('open')) { closeLeadPanel(); return; }
@@ -2502,47 +2584,6 @@
       return `${response} ${close}`;
     }
 
-    function buildAgentAssist(data) {
-      const rep = data.owner || currentRep || 'DG';
-      const name = data.name || 'there';
-      const category = detectAgentCategory(data);
-      const reason = agentReason(data);
-      const nextBestAction = agentNextAction(data);
-      const choice = agentChoiceQuestion(data);
-      const callAsk = agentCallQuestion(data);
-      const concern = agentConcern(data);
-      const priority = computeAgentPriority(data);
-      const score = agentScore(data);
-      const languageModule = selectLanguageModule(data);
-
-      const suggestedText = buildTrainerResponse(data, languageModule);
-      const callOpener = `Hey ${name}, this is ${rep} with Rent-A-Center on Hepburn. I’m following up from when we talked about ${category}. ${callAsk}`;
-      const close = languageModule.close || `If I can ${concern}, would it make sense to ${
-        agentHas(data.nextStep, 'Come Into Store')
-          ? 'stop in and look at the best option'
-          : agentHas(data.nextStep, 'Write Agreement')
-            ? 'get the next step started'
-            : 'look at the best option today'
-      }?`;
-
-      const trainerCopy = `Recommended Response:\n${suggestedText}\n\nWhy This Works:\n${languageModule.whyThisWorks}\n\nPolicy Anchor:\n${languageModule.policyAnchor}\n\nDo Not Say:\n${languageModule.doNotSay}\n\nClose:\n${close}`;
-
-      return {
-        priority,
-        score,
-        reason,
-        nextBestAction,
-        suggestedText,
-        callOpener,
-        close,
-        trainerLabel: languageModule.label,
-        policyAnchor: languageModule.policyAnchor,
-        whyThisWorks: languageModule.whyThisWorks,
-        doNotSay: languageModule.doNotSay,
-        trainerCopy
-      };
-    }
-
     function renderAgentAssist(agent) {
       const priorityClass = String(agent.priority || 'Low').toLowerCase();
       return `
@@ -2554,7 +2595,15 @@
           data-agent-policy="${escapeHtml(agent.policyAnchor || '')}"
           data-agent-why="${escapeHtml(agent.whyThisWorks || '')}"
           data-agent-donot="${escapeHtml(agent.doNotSay || '')}"
-          data-agent-close="${escapeHtml(agent.close || '')}">
+          data-agent-close="${escapeHtml(agent.close || '')}"
+          data-agent-call="${escapeHtml(agent.callOpener || '')}"
+          data-agent-customer="${escapeHtml(agent.customerName || '')}"
+          data-agent-phone="${escapeHtml(agent.customerPhone || '')}"
+          data-agent-source-page-id="${escapeHtml(agent.sourcePageId || '')}"
+          data-agent-result="${escapeHtml(agent.result || '')}"
+          data-agent-temps="${escapeHtml((agent.temps || []).join(', '))}"
+          data-agent-wishlist="${escapeHtml((agent.wishList || []).join(', '))}"
+          data-agent-when="${escapeHtml(agent.when || '')}">
           <div class="agent-head">
             <div>
               <div class="agent-title mono">Agent Assist</div>
@@ -2606,12 +2655,12 @@
           <div class="feedback-block">
             <div class="feedback-title mono">Response Audit</div>
             <div class="feedback-actions">
-              <button class="feedback-btn mono" type="button" onclick="event.stopPropagation(); copyAgentFeedbackButton(this, 'Good Response')">Good</button>
-              <button class="feedback-btn mono" type="button" onclick="event.stopPropagation(); copyAgentFeedbackButton(this, 'Too Generic')">Generic</button>
-              <button class="feedback-btn mono" type="button" onclick="event.stopPropagation(); copyAgentFeedbackButton(this, 'Too Pushy')">Pushy</button>
-              <button class="feedback-btn mono" type="button" onclick="event.stopPropagation(); copyAgentFeedbackButton(this, 'Needs More Policy')">Policy</button>
-              <button class="feedback-btn mono" type="button" onclick="event.stopPropagation(); copyAgentFeedbackButton(this, 'Needs Better Close')">Close</button>
-              <button class="feedback-btn mono" type="button" onclick="event.stopPropagation(); copyAgentFeedbackButton(this, 'Needs Better Tone')">Tone</button>
+              <button class="feedback-btn mono" type="button" onclick="event.stopPropagation(); openAgentFeedbackModal(this, 'Good Response')">Good</button>
+              <button class="feedback-btn mono" type="button" onclick="event.stopPropagation(); openAgentFeedbackModal(this, 'Too Generic')">Generic</button>
+              <button class="feedback-btn mono" type="button" onclick="event.stopPropagation(); openAgentFeedbackModal(this, 'Too Pushy')">Pushy</button>
+              <button class="feedback-btn mono" type="button" onclick="event.stopPropagation(); openAgentFeedbackModal(this, 'Needs More Policy')">Policy</button>
+              <button class="feedback-btn mono" type="button" onclick="event.stopPropagation(); openAgentFeedbackModal(this, 'Needs Better Close')">Close</button>
+              <button class="feedback-btn mono" type="button" onclick="event.stopPropagation(); openAgentFeedbackModal(this, 'Needs Better Tone')">Tone</button>
             </div>
           </div>
         </div>
@@ -2719,6 +2768,153 @@ DANIEL REVISION NOTES:
         button.textContent = original;
         button.classList.remove('copied');
       }, 1400);
+    }
+
+
+    function getAgentAssistDataFromButton(button, feedbackLabel) {
+      const box = button.closest('.agent-assist');
+      const card = button.closest('.card');
+      const panelName = $('panel-customer-name');
+      const panelPhone = $('panel-customer-phone');
+
+      const customerFromBox = box ? (box.getAttribute('data-agent-customer') || '') : '';
+      const phoneFromBox = box ? (box.getAttribute('data-agent-phone') || '') : '';
+      const customerFromCard = card && card.dataset ? decodeHtml(card.dataset.name || '') : '';
+      const phoneFromCard = card && card.dataset ? decodeHtml(card.dataset.phone || '') : '';
+      const sourceFromCard = card && card.dataset ? (card.dataset.pageId || '') : '';
+
+      return {
+        feedbackLabel,
+        rep: currentRep || '—',
+        customerName: customerFromBox || customerFromCard || (panelName ? panelName.textContent.trim() : '') || 'Unknown Customer',
+        phone: phoneFromBox || phoneFromCard || (panelPhone ? panelPhone.textContent.trim() : '') || '',
+        sourcePageId: box ? (box.getAttribute('data-agent-source-page-id') || sourceFromCard || '') : (sourceFromCard || ''),
+        priority: box ? (box.getAttribute('data-agent-priority') || '') : '',
+        score: box ? (box.getAttribute('data-agent-score') || '') : '',
+        trainingLane: box ? (box.getAttribute('data-agent-lane') || '') : '',
+        policyAnchor: box ? (box.getAttribute('data-agent-policy') || '') : '',
+        recommendedResponse: box ? (box.getAttribute('data-agent-response') || '') : '',
+        suggestedCallOpener: box ? (box.getAttribute('data-agent-call') || '') : '',
+        close: box ? (box.getAttribute('data-agent-close') || '') : '',
+        whyThisWorks: box ? (box.getAttribute('data-agent-why') || '') : '',
+        doNotSay: box ? (box.getAttribute('data-agent-donot') || '') : '',
+        result: box ? (box.getAttribute('data-agent-result') || '') : '',
+        temps: box ? (box.getAttribute('data-agent-temps') || '') : '',
+        wishList: box ? (box.getAttribute('data-agent-wishlist') || '') : '',
+        when: box ? (box.getAttribute('data-agent-when') || '') : ''
+      };
+    }
+
+    function buildFeedbackNoteFromData(data, notes) {
+      return `AGENT RESPONSE AUDIT
+DATE: ${todayISO()}
+REP: ${data.rep || currentRep || '—'}
+CUSTOMER: ${data.customerName || '—'}
+PHONE: ${data.phone || '—'}
+SOURCE PAGE ID: ${data.sourcePageId || '—'}
+FEEDBACK: ${data.feedbackLabel || '—'}
+PRIORITY: ${data.priority || '—'}${data.score ? ` (${data.score})` : ''}
+TRAINING LANE: ${data.trainingLane || '—'}
+POLICY ANCHOR: ${data.policyAnchor || '—'}
+RESULT / OBJECTION: ${data.result || '—'}
+TEMP: ${data.temps || '—'}
+WISH LIST: ${data.wishList || '—'}
+WHEN: ${data.when || '—'}
+
+RECOMMENDED RESPONSE:
+${data.recommendedResponse || '—'}
+
+SUGGESTED CALL OPENER:
+${data.suggestedCallOpener || '—'}
+
+WHY THIS WORKS:
+${data.whyThisWorks || '—'}
+
+DO NOT SAY:
+${data.doNotSay || '—'}
+
+CLOSE:
+${data.close || '—'}
+
+DANIEL REVISION NOTES:
+${notes || '[Add what sounded right, what sounded wrong, and what the better wording should be.]'}`;
+    }
+
+    function openAgentFeedbackModal(button, feedbackLabel) {
+      activeFeedbackCapture = getAgentAssistDataFromButton(button, feedbackLabel);
+
+      $('fb-customer').textContent = activeFeedbackCapture.customerName || '—';
+      $('fb-rep').textContent = activeFeedbackCapture.rep || '—';
+      $('fb-label').textContent = activeFeedbackCapture.feedbackLabel || '—';
+      $('fb-source').textContent = activeFeedbackCapture.sourcePageId || '—';
+      $('fb-response-preview').textContent = activeFeedbackCapture.recommendedResponse || '—';
+      $('fb-notes').value = '';
+      $('feedback-msg').textContent = '';
+      $('feedback-msg').className = 'form-msg mono';
+      $('feedback-save-btn').disabled = false;
+      $('feedback-save-btn').textContent = 'Save Feedback';
+      $('feedback-modal').classList.add('open');
+      setTimeout(() => $('fb-notes').focus(), 50);
+    }
+
+    function closeFeedbackModal() {
+      if ($('feedback-modal')) $('feedback-modal').classList.remove('open');
+      activeFeedbackCapture = null;
+    }
+
+    async function copyCurrentFeedbackNote(button) {
+      const original = button.textContent;
+      const data = activeFeedbackCapture || {};
+      const note = buildFeedbackNoteFromData(data, $('fb-notes').value.trim());
+      const ok = await copyAgentText(note);
+      button.textContent = ok ? 'Copied' : 'Copy Failed';
+      setTimeout(() => { button.textContent = original; }, 1200);
+    }
+
+    async function saveFeedbackCapture() {
+      const msg = $('feedback-msg');
+      const btn = $('feedback-save-btn');
+
+      if (!activeFeedbackCapture) {
+        msg.textContent = 'No feedback capture is active.';
+        msg.className = 'form-msg mono err';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Saving…';
+      msg.textContent = 'Saving feedback to Agent Feedback Log…';
+      msg.className = 'form-msg mono';
+
+      const payload = {
+        action: 'feedbackCreate',
+        feedback: {
+          ...activeFeedbackCapture,
+          danielRevisionNotes: $('fb-notes').value.trim(),
+          feedbackNote: buildFeedbackNoteFromData(activeFeedbackCapture, $('fb-notes').value.trim())
+        }
+      };
+
+      try {
+        const res = await notionQuery(payload);
+        if (!res.ok) {
+          msg.textContent = `Failed (HTTP ${res.status}): ${(res.data && (res.data.error || res.data.message)) || 'Unknown error'}`;
+          msg.className = 'form-msg mono err';
+          btn.disabled = false;
+          btn.textContent = 'Save Feedback';
+          return;
+        }
+
+        msg.textContent = 'Saved feedback.';
+        msg.className = 'form-msg mono ok';
+        setLiveStatus('Feedback saved', 'idle');
+        setTimeout(() => closeFeedbackModal(), 700);
+      } catch (error) {
+        msg.textContent = `Network error: ${error.message}`;
+        msg.className = 'form-msg mono err';
+        btn.disabled = false;
+        btn.textContent = 'Save Feedback';
+      }
     }
 
     function toggleResultCard(card) {
@@ -3166,7 +3362,6 @@ DANIEL REVISION NOTES:
         setTimeout(() => {
           closeAddModal();
           if (currentTab === 'entry') loadEntryHub();
-          else if (currentTab === 'entry') runEntrySearch();
           else if (currentTab === 'today') loadToday();
           else if (currentTab === 'archive') loadArchive();
         }, 900);
@@ -3450,10 +3645,9 @@ DANIEL REVISION NOTES:
           closeTouchModal();
           // If panel is open, reload its timeline
           if ($('lead-panel').classList.contains('open') && activePanelCustomer) {
-            loadLeadTimeline(activePanelCustomer.name);
+            loadLeadProfile(activePanelCustomer.name);
           }
           if (currentTab === 'entry') loadEntryHub();
-          else if (currentTab === 'entry') runEntrySearch();
           else if (currentTab === 'today') loadToday();
           else if (currentTab === 'archive') loadArchive();
         }, 900);
@@ -3748,7 +3942,16 @@ DANIEL REVISION NOTES:
         policyAnchor,
         whyThisWorks,
         doNotSay,
-        trainerCopy
+        trainerCopy,
+        responseWhy: agentResponseWhy(data),
+        callWhy: agentCallWhy(data),
+        customerName: data.name || '',
+        customerPhone: data.phone || '',
+        sourcePageId: data.pageId || '',
+        result: data.result || '',
+        temps: data.temps || [],
+        wishList: data.wishList || [],
+        when: data.when || ''
       };
     }
 
